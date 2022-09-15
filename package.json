@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "axios": "^0.27.2",
     "bootstrap": "^5.2.1",
     "fast-xml-parser": "^4.0.10",
     "localforage": "^1.10.0",
