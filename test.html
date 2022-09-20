@@ -1,0 +1,145 @@
+<html>
+<script>
+// function Semaphore(max) {
+//   var counter = 0;
+//   var waiting = [];
+  
+//   var take = function() {
+//     if (waiting.length > 0 && counter < max){
+//       counter++;
+//       let promise = waiting.shift();
+//       promise.resolve();
+//     }
+//   }
+  
+//   this.acquire = function() {
+//     if(counter < max) {
+//       counter++
+//       return new Promise(resolve => {
+//       resolve();
+//     });
+//     } else {
+//       return new Promise((resolve, err) => {
+//         waiting.push({resolve: resolve, err: err});
+//       });
+//     }
+//   }
+    
+//   this.release = function() {
+//    counter--;
+//    take();
+//   }
+  
+//   this.purge = function() {
+//     let unresolved = waiting.length;
+  
+//     for (let i = 0; i < unresolved; i++) {
+//       waiting[i].err('Task has been purged.');
+//     }
+  
+//     counter = 0;
+//     waiting = [];
+    
+//     return unresolved;
+//   }
+// }
+
+// // testing the semaphore
+
+// let sema = new Semaphore(5);
+
+// async function test(id) {
+//   console.log('queueing task', id);
+//   try {
+//     await sema.acquire();
+//     console.log('running task', id);
+//     setTimeout(() => {
+//     sema.release();
+//     }, 2000);
+//   } catch (e) {
+//     console.error(id, e);
+//   }
+// }
+
+// test(1);
+// test(2);
+// test(3);
+// test(4);
+// test(5);
+
+// setTimeout(() => {
+//   test(10);
+//   test(11);
+//   test(12);
+// }, 1500);
+
+// setTimeout(() => {
+//   test(20);
+//   test(21);
+//   test(22);
+// }, 2700);
+
+class Semaphore {
+    /**
+     * Creates a semaphore that limits the number of concurrent Promises being handled
+     * @param {*} maxConcurrentRequests max number of concurrent promises being handled at any time
+     */
+    constructor(maxConcurrentRequests = 1) {
+        this.currentRequests = [];
+        this.runningRequests = 0;
+        this.maxConcurrentRequests = maxConcurrentRequests;
+    }
+
+    /**
+     * Returns a Promise that will eventually return the result of the function passed in
+     * Use this to limit the number of concurrent function executions
+     * @param {*} fnToCall function that has a cap on the number of concurrent executions
+     * @param  {...any} args any arguments to be passed to fnToCall
+     * @returns Promise that will resolve with the resolved value as if the function passed in was directly called
+     */
+    callFunction(fnToCall, ...args) {
+        return new Promise((resolve, reject) => {
+            this.currentRequests.push({
+                resolve,
+                reject,
+                fnToCall,
+                args,
+            });
+            this.tryNext();
+        });
+    }
+
+    tryNext() {
+        if (!this.currentRequests.length) {
+            return;
+        } else if (this.runningRequests < this.maxConcurrentRequests) {
+            let { resolve, reject, fnToCall, args } = this.currentRequests.shift();
+            this.runningRequests++;
+            let req = fnToCall(...args);
+            req.then((res) => resolve(res))
+                .catch((err) => reject(err))
+                .finally(() => {
+                    this.runningRequests--;
+                    this.tryNext();
+                });
+        }
+    }
+}
+
+/* HOW TO USE */
+const throttler = new Semaphore(2);
+const fu = (url) => {
+  console.log('fu')
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      // console.log(url)
+      resolve(url)
+    }, 1500)
+  })
+}
+throttler.callFunction(fu, 'www.facebook.com').then(console.log);
+throttler.callFunction(fu, 'www.amazon.com').then(console.log);
+throttler.callFunction(fu, 'www.netflix.com').then(console.log);
+throttler.callFunction(fu, 'www.google.com').then(console.log);
+</script>
+</html>
