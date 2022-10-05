@@ -15,12 +15,63 @@ a {
   box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-  body {
-    color: white;
-    background: black;
-  }
+.cursor-pointer {
+  cursor: pointer;
+}
+
+
+.img-overlay-wrap {
+  position: relative;
+  display: inline-block;
+  transition: transform 150ms ease-in-out;
+}
+
+.img-overlay-wrap img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.img-overlay-wrap svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.circle-group:hover {
+  cursor: pointer;
+}
+
+.circle-group circle {
+  stroke: white;
+}
+
+.circle-group:hover circle {
+  stroke: #AFEEEE;
+}
+
+.circle-group text {
+  filter: url(#bg-text);
+  font: 13px px Arial, sans-serif;
+  font-weight: bold;
+}
+
+.circle-group:hover text {
+  filter: url(#bg-text-hover);
+}
+
+.modal-dialog {
+  position: unset;
+}
+
+.modal-content {
+  position: unset;
+}
+
+.modal-body {
+  position: unset;
+}
+
+.alert {
+  position: unset;
 }
