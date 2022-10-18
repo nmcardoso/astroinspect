@@ -25,6 +25,7 @@
     "react-lazy-load-image-component": "^1.5.5"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.186",
     "@types/node": "18.7.23",
     "@types/papaparse": "^5.3.5",
     "@types/react": "18.0.21",
