@@ -16,40 +16,58 @@ export type SdssColumnDesc = {
 }
 
 interface SearchStrategy {
-  getQuery: (ra: number, dec: number) => string
+  objType: 'photo' | 'spectro'
+  getQuery?: (ra: number, dec: number, table: string, columns: string[]) => string
+  getCrossIdQuery: (
+    table: string,
+    columns: string[]
+  ) => string
 }
 
 class PositionStrategy implements SearchStrategy {
+  objType: 'photo' | 'spectro'
   raColumn: string
   decColumn: string
-  kindId: string
+  pkColumn: string | null
 
-  constructor(
-    raColumn: string = 'ra',
-    decColumn: string = 'dec',
-    kindId: string = 'objID'
-  ) {
+  constructor(options?: {
+    objType?: 'photo' | 'spectro',
+    raColumn?: string,
+    decColumn?: string,
+    pkColumn?: string | null
+  }) {
+    const {
+      objType = 'photo',
+      raColumn = 'ra',
+      decColumn = 'dec',
+      pkColumn = null
+    } = options || {}
     this.raColumn = raColumn
     this.decColumn = decColumn
-    this.kindId = kindId
+    this.pkColumn = pkColumn
+    this.objType = objType
   }
 
-  getQuery(table: string, columns: string[], ra: number[], dec: number[]): string {
+  getQuery(ra: number, dec: number, table: string, columns: string[]): string {
     return `SELECT p.fiber2Mag_z ${columns.map(e => `t.${e}`).join(',')}
     FROM PhotoObj p, dbo.fGetNearbyObjEq(326.8952189, 0.7732093, 0.02) n
     WHERE p.objID = n.objID`
   }
-}
 
-class JoinStrategy implements SearchStrategy {
-  table: string
-
-  constructor(table: string) {
-    this.table = table
-  }
-
-  getQuery(ra: number, dec: number): string {
-    return 'a'
+  getCrossIdQuery(
+    table: string,
+    columns: string[]
+  ): string {
+    const pk = this.objType == 'photo' ? 'objID' : 'specObjID'
+    const sql = `
+    SELECT 
+      ${columns.map(c => `t.${c}`).join(',')}
+    FROM #upload u
+      JOIN #x x ON x.up_id = u.up_id
+      JOIN ${table} t ON t.${this.pkColumn || pk} = x.${pk}
+    ORDER by x.up_id
+    `.trim()
+    return sql
   }
 }
 
