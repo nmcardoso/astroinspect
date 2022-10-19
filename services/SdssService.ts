@@ -131,6 +131,10 @@ export default class SdssService {
     return `https://skyserver.sdss.org/dr17/en/get/SpecById.ashx?id=${specObjId}`
   }
 
+  getSpecPlotUrlById(specObjId: string): string {
+    return `https://skyserver.sdss.org/dr17/en/get/SpecById.ashx?id=${specObjId}`
+  }
+
   getTables() {
     return Object.keys(SDSS_TABLES)
   }
