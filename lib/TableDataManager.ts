@@ -3,6 +3,9 @@ import SplusService from '../services/SplusService'
 import Papa, { ParseResult } from 'papaparse'
 import LegacyService from '../services/LegacyService'
 import { semaphore } from './Semaphore'
+import SdssService from '../services/SdssService'
+import chunk from 'lodash/chunk'
+import uniq from 'lodash/uniq'
 
 enum ColumnCategory {
   src = 'src',
@@ -25,6 +28,7 @@ interface ITableSummary {
 
 const splusService = new SplusService()
 const legacyService = new LegacyService()
+const sdssService = new SdssService()
 
 const findIndex = (query: string, items: string[]) => {
   const pattern = `^${query}[_\d]*?$`
@@ -42,13 +46,14 @@ class TableData {
   config: IState | null
   schema: {
     sourceTable: { colId: number, colName: string }[],
+    sdssCatalog: { tableName: string, colName: string }[],
     classification: boolean,
     legacyImaging: boolean,
     splusImaging: boolean,
     sdssSpectra: boolean,
   }
-  raIndex: number | null
-  decIndex: number | null
+  raIndex: number
+  decIndex: number
 
   constructor() {
     this.data = []
@@ -57,13 +62,14 @@ class TableData {
     this.config = null
     this.schema = {
       sourceTable: [],
+      sdssCatalog: [],
       classification: false,
       legacyImaging: false,
       splusImaging: false,
       sdssSpectra: false,
     }
-    this.raIndex = null
-    this.decIndex = null
+    this.raIndex = -1
+    this.decIndex = -1
   }
 
   clean() {
@@ -124,6 +130,10 @@ class TableData {
             colId: e,
             colName: config.table.columns[e]
           })),
+          sdssCatalog: config.sdssCatalog.selectedColumns.map(e => ({
+            tableName: e.table,
+            colName: e.column
+          })),
           legacyImaging: config.legacyImaging.enabled,
           splusImaging: !!config.splusImaging.enabled,
           classification: config.classification.enabled,
@@ -140,12 +150,19 @@ class TableData {
           this.schema.sourceTable.forEach(c => {
             row[`sourceTable:${c.colName}`] = sourceData[i + 1][c.colId]
           })
+          this.schema.sdssCatalog.forEach(c => {
+            row[`sdss:${c.tableName}.${c.colName}`] = undefined
+          })
           if (this.schema.legacyImaging) {
             row.legacyImaging = legacyService.getRGBUrl(ra, dec)
           }
           if (this.schema.splusImaging) {
             const imgType = config.splusImaging.type
-            row.splusImaging = splusService.getTrilogyUrl(ra, dec)
+            row.splusImaging = imgType == 'trilogy' ? splusService.getTrilogyUrl(
+              ra, dec, config.splusImaging.trilogyConfig
+            ) : splusService.getLuptonUrl(
+              ra, dec, config.splusImaging.luptonConfig
+            )
           }
           if (this.schema.classification) {
             row.classification = undefined
@@ -155,13 +172,47 @@ class TableData {
           }
           this.data[i] = row
         }
-        console.log(this.data)
+
+        const positions = this.sourceData.slice(1).map((row, i) => ({
+          index: i,
+          ra: row[this.raIndex],
+          dec: row[this.decIndex]
+        }))
+
+        for (const c of config.sdssCatalog.selectedColumns) {
+          const promises = chunk(positions, 50).map(batch => (
+            sdssService.batchQuery(batch, c.table, [c.column])
+          ))
+          for (const p of promises) {
+            p.then(queryResult => {
+              for (const r of queryResult) {
+                this.data[r.index][`sdss:${c.table}.${c.column}`] = r[c.column] || null
+              }
+            })
+          }
+        }
+
+        if (this.schema.sdssSpectra) {
+          const promises = chunk(positions, 50).map(batch => (
+            sdssService.batchQuery(batch, 'SpecObj', ['specObjId'])
+          ))
+          for (const p of promises) {
+            p.then(queryResult => {
+              for (const r of queryResult) {
+                this.data[r.index]['sdssSpectra'] = r['specObjId'] || null
+              }
+              console.log(this.data)
+            })
+          }
+        }
+
         resolve()
       }
 
       if (file) {
         Papa.parse(file, {
-          complete: handleParseComplete
+          complete: handleParseComplete,
+          skipEmptyLines: true
         })
       }
     })

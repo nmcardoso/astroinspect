@@ -14,6 +14,7 @@ import {
 import ImageCell from './ImageCell'
 import ClassCell from './ClassCell'
 import SdssSpectraCell from './SdssSpectraCell'
+import AsyncTextCell from './AsyncTextCell'
 
 
 const columnHelper = createColumnHelper<any>()
@@ -31,11 +32,11 @@ const columnsAccessors = {
   }),
   legacyImaging: () => columnHelper.accessor('legacyImaging', {
     cell: info => <ImageCell src={info.getValue()} rowId={info.row.index} />,
-    header: 'Legacy RGB'
+    header: 'Legacy'
   }),
   splusImaging: () => columnHelper.accessor('splusImaging', {
     cell: info => <ImageCell src={info.getValue()} rowId={info.row.index} />,
-    header: 'S-PLUS RGB'
+    header: 'S-PLUS'
   }),
   classification: () => columnHelper.accessor('classification', {
     cell: info => <ClassCell rowId={info.row.index} />,
@@ -44,7 +45,16 @@ const columnsAccessors = {
   sdssSpectra: () => columnHelper.accessor('sdssSpectra', {
     cell: info => <SdssSpectraCell rowId={info.row.index} />,
     header: 'SDSS Spec'
-  })
+  }),
+  sdssCatalog: (table: string, column: string) => columnHelper.accessor(
+    `sdss:${table}.${column}`,
+    {
+      cell: info => <AsyncTextCell
+        rowId={info.row.index}
+        colId={`sdss:${table}.${column}`} />,
+      header: column
+    }
+  )
 }
 
 
@@ -72,9 +82,12 @@ export default function XTableBody() {
       [columnsAccessors.classification()] : []
     const sdssSpectraCol = schema.sdssSpectra ?
       [columnsAccessors.sdssSpectra()] : []
+    const sdssCatalog = schema.sdssCatalog.map(col => {
+      return columnsAccessors.sdssCatalog(col.tableName, col.colName)
+    })
     return [
-      ...classificationCol, ...sourceTableCol, ...sdssSpectraCol,
-      ...legacyImagingCol, ...splusImagingCol
+      ...classificationCol, ...sourceTableCol, ...sdssCatalog,
+      ...sdssSpectraCol, ...legacyImagingCol, ...splusImagingCol
     ]
   }, [schema])
 
@@ -136,7 +149,9 @@ export default function XTableBody() {
             <tr key={row.id}>
               {row.getVisibleCells().map(cell => (
                 <td key={cell.id} className="p-1">
+                  {/* <div style={{ width: '100%', wordWrap: 'break-word', overflowWrap: 'break-word' }}> */}
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  {/* </div> */}
                 </td>
               ))}
             </tr>
