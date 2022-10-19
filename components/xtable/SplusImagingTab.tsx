@@ -18,6 +18,7 @@ function toggleUnique(data: { [key: string]: string[] }, key: string, value: str
 
   for (const k in data) {
     if (k != key) d[k] = data[k].filter(e => e != value)
+    if (d[k].length < 1) return data
   }
 
   if (d[key].includes(value)) {
@@ -30,7 +31,8 @@ function toggleUnique(data: { [key: string]: string[] }, key: string, value: str
 }
 
 
-function SplusFilterChip({ band, channel, variant }: { band: string, channel: string, variant: string }) {
+function SplusFilterChip({ band, channel, variant }:
+  { band: string, channel: string, variant: string }) {
   const { tcState, tcDispatch } = useXTableConfig()
 
   const trilogyConfig = tcState.splusImaging.trilogyConfig
@@ -73,7 +75,7 @@ function TrilogyParams() {
             <Help title="Red Composition" className="ms-1">
               Choose the S-PLUS bands that will be mapped to the{' '}
               <span className="text-danger">red</span> channel of the{' '}
-              RGB image
+              RGB image. Each channel must be mapped by at least 1 S-PLUS filter
             </Help>
           </div>
         </Col>
@@ -95,7 +97,7 @@ function TrilogyParams() {
             <Help title="Green Composition" className="ms-1">
               Choose the S-PLUS bands that will be mapped to the{' '}
               <span className="text-success">green</span> channel of the{' '}
-              RGB image
+              RGB image. Each channel must be mapped by at least 1 S-PLUS filter
             </Help>
           </div>
         </Col>
@@ -117,7 +119,7 @@ function TrilogyParams() {
             <Help title="Blue Composition" className="ms-1">
               Choose the S-PLUS bands that will be mapped to the{' '}
               <span className="text-primary">blue</span> channel of the{' '}
-              RGB image
+              RGB image. Each channel must be mapped by at least 1 S-PLUS filter
             </Help>
           </div>
         </Col>
@@ -127,7 +129,7 @@ function TrilogyParams() {
         <Form.Label column sm="1">
           Params
         </Form.Label>
-        <Col sm="11">
+        <Col sm={8}>
           <Row>
             <Col>
               <InputGroup className="mb-3">
@@ -179,7 +181,7 @@ function LuptonParams() {
         <Form.Label column sm="1">
           Colors
         </Form.Label>
-        <Col sm="11">
+        <Col sm={8}>
           <Row>
             <Col>
               <InputGroup>
@@ -191,7 +193,7 @@ function LuptonParams() {
                     payload: { R: e.target.value }
                   })}>
                   {splusBands.map(band => (
-                    <option key={`lupton_R_${band}`}>
+                    <option key={band}>
                       {band}
                     </option>
                   ))}
@@ -208,7 +210,7 @@ function LuptonParams() {
                     payload: { G: e.target.value }
                   })}>
                   {splusBands.map(band => (
-                    <option key={`lupton_G_${band}`}>
+                    <option key={band}>
                       {band}
                     </option>
                   ))}
@@ -225,7 +227,7 @@ function LuptonParams() {
                     payload: { B: e.target.value }
                   })}>
                   {splusBands.map(band => (
-                    <option key={`lupton_B_${band}`}>
+                    <option key={band}>
                       {band}
                     </option>
                   ))}
@@ -240,7 +242,7 @@ function LuptonParams() {
         <Form.Label column sm="1">
           Params
         </Form.Label>
-        <Col sm="11">
+        <Col sm={6}>
           <Row>
             <Col>
               <InputGroup>
@@ -309,7 +311,7 @@ export default function SplusImagingTab() {
         <Form.Label column sm="1">
           Type
         </Form.Label>
-        <Col sm="11">
+        <Col sm={5}>
           <div className="d-flex align-items-center">
             <Form.Select
               defaultValue={splusImaging.type}
