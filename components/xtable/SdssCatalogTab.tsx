@@ -4,7 +4,6 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Spinner from 'react-bootstrap/Spinner'
 import SdssService, { SdssColumnDesc } from '../../services/SdssService'
-import DatabaseTreeView from '../common/DatabaseTreeView'
 import ListView from '../common/ListView'
 import Modal from 'react-bootstrap/Modal'
 import { Button, Table } from 'react-bootstrap'
@@ -12,6 +11,7 @@ import { useXTableConfig } from '../../contexts/XTableConfigContext'
 import { BiPlus } from 'react-icons/bi'
 import { HiMinusSm } from 'react-icons/hi'
 import Chip from '../common/Chip'
+import uniq from 'lodash/uniq'
 
 const service = new SdssService()
 const tables = service.getTables()
@@ -19,10 +19,10 @@ const tables = service.getTables()
 
 const SdssModal = ({ show, onHide }: { show: boolean, onHide: any }) => {
   const { tcState, tcDispatch } = useXTableConfig()
-  const [activeTable, setActiveTable] = useState('')
+  const [activeTable, setActiveTable] = useState(tables[0])
   const [activeColumn, setActiveColumn] = useState('')
   const [columns, setColumns] = useState<SdssColumnDesc[] | undefined>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const selectedColumns = tcState.sdssCatalog.selectedColumns
 
   useEffect(() => {
@@ -77,6 +77,11 @@ const SdssModal = ({ show, onHide }: { show: boolean, onHide: any }) => {
       size="lg"
       centered
     >
+      <Modal.Header className="py-2" closeButton>
+        <Modal.Title as={"h5"} id="contained-modal-title-vcenter">
+          Add SDSS columns
+        </Modal.Title>
+      </Modal.Header>
       <Modal.Body>
         <Row>
           <Col sm={5}>
@@ -86,6 +91,7 @@ const SdssModal = ({ show, onHide }: { show: boolean, onHide: any }) => {
               </Col>
               <Col>
                 <Form.Select
+                  defaultValue={activeTable}
                   onChange={(e) => {
                     setLoading(true)
                     setActiveColumn('')
@@ -105,20 +111,8 @@ const SdssModal = ({ show, onHide }: { show: boolean, onHide: any }) => {
               height={340}
               onClick={({ title }) => setActiveColumn(title)} />
           </Col>
-          <Col>
-            <div className="mb-2">
-              <span className="text-muted fw-bold">Selected columns: </span>
-              {selectedColumns.filter(e => e.table == activeTable).map(e => (
-                <Chip
-                  closeable
-                  className="mb-1 me-1"
-                  key={e.column}
-                  onClose={() => handleRemoveColumn(activeTable, e.column)}>
-                  {e.column}
-                </Chip>
-              ))}
-            </div>
-            {loading && <div>
+          {loading ? (
+            <Col>
               <Spinner
                 animation="border"
                 variant="secondary"
@@ -126,36 +120,55 @@ const SdssModal = ({ show, onHide }: { show: boolean, onHide: any }) => {
                 size="sm"
                 className="me-2" />
               <span className="text-muted">
-                Loading columns of table <u>{activeTable}</u>
+                Loading columns of the <u>{activeTable}</u> table
               </span>
-            </div>}
-            {activeColumnObj && <div>
-              <div className="mb-2">
-                <b>{activeColumnObj.name}:</b>&nbsp;
-                {activeColumnObj.description}.&nbsp;
-                {activeColumnObj.unit && <>
-                  Unit: <i dangerouslySetInnerHTML={{ __html: activeColumnObj.unit }} />
-                </>}
-              </div>
-              <div>
-                {isActiveColumnSelected ? (
-                  <Button
-                    variant="outline-danger"
-                    size="sm"
-                    onClick={() => handleRemoveColumn(activeTable, activeColumn)}>
-                    <HiMinusSm /> Remove Selected Column
-                  </Button>
-                ) : (
-                  <Button
-                    variant="outline-success"
-                    size="sm"
-                    onClick={() => handleAddColumn(activeTable, activeColumn)}>
-                    <BiPlus size={16} /> Add Selected Column
-                  </Button>
-                )}
-              </div>
-            </div>}
-          </Col>
+            </Col>
+          ) : (
+            <Col>
+              {selectedColumns.filter(e => e.table == activeTable).length > 0 && (
+                <div className="mb-2">
+                  <span className="text-muted fw-bold">
+                    Selected columns:&nbsp;
+                  </span>
+                  {selectedColumns.filter(e => e.table == activeTable).map(e => (
+                    <Chip
+                      closeable
+                      className="mb-1 me-1"
+                      key={e.column}
+                      onClose={() => handleRemoveColumn(activeTable, e.column)}>
+                      {e.column}
+                    </Chip>
+                  ))}
+                </div>
+              )}
+              {activeColumnObj && <div>
+                <div className="mb-2">
+                  <b>{activeColumnObj.name}:</b>&nbsp;
+                  {activeColumnObj.description}.&nbsp;
+                  {activeColumnObj.unit && <>
+                    Unit: <i dangerouslySetInnerHTML={{ __html: activeColumnObj.unit }} />
+                  </>}
+                </div>
+                <div>
+                  {isActiveColumnSelected ? (
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      onClick={() => handleRemoveColumn(activeTable, activeColumn)}>
+                      <HiMinusSm /> Remove Selected Column
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outline-success"
+                      size="sm"
+                      onClick={() => handleAddColumn(activeTable, activeColumn)}>
+                      <BiPlus size={16} /> Add Selected Column
+                    </Button>
+                  )}
+                </div>
+              </div>}
+            </Col>
+          )}
         </Row>
       </Modal.Body>
     </Modal >
@@ -168,12 +181,24 @@ export default function SdssCatalogTab() {
   const selectedColumns = tcState.sdssCatalog.selectedColumns
 
   const selectedTables = useMemo(() => {
-    return [...new Set(selectedColumns.map(col => col.table))]
+    return uniq(selectedColumns.map(col => col.table))
   }, [selectedColumns])
+
+  const handleRemoveColumn = (table: string, column: string) => {
+    const idx = selectedColumns.findIndex(e => (
+      e.column == column && e.table == table
+    ))
+    tcDispatch({
+      type: 'setSdssCatalog',
+      payload: {
+        selectedColumns: selectedColumns.filter((_, i) => i != idx)
+      }
+    })
+  }
 
   return (
     <>
-      {tcState.sdssCatalog.selectedColumns && <>
+      {selectedColumns.length > 0 && <>
         <Table>
           <thead>
             <tr>
@@ -182,14 +207,29 @@ export default function SdssCatalogTab() {
             </tr>
           </thead>
           <tbody>
-
+            {selectedTables.map(table => (
+              <tr key={table}>
+                <td>{table}</td>
+                <td>
+                  {selectedColumns.filter(col => col.table == table).map(col => (
+                    <Chip
+                      key={col.column}
+                      className="mb-1 me-1"
+                      onClose={() => handleRemoveColumn(col.table, col.column)}>
+                      {col.column}
+                    </Chip>
+                  ))}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </Table>
       </>}
 
       <Button
+        size="sm"
         onClick={() => setShowModal(true)}>
-        Add SDSS Columns
+        <BiPlus size={16} /> Add SDSS Columns
       </Button>
 
       <SdssModal
