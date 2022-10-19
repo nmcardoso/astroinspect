@@ -1,10 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
-import { useEffect, useMemo, useState } from 'react'
+import { useState } from 'react'
 import TableDataManager from '../../lib/TableDataManager'
 import SdssService from '../../services/SdssService'
 import Modal from 'react-bootstrap/Modal'
 
 const service = new SdssService()
+
+const notFoundSrc = 'https://dummyimage.com/90x90/e8e8e8/474747.jpg&text=Not+Found'
 
 const ImageModal = ({ show, onHide, src }: any) => {
   return (
@@ -23,29 +25,16 @@ const ImageModal = ({ show, onHide, src }: any) => {
 }
 
 export default function SdssSpectraCell({ rowId }: { rowId: number }) {
-  const ra = useMemo(() => {
-    return TableDataManager.getRa(rowId)
-  }, [rowId])
-
-  const dec = useMemo(() => {
-    return TableDataManager.getDec(rowId)
-  }, [rowId])
-
   const [showModal, setShowModal] = useState(false)
 
-  useEffect(() => {
-    service.getSpecPlotUrl(ra, dec).then(url => {
-      TableDataManager.setCellValue(rowId, 'sdssSpectra', url)
-    })
-  }, [ra, dec, rowId])
-
-  const src = TableDataManager.getCellValue(rowId, 'sdssSpectra')
+  const specObjID = TableDataManager.getCellValue(rowId, 'sdssSpectra')
+  const src = service.getSpecPlotUrlById(specObjID)
 
   return (
     <>
       <img
         className="cursor-pointer"
-        src={src}
+        src={specObjID === null ? notFoundSrc : src}
         height={90}
         alt=""
         onClick={() => setShowModal(true)} />
