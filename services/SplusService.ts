@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios'
 import { XMLParser } from 'fast-xml-parser'
 import { ILuptonConfig, ITrilogyConfig } from '../contexts/XTableConfigContext'
+import { obj2qs } from '../lib/utils'
 
 
 type TableType = {
@@ -17,7 +18,8 @@ type SchemaType = {
 
 const PUBLIC_TAP_URL = 'https://red-mirror.herokuapp.com/https://splus.cloud/public-TAP/tap/'
 const PRIVATE_TAP_URL = 'https://red-mirror.herokuapp.com/https://splus.cloud/tap/tap/'
-const TRILOGY_URL = 'https://checker-melted-forsythia.glitch.me/img'
+const TRILOGY_URL = 'https://checker-melted-forsythia.glitch.me/trilogy.png'
+const LUPTON_URL = 'https://checker-melted-forsythia.glitch.me/lupton.png'
 
 
 export default class SplusService {
@@ -64,10 +66,30 @@ export default class SplusService {
   }
 
   getTrilogyUrl(ra: number, dec: number, config?: ITrilogyConfig) {
-    return `${TRILOGY_URL}?ra=${ra}&dec=${dec}`
+    const params = {
+      ra,
+      dec,
+      r: config?.R?.join(','),
+      g: config?.G?.join(','),
+      b: config?.B?.join(','),
+      noise: config?.noise,
+      q: config?.Q
+    }
+    const qs = obj2qs(params)
+    return `${TRILOGY_URL}?${qs}`
   }
 
   getLuptonUrl(ra: number, dec: number, config: ILuptonConfig) {
-    return `${TRILOGY_URL}?ra=${ra}&dec=${dec}`
+    const params = {
+      ra,
+      dec,
+      r: config?.R,
+      g: config?.G,
+      b: config?.B,
+      stretch: config?.stretch,
+      q: config?.Q
+    }
+    const qs = obj2qs(params)
+    return `${LUPTON_URL}?${qs}`
   }
 }
