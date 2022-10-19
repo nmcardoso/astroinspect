@@ -1,13 +1,15 @@
 import { semaphore } from '../lib/Semaphore'
 import TableDataManager from '../lib/TableDataManager'
 import axios from 'axios'
+import { obj2formData } from '../lib/utils'
+import JSONBigInt from 'json-bigint'
 
 semaphore.create('sdss_cone_spec', 1)
 semaphore.create('sdss_sql', 2)
 
 const CONE_SPEC_URL = 'https://skyserver.sdss.org/dr17/SkyServerWS/SpectroQuery/ConeSpectro'
-const SQL_URL = 'http://skyserver.sdss.org/dr16/SkyServerWS/SearchTools/SqlSearch'
-const CROSSID_SEARCH = 'http://skyserver.sdss.org/dr16/SkyServerWS/SearchTools/CrossIdSearch'
+const SQL_URL = 'https://skyserver.sdss.org/dr16/SkyServerWS/SearchTools/SqlSearch'
+const CROSSID_SEARCH = 'https://skyserver.sdss.org/dr17/SkyServerWS/SearchTools/CrossIdSearch'
 
 export type SdssColumnDesc = {
   name: string,
@@ -145,5 +147,40 @@ export default class SdssService {
     const resp = await fetch(url)
     const data = await resp.json()
     return data?.[0]?.Rows
+  }
+
+  async batchQuery(
+    positions: { index: number, ra: number, dec: number }[],
+    table: string,
+    columns: string[]
+  ) {
+    console.log(table)
+    const strategy = SDSS_TABLES[table].searchStrategy
+    const query = strategy.getCrossIdQuery(table, columns)
+    const params = {
+      searchtool: 'CrossID',
+      searchType: strategy.objType,
+      photoScope: 'nearPrim',
+      spectroScope: 'nearPrim',
+      photoUpType: 'ra-dec',
+      spectroUpType: 'ra-dec',
+      radius: 0.016667,
+      firstcol: 1,
+      paste: this.getCsv(positions),
+      uquery: query,
+      format: 'JSON',
+    }
+    const r = await axios.get(CROSSID_SEARCH, {
+      params,
+      transformResponse: [data => data]
+    })
+    const parsed = JSONBigInt({ storeAsString: true }).parse(r.data)
+    const data = parsed.find((e: any) => e.TableName == 'Table1').Rows
+    return data
+  }
+
+  private getCsv(positions: { index: number, ra: number, dec: number }[]) {
+    const posCsv = positions.map(p => `${p.index},${p.ra},${p.dec}`).join('\r\n')
+    return 'index,ra,dec\r\n' + (posCsv || '')
   }
 }
