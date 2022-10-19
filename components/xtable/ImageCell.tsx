@@ -1,8 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
+import Form from 'react-bootstrap/Form'
+import TableDataManager from '../../lib/TableDataManager'
+import LegacyService from '../../services/LegacyService'
 
 
 type RedshiftMaskProps = {
@@ -14,6 +17,8 @@ type RedshiftMaskProps = {
     z: number
   }[]
 }
+
+const service = new LegacyService()
 
 const RedshiftMask = ({
   centerRa,
@@ -38,16 +43,16 @@ const RedshiftMask = ({
             cx={200 + (centerRa - redshift.ra) * (400 / 0.0212)}
             cy={200 + (centerDec - redshift.dec) * (400 / 0.0213)}
             r="40"
-            stroke-width="2px"
+            strokeWidth="2px"
             fill="transparent" />
           <text
             x={200 + (centerRa - redshift.ra) * (400 / 0.0212)}
             y={230 + (centerDec - redshift.dec) * (400 / 0.0213)}
             fill="black"
             stroke="transparent"
-            text-anchor="middle"
-            alignment-baseline="hanging">
-            z = {redshift.z}
+            textAnchor="middle"
+            alignmentBaseline="hanging">
+            {redshift.z}
           </text>
         </g>
       ))}
@@ -56,7 +61,19 @@ const RedshiftMask = ({
 }
 
 
-const ImageModal = ({ show, onHide, src }: any) => {
+const ImageModal = ({ show, onHide, src, ra, dec }: any) => {
+  const [redshiftEnabled, setRedshiftEnabled] = useState(false)
+  const [zInfo, setZInfo] = useState<any>(null)
+
+  useEffect(() => {
+    if (redshiftEnabled && zInfo === null) {
+      service.getNearbyRedshift(ra, dec, 0).then(resp => {
+        setZInfo(resp)
+      })
+    }
+    console.log(zInfo)
+  }, [ra, dec, zInfo, redshiftEnabled])
+
   return (
     <Modal
       show={show}
@@ -67,10 +84,21 @@ const ImageModal = ({ show, onHide, src }: any) => {
       <Modal.Body className="mx-auto px-0 py-2">
         <div className="img-overlay-wrap">
           <img src={src} width={400} height={400} alt="" />
-          <RedshiftMask centerRa={326.89521889778166} centerDec={0.7732092724400577}
-            redshifts={[{ ra: 326.89521889778166, dec: 0.7732092724400577, z: 10 }]} />
+          {redshiftEnabled && zInfo && <RedshiftMask
+            centerRa={ra}
+            centerDec={dec}
+            redshifts={zInfo} />}
         </div>
       </Modal.Body>
+      <Modal.Footer className="py-2">
+        <Form.Check
+          type="switch"
+          id="image-modal-redshift-toogle"
+          label="Show Redshit"
+          defaultChecked={redshiftEnabled}
+          onChange={e => setRedshiftEnabled(e.target.checked)}
+        />
+      </Modal.Footer>
     </Modal>
   )
 }
@@ -94,11 +122,16 @@ export default function ImageCell({ src, rowId }: { src: string, rowId: any }) {
   //   })
   // }, [id, src])
 
+  const ra = useMemo(() => TableDataManager.getRa(rowId), [rowId])
+  const dec = useMemo(() => TableDataManager.getDec(rowId), [rowId])
+
   return (
     // <img src={src} height={90} alt="" loading="lazy" />
     <>
-      <LazyLoadImage src={src}
-        width={90} height={90}
+      <LazyLoadImage
+        src={src}
+        width={90}
+        height={90}
         // PlaceholderSrc={PlaceholderImage}
         onClick={() => setShowModal(true)}
         className="cursor-pointer"
@@ -106,7 +139,9 @@ export default function ImageCell({ src, rowId }: { src: string, rowId: any }) {
       <ImageModal
         show={showModal}
         onHide={() => setShowModal(false)}
-        src={src} />
+        src={src}
+        ra={ra}
+        dec={dec} />
     </>
     // <span>{asyncId == null ? '-' : asyncId}{ } ({id})</span>
   )
