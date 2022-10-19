@@ -142,7 +142,20 @@ export default class SdssService {
   }
 
   async getColumns(table: string): Promise<SdssColumnDesc[] | undefined> {
-    const sql = `SELECT name, description, unit FROM DBColumns WHERE tablename='${table}'`
+    let sql
+    if (SDSS_TABLES[table].type == 'table') {
+      sql = `SELECT name, description, unit 
+      FROM DBColumns 
+      WHERE tablename='${table}'`
+    } else {
+      sql = `
+      SELECT tc.name name, tc.description description, tc.unit unit
+      FROM DBColumns tc
+      INNER JOIN DBViewCols vc ON vc.parent = tc.tablename AND vc.name = tc.name
+      WHERE vc.viewname='${table}' 
+      `.trim()
+    }
+    console.log(sql)
     const url = `${SQL_URL}?cmd=${encodeURIComponent(sql)}&format=json`
     const resp = await fetch(url)
     const data = await resp.json()
