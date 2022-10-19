@@ -73,28 +73,48 @@ class PositionStrategy implements SearchStrategy {
   }
 }
 
-class PhotoJoinStrategy extends JoinStrategy {
-  constructor() {
-    super('PhotoObjAll')
+
+const SDSS_TABLES: {
+  [key: string]: {
+    searchStrategy: SearchStrategy,
+    type: 'view' | 'table'
   }
-}
-
-class SpecJoinStrategy extends JoinStrategy {
-  constructor() {
-    super('SpecObjAll')
-  }
-}
-
-
-const SDSS_TABLES: { [key: string]: { searchStrategy: SearchStrategy, } } = {
-  'PhotoObjAll': {
-    searchStrategy: new PositionStrategy()
+} = {
+  'PhotoTag': {
+    searchStrategy: new PositionStrategy(),
+    type: 'view'
   },
-  'SpecObjAll': {
-    searchStrategy: new PositionStrategy()
+  'SpecObj': {
+    searchStrategy: new PositionStrategy({ objType: 'spectro' }),
+    type: 'view'
+  },
+  'GalaxyTag': {
+    searchStrategy: new PositionStrategy(),
+    type: 'view'
+  },
+  'StarTag': {
+    searchStrategy: new PositionStrategy(),
+    type: 'table'
   },
   'emissionLinesPort': {
-    searchStrategy: new PhotoJoinStrategy()
+    searchStrategy: new PositionStrategy({ objType: 'spectro' }),
+    type: 'table'
+  },
+  'TwoMass': {
+    searchStrategy: new PositionStrategy(),
+    type: 'table'
+  },
+  'zooSpec': {
+    searchStrategy: new PositionStrategy(),
+    type: 'table'
+  },
+  'zooNoSpec': {
+    searchStrategy: new PositionStrategy(),
+    type: 'table'
+  },
+  'zoo2MainSpecZ': {
+    searchStrategy: new PositionStrategy({ pkColumn: 'dr8objid' }),
+    type: 'table'
   }
 }
 
