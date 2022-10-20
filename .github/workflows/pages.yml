@@ -26,6 +26,8 @@ jobs:
         npm run build
         npm run export
         touch out/.no-jekyll
+      env:
+        NODE_ENV: production
     
     - name: Deploy to Github Pages
       uses: peaceiris/actions-gh-pages@v3
