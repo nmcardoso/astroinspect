@@ -4,6 +4,7 @@ import LoadInitialState from '../components/xtable/LoadInitialState'
 import ConfigForm from '../components/xtable/ConfigForm'
 import { XTableConfigProvider } from '../contexts/XTableConfigContext'
 import XTableBody from '../components/xtable/XTableBody'
+import { XTableDataProvider } from '../contexts/XTableDataContext'
 
 export default function XTable() {
   return (
@@ -18,7 +19,9 @@ export default function XTable() {
         </Container>
 
         <Container fluid className="px-0">
-          <XTableBody />
+          <XTableDataProvider>
+            <XTableBody />
+          </XTableDataProvider>
         </Container>
       </XTableConfigProvider>
     </>

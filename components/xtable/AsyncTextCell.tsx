@@ -1,8 +1,10 @@
-import TableDataManager from '../../lib/TableDataManager'
+import { useXTableData } from '../../contexts/XTableDataContext'
+import TableHelper from '../../lib/TableHelper'
 
 export default function AsyncTextCell({ rowId, colId }:
   { rowId: number, colId: string }) {
-  const content = TableDataManager.getCellValue(rowId, colId)
+  const { tdState } = useXTableData()
+  const content = TableHelper.getCellValue(rowId, colId, tdState)
   return (
     <>
       {content === undefined ? (

@@ -4,8 +4,9 @@ import { LazyLoadImage } from 'react-lazy-load-image-component'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form'
-import TableDataManager from '../../lib/TableDataManager'
 import LegacyService from '../../services/LegacyService'
+import TableHelper from '../../lib/TableHelper'
+import { useXTableData } from '../../contexts/XTableDataContext'
 
 
 type RedshiftMaskProps = {
@@ -29,16 +30,16 @@ const RedshiftMask = ({
     <svg viewBox="0 0 400 400">
       <defs>
         <filter x="-0.03" y="-0.03" width="1.06" height="1.06" id="bg-text">
-          <feFlood flood-color="#FFFFFF" />
+          <feFlood floodColor="#FFFFFF" />
           <feComposite in="SourceGraphic" operator="over" />
         </filter>
         <filter x="-0.03" y="-0.03" width="1.06" height="1.06" id="bg-text-hover">
-          <feFlood flood-color="#AFEEEE" />
+          <feFlood floodColor="#AFEEEE" />
           <feComposite in="SourceGraphic" operator="over" />
         </filter>
       </defs>
-      {redshifts.map(redshift => (
-        <g className="circle-group" key={`${redshift.ra}-${redshift.dec}`}>
+      {redshifts.map((redshift, i) => (
+        <g className="circle-group" key={i}>
           <circle
             cx={200 + (centerRa - redshift.ra) * (400 / 0.0212)}
             cy={200 + (centerDec - redshift.dec) * (400 / 0.0213)}
@@ -67,6 +68,7 @@ const ImageModal = ({ show, onHide, src, ra, dec }: any) => {
 
   useEffect(() => {
     if (redshiftEnabled && zInfo === null) {
+      console.log(ra, dec)
       service.getNearbyRedshift(ra, dec, 0).then(resp => {
         setZInfo(resp)
       })
@@ -108,22 +110,9 @@ export default function ImageCell({ src, rowId }: { src: string, rowId: any }) {
   const [asyncId, setAsyncId] = useState(null)
   const [showModal, setShowModal] = useState(false)
 
-  // useEffect(() => {
-  //   const fact = (_id: any) => new Promise((resolve, reject) => {
-  //     const img = new Image()
-  //     img.addEventListener('load', () => {
-  //       resolve(id)
-  //     })
-  //     img.src = src
-  //   })
-  //   semaphore.enqueue(1, fact, id).then((resp: any) => {
-  //     console.log(`resolve ${resp}`)
-  //     setAsyncId(resp)
-  //   })
-  // }, [id, src])
-
-  const ra = useMemo(() => TableDataManager.getRa(rowId), [rowId])
-  const dec = useMemo(() => TableDataManager.getDec(rowId), [rowId])
+  const { tdState } = useXTableData()
+  const ra = useMemo(() => TableHelper.getRa(rowId, tdState), [rowId, tdState])
+  const dec = useMemo(() => TableHelper.getDec(rowId, tdState), [rowId, tdState])
 
   return (
     // <img src={src} height={90} alt="" loading="lazy" />

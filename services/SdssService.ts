@@ -3,9 +3,11 @@ import TableDataManager from '../lib/TableDataManager'
 import axios from 'axios'
 import { obj2formData } from '../lib/utils'
 import JSONBigInt from 'json-bigint'
+import chunk from 'lodash/chunk'
 
 semaphore.create('sdss_cone_spec', 1)
 semaphore.create('sdss_sql', 2)
+semaphore.create('sdss_batch_query', 2)
 
 const CONE_SPEC_URL = 'https://skyserver.sdss.org/dr17/SkyServerWS/SpectroQuery/ConeSpectro'
 const SQL_URL = 'https://skyserver.sdss.org/dr16/SkyServerWS/SearchTools/SqlSearch'
@@ -187,29 +189,64 @@ export default class SdssService {
     table: string,
     columns: string[]
   ) {
-    console.log(table)
-    const strategy = SDSS_TABLES[table].searchStrategy
-    const query = strategy.getCrossIdQuery(table, columns)
-    const params = {
-      searchtool: 'CrossID',
-      searchType: strategy.objType,
-      photoScope: 'nearPrim',
-      spectroScope: 'nearPrim',
-      photoUpType: 'ra-dec',
-      spectroUpType: 'ra-dec',
-      radius: 0.016667,
-      firstcol: 1,
-      paste: this.getCsv(positions),
-      uquery: query,
-      format: 'JSON',
-    }
-    const r = await axios.get(CROSSID_SEARCH, {
-      params,
-      transformResponse: [data => data]
+    return semaphore.enqueue('sdss_batch_query', async () => {
+      const strategy = SDSS_TABLES[table].searchStrategy
+      const query = strategy.getCrossIdQuery(table, columns)
+      const r = await axios.get(CROSSID_SEARCH, {
+        params: {
+          searchtool: 'CrossID',
+          searchType: strategy.objType,
+          photoScope: 'nearPrim',
+          spectroScope: 'nearPrim',
+          photoUpType: 'ra-dec',
+          spectroUpType: 'ra-dec',
+          radius: 0.016667,
+          firstcol: 1,
+          paste: this.getCsv(positions),
+          uquery: query,
+          format: 'JSON',
+        },
+        transformResponse: [data => data]
+      })
+      const parsed = JSONBigInt({ storeAsString: true }).parse(r.data)
+      const data = parsed.find((e: any) => e.TableName == 'Table1').Rows
+      return data.map((e: any) => ({ ...e, index: parseInt(e.index) }))
     })
-    const parsed = JSONBigInt({ storeAsString: true }).parse(r.data)
-    const data = parsed.find((e: any) => e.TableName == 'Table1').Rows
-    return data
+  }
+
+  chunckedQuery(
+    positions: { index: number, ra: number, dec: number }[],
+    table: string,
+    columns: string[],
+    handler: (r: any) => void,
+    elementWise: boolean = false
+  ) {
+    const chunkSize = 50
+    const chunkedPositions = chunk(positions, chunkSize)
+    const nullObj = columns.reduce((prev: { [key: string]: any }, curr: string) => {
+      prev[curr] = null
+      return prev
+    }, {})
+
+    chunkedPositions.map(batch => (
+      this.batchQuery(batch, table, columns)
+    )).forEach((promise, i) => {
+      promise.then(queryResult => {
+        const resultIdx = queryResult.map((e: any) => e.index)
+        const notFound = chunkedPositions[i]
+          .map(e => e.index)
+          .filter(e => !resultIdx.includes(e))
+          .map(e => ({ index: e, ...nullObj }))
+        const fullResult = [...queryResult, ...notFound]
+        if (elementWise) {
+          for (const r of fullResult) {
+            handler(r)
+          }
+        } else {
+          handler(fullResult)
+        }
+      })
+    })
   }
 
   private getCsv(positions: { index: number, ra: number, dec: number }[]) {

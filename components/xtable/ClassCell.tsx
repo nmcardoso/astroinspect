@@ -1,14 +1,25 @@
 import Form from 'react-bootstrap/Form'
 import { useXTableConfig } from '../../contexts/XTableConfigContext'
-import TableDataManager from '../../lib/TableDataManager'
+import { useXTableData } from '../../contexts/XTableDataContext'
+import TableHelper from '../../lib/TableHelper'
 
 export default function ClassCell({ rowId }: { rowId: number }) {
   const { tcState } = useXTableConfig()
+  const { tdState, tdDispatch } = useXTableData()
 
   return (
     <Form.Select
       defaultValue=""
-      onChange={e => { TableDataManager.setCellValue(rowId, 'classification', e.target.value); console.log(TableDataManager.data) }}>
+      value={tdState.data[rowId].classification}
+      onChange={e => {
+        tdDispatch({
+          type: 'setClass',
+          payload: {
+            class: e.target.value,
+            rowId
+          }
+        })
+      }}>
       <option value="">-</option>
       {tcState.classification.classNames.map(cls => (
         <option key={cls} value={cls}>{cls}</option>

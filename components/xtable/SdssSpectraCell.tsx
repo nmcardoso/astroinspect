@@ -1,8 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 import { useState } from 'react'
-import TableDataManager from '../../lib/TableDataManager'
 import SdssService from '../../services/SdssService'
 import Modal from 'react-bootstrap/Modal'
+import TableHelper from '../../lib/TableHelper'
+import { useXTableData } from '../../contexts/XTableDataContext'
 
 const service = new SdssService()
 
@@ -26,8 +27,8 @@ const ImageModal = ({ show, onHide, src }: any) => {
 
 export default function SdssSpectraCell({ rowId }: { rowId: number }) {
   const [showModal, setShowModal] = useState(false)
-
-  const specObjID = TableDataManager.getCellValue(rowId, 'sdssSpectra')
+  const { tdState } = useXTableData()
+  const specObjID = TableHelper.getCellValue(rowId, 'sdssSpectra', tdState)
   const src = service.getSpecPlotUrlById(specObjID)
 
   return (

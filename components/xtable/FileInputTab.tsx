@@ -6,9 +6,9 @@ import Form from 'react-bootstrap/Form'
 import Help from '../common/Help'
 import { useXTableConfig } from '../../contexts/XTableConfigContext'
 import { MouseEventHandler, useState } from 'react'
-import TableDataManager from '../../lib/TableDataManager'
 import { HiCheck, HiX } from 'react-icons/hi'
 import Chip from '../common/Chip'
+import TableHelper from '../../lib/TableHelper'
 
 enum TableState {
   unloaded = 'unloaded',
@@ -169,7 +169,7 @@ export default function FileInputTab() {
     if (e.target.files.length > 0) {
       const file = e.target.files[0]
       setTableState(TableState.loading)
-      TableDataManager.getTableSummary(file).then(summary => {
+      TableHelper.getTableSummary(file).then(summary => {
         if (summary?.positionFound) {
           setTableState(TableState.success)
 
