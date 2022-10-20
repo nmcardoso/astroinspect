@@ -76,7 +76,7 @@ export interface IState {
 
 export const SCHEMA_VERSION: number = 7
 
-const initialState: IState = {
+const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
   table: {
     type: 'local',
@@ -126,7 +126,8 @@ const initialState: IState = {
     enabled: true
   },
   loadId: 0
-}
+})
+const initialState = getInitialState()
 
 interface IAction<P> {
   type: string,
@@ -134,7 +135,7 @@ interface IAction<P> {
 }
 
 const persistStateAsync = (state: IState) => {
-  const s = { ...state, table: initialState.table, loadId: initialState.loadId }
+  const s = { ...state, table: getInitialState().table, loadId: getInitialState().loadId }
   localforage.setItem('tableConfigState', s, (err, value) => {
     if (err) console.error(err)
   })
@@ -249,7 +250,8 @@ const reducer = (state: IState, action: IAction<any>) => {
     case 'setLoadId':
       return setLoadId(state, action)
     default:
-      return state
+      console.log(`Action ${action.type} not found`)
+      return { ...state }
   }
 }
 
