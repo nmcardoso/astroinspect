@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import Image from 'next/image'
 import Container from 'react-bootstrap/Container'
 import Nav from 'react-bootstrap/Nav'
@@ -11,14 +10,15 @@ export default function AppNavbar() {
     <Navbar bg="light" expand="lg" className="border-bottom">
       <Container>
         <Navbar.Brand href="#home">
-          <img
-            alt="Logo"
-            src="/galaxy_32.png"
-            width="30"
-            height="30"
-            className="d-inline-block align-top"
-          />{' '}
-          AstroTools
+          <div className="d-flex align-items-center">
+            <Image
+              alt=""
+              src="https://nmcardoso.github.io/astrotools/galaxy_128.png"
+              width="30"
+              height="30"
+              className="d-inline-block align-top" />
+            <span className="ms-2">AstroTools</span>
+          </div>
         </Navbar.Brand>
         {/* <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
