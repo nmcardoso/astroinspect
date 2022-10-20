@@ -24,7 +24,7 @@ jobs:
     - name: Build app
       run: |
         npm run build
-        npm run export
+        npm run export -o astrotools
         touch out/.no-jekyll
     
     - name: Deploy to Github Pages
