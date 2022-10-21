@@ -18,6 +18,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import NearbyRedshiftCell from './NearbyRedshiftCell'
 
 
 const splusService = new SplusService()
@@ -75,6 +76,10 @@ const columnsAccessors = {
         modalSize="lg"
         zoomWidth={720} />,
     header: 'PhotoSpec'
+  }),
+  nearbyRedshifts: () => columnHelper.accessor('nearbyRedshifts', {
+    cell: info => <NearbyRedshiftCell rowId={info.row.index} />,
+    header: 'z'
   })
 }
 
@@ -103,10 +108,12 @@ export default function XTableBody() {
     })
     const splusPhotoSpectraCol = tdState.schema.splusPhotoSpectra ?
       [columnsAccessors.splusPhotoSpectra()] : []
+    const nearbyRedshiftsCol = tdState.schema.nearbyRedshifts ?
+      [columnsAccessors.nearbyRedshifts()] : []
     return [
       ...classificationCol, ...sourceTableCol, ...sdssCatalog,
-      ...splusPhotoSpectraCol, ...sdssSpectraCol, ...legacyImagingCol,
-      ...splusImagingCol
+      ...nearbyRedshiftsCol, ...splusPhotoSpectraCol, ...sdssSpectraCol,
+      ...legacyImagingCol, ...splusImagingCol
     ]
   }, [tdState.schema])
 
@@ -145,7 +152,8 @@ export default function XTableBody() {
           splusImaging: !!tcState.splusImaging.enabled,
           classification: tcState.classification.enabled,
           sdssSpectra: tcState.sdssSpectra.enabled,
-          splusPhotoSpectra: tcState.splusPhotoSpectra.enabled
+          splusPhotoSpectra: tcState.splusPhotoSpectra.enabled,
+          nearbyRedshifts: tcState.nearbyRedshifts.enabled,
         }
 
         // set initial table state
@@ -194,6 +202,11 @@ export default function XTableBody() {
             row.splusPhotoSpectra = splusService.getPhotoSpecUrl(
               ra, dec, tcState.splusPhotoSpectra.selectedLines
             )
+          }
+
+          // nearby redshifts column
+          if (schema.nearbyRedshifts) {
+            row.nearbyRedshifts = undefined
           }
 
           initialData[i] = row

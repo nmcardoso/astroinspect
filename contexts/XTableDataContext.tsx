@@ -24,6 +24,7 @@ export interface ISchema {
   splusImaging: boolean,
   sdssSpectra: boolean,
   splusPhotoSpectra: boolean,
+  nearbyRedshifts: boolean,
 }
 
 export interface IState {
@@ -51,6 +52,7 @@ const initialState: IState = {
     splusImaging: false,
     sdssSpectra: false,
     splusPhotoSpectra: false,
+    nearbyRedshifts: false,
   }
 }
 
