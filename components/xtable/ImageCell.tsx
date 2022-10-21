@@ -115,7 +115,6 @@ export default function ImageCell({ src, rowId }: { src: string, rowId: any }) {
   const dec = useMemo(() => TableHelper.getDec(rowId, tdState), [rowId, tdState])
 
   return (
-    // <img src={src} height={90} alt="" loading="lazy" />
     <>
       <LazyLoadImage
         src={src}
@@ -132,6 +131,5 @@ export default function ImageCell({ src, rowId }: { src: string, rowId: any }) {
         ra={ra}
         dec={dec} />
     </>
-    // <span>{asyncId == null ? '-' : asyncId}{ } ({id})</span>
   )
 }
