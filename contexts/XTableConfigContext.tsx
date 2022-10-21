@@ -67,6 +67,10 @@ interface ISplusPhotoSpectra extends IterableInterface {
   selectedLines: string[]
 }
 
+interface INearbyRedshifts extends IterableInterface {
+  enabled: boolean,
+}
+
 export interface IState {
   schemaVersion: number,
   table: ITableConfig,
@@ -78,9 +82,10 @@ export interface IState {
   sdssSpectra: ISdssSpectra,
   loadId: number,
   splusPhotoSpectra: ISplusPhotoSpectra,
+  nearbyRedshifts: INearbyRedshifts,
 }
 
-export const SCHEMA_VERSION: number = 7
+export const SCHEMA_VERSION: number = 10
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
@@ -136,6 +141,9 @@ const getInitialState = (): IState => ({
     enabled: true,
     selectedLines: ['iso', 'aper6']
   },
+  nearbyRedshifts: {
+    enabled: true
+  }
 })
 const initialState = getInitialState()
 
@@ -242,9 +250,18 @@ const setSplusPhotoSpectra = (state: IState, action: IAction<ISplusPhotoSpectra>
   return s
 }
 
+const setNearbyRedshifts = (state: IState, action: IAction<ISplusPhotoSpectra>) => {
+  const s = { ...state }
+  for (const k in action.payload) {
+    s.nearbyRedshifts[k] = action.payload[k]
+  }
+  persistStateAsync(s)
+  return s
+}
+
 type PayloadType = IState | ITrilogyConfig | ISplusImaging | ILuptonConfig
   | ITableConfig | IClassification | ILegacyImaging | ISdssSpectra
-  | ISdssCatalog
+  | ISdssCatalog | ISplusPhotoSpectra
 
 const reducer = (state: IState, action: IAction<any>) => {
   switch (action.type) {
@@ -270,6 +287,8 @@ const reducer = (state: IState, action: IAction<any>) => {
       return setLoadId(state, action)
     case 'setSplusPhotoSpectra':
       return setSplusPhotoSpectra(state, action)
+    case 'setNearbyRedshifts':
+      return setNearbyRedshifts(state, action)
     default:
       console.log(`Action ${action.type} not found`)
       return { ...state }
