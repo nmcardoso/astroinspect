@@ -12,12 +12,11 @@ const notFoundSrc = 'https://dummyimage.com/90x90/e8e8e8/474747.jpg&text=Not+Fou
 const ImageModal = ({ show, onHide, src }: any) => {
   return (
     <Modal
+      centered
       show={show}
       onHide={onHide}
       animation={false}
-      size="lg"
-      centered
-    >
+      size="lg">
       <Modal.Body className="p-1">
         <img src={src} width="100%" alt="" />
       </Modal.Body>
