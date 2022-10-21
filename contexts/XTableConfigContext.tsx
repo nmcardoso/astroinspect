@@ -62,6 +62,11 @@ interface ISdssCatalog extends IterableInterface {
   }[]
 }
 
+interface ISplusPhotoSpectra extends IterableInterface {
+  enabled: boolean,
+  selectedLines: string[]
+}
+
 export interface IState {
   schemaVersion: number,
   table: ITableConfig,
@@ -71,7 +76,8 @@ export interface IState {
   splusImaging: ISplusImaging,
   legacyImaging: ILegacyImaging,
   sdssSpectra: ISdssSpectra,
-  loadId: number
+  loadId: number,
+  splusPhotoSpectra: ISplusPhotoSpectra,
 }
 
 export const SCHEMA_VERSION: number = 7
@@ -125,7 +131,11 @@ const getInitialState = (): IState => ({
   sdssSpectra: {
     enabled: true
   },
-  loadId: 0
+  loadId: 0,
+  splusPhotoSpectra: {
+    enabled: true,
+    selectedLines: ['iso', 'aper6']
+  },
 })
 const initialState = getInitialState()
 
@@ -223,6 +233,15 @@ const setLoadId = (state: IState, action: IAction<{ id: number }>) => {
   return s
 }
 
+const setSplusPhotoSpectra = (state: IState, action: IAction<ISplusPhotoSpectra>) => {
+  const s = { ...state }
+  for (const k in action.payload) {
+    s.splusPhotoSpectra[k] = action.payload[k]
+  }
+  persistStateAsync(s)
+  return s
+}
+
 type PayloadType = IState | ITrilogyConfig | ISplusImaging | ILuptonConfig
   | ITableConfig | IClassification | ILegacyImaging | ISdssSpectra
   | ISdssCatalog
@@ -249,6 +268,8 @@ const reducer = (state: IState, action: IAction<any>) => {
       return setSdssCatalogAction(state, action)
     case 'setLoadId':
       return setLoadId(state, action)
+    case 'setSplusPhotoSpectra':
+      return setSplusPhotoSpectra(state, action)
     default:
       console.log(`Action ${action.type} not found`)
       return { ...state }

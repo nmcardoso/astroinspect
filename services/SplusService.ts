@@ -20,6 +20,7 @@ const PUBLIC_TAP_URL = 'https://red-mirror.herokuapp.com/https://splus.cloud/pub
 const PRIVATE_TAP_URL = 'https://red-mirror.herokuapp.com/https://splus.cloud/tap/tap/'
 const TRILOGY_URL = 'https://checker-melted-forsythia.glitch.me/trilogy.png'
 const LUPTON_URL = 'https://checker-melted-forsythia.glitch.me/lupton.png'
+const PHOTOSPEC_URL = 'https://splus-spectra.herokuapp.com/plot'
 
 
 export default class SplusService {
@@ -91,5 +92,9 @@ export default class SplusService {
     }
     const qs = obj2qs(params)
     return `${LUPTON_URL}?${qs}`
+  }
+
+  getPhotoSpecUrl(ra: number, dec: number, lines: string[] = []) {
+    return `${PHOTOSPEC_URL}?ra=${ra}&dec=${dec}&${lines.join('&')}`
   }
 }

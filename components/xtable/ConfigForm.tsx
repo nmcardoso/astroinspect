@@ -47,7 +47,7 @@ export default function ConfigForm() {
                 Legacy Imaging
               </ListGroup.Item>
               <ListGroup.Item action href="#link6">
-                SDSS Spectra
+                Spectra & PhotoSpectra
               </ListGroup.Item>
             </ListGroup>
             <Button
