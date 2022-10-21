@@ -62,31 +62,29 @@ const RedshiftMask = ({
 }
 
 
-const ImageModal = ({ show, onHide, src, ra, dec, showFooter }: any) => {
+const ImageModal = ({ show, onHide, src, ra, dec, showFooter, size, zoomWidth, zoomHeight }: any) => {
   const [redshiftEnabled, setRedshiftEnabled] = useState(false)
   const [zInfo, setZInfo] = useState<any>(null)
 
   useEffect(() => {
     if (showFooter && redshiftEnabled && zInfo === null) {
-      console.log(ra, dec)
       service.getNearbyRedshift(ra, dec, 0).then(resp => {
         setZInfo(resp)
       })
     }
-    console.log(zInfo)
   }, [ra, dec, zInfo, redshiftEnabled, showFooter])
 
   return (
     <Modal
+      centered
       show={show}
       onHide={onHide}
       animation={false}
-      centered
-    >
+      size={size}>
       <Modal.Body className="mx-auto px-0 py-2">
         <div className="img-overlay-wrap">
-          <img src={src} width={400} height={400} alt="" />
-          {redshiftEnabled && zInfo && <RedshiftMask
+          <img src={src} width={zoomWidth} height={zoomHeight} alt="" />
+          {showFooter && zInfo && <RedshiftMask
             centerRa={ra}
             centerDec={dec}
             redshifts={zInfo} />}
@@ -106,8 +104,20 @@ const ImageModal = ({ show, onHide, src, ra, dec, showFooter }: any) => {
 }
 
 
-export default function ImageCell({ src, rowId, showFooter = true }: {
-  src: string, rowId: any, showFooter?: boolean
+export default function ImageCell({
+  src,
+  rowId,
+  zoomWidth,
+  zoomHeight,
+  showFooter = true,
+  modalSize = "",
+}: {
+  src: string,
+  rowId: any,
+  zoomWidth?: number | string,
+  zoomHeight?: number | string,
+  showFooter?: boolean,
+  modalSize?: string
 }) {
   const [showModal, setShowModal] = useState(false)
 
@@ -131,7 +141,10 @@ export default function ImageCell({ src, rowId, showFooter = true }: {
         src={src}
         ra={ra}
         dec={dec}
-        showFooter={showFooter} />
+        showFooter={showFooter}
+        size={modalSize}
+        zoomWidth={zoomWidth}
+        zoomHeight={zoomHeight} />
     </>
   )
 }
