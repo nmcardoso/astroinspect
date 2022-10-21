@@ -32,11 +32,21 @@ const columnsAccessors = {
     header: column
   }),
   legacyImaging: () => columnHelper.accessor('legacyImaging', {
-    cell: info => <ImageCell src={info.getValue()} rowId={info.row.index} />,
+    cell: info =>
+      <ImageCell
+        src={info.getValue()}
+        rowId={info.row.index}
+        zoomWidth={400}
+        zoomHeight={400} />,
     header: 'Legacy'
   }),
   splusImaging: () => columnHelper.accessor('splusImaging', {
-    cell: info => <ImageCell src={info.getValue()} rowId={info.row.index} />,
+    cell: info =>
+      <ImageCell
+        src={info.getValue()}
+        rowId={info.row.index}
+        zoomWidth={400}
+        zoomHeight={400} />,
     header: 'S-PLUS'
   }),
   classification: () => columnHelper.accessor('classification', {
@@ -55,7 +65,17 @@ const columnsAccessors = {
         colId={`sdss:${table}.${column}`} />,
       header: column
     }
-  )
+  ),
+  splusPhotoSpectra: () => columnHelper.accessor('splusPhotoSpectra', {
+    cell: info =>
+      <ImageCell
+        src={info.getValue()}
+        rowId={info.row.index}
+        showFooter={false}
+        modalSize="lg"
+        zoomWidth={720} />,
+    header: 'PhotoSpec'
+  })
 }
 
 
@@ -81,9 +101,12 @@ export default function XTableBody() {
     const sdssCatalog = tdState.schema.sdssCatalog.map(col => {
       return columnsAccessors.sdssCatalog(col.tableName, col.colName)
     })
+    const splusPhotoSpectraCol = tdState.schema.splusPhotoSpectra ?
+      [columnsAccessors.splusPhotoSpectra()] : []
     return [
       ...classificationCol, ...sourceTableCol, ...sdssCatalog,
-      ...sdssSpectraCol, ...legacyImagingCol, ...splusImagingCol
+      ...splusPhotoSpectraCol, ...sdssSpectraCol, ...legacyImagingCol,
+      ...splusImagingCol
     ]
   }, [tdState.schema])
 
@@ -121,7 +144,8 @@ export default function XTableBody() {
           legacyImaging: tcState.legacyImaging.enabled,
           splusImaging: !!tcState.splusImaging.enabled,
           classification: tcState.classification.enabled,
-          sdssSpectra: tcState.sdssSpectra.enabled
+          sdssSpectra: tcState.sdssSpectra.enabled,
+          splusPhotoSpectra: tcState.splusPhotoSpectra.enabled
         }
 
         // set initial table state
@@ -163,6 +187,13 @@ export default function XTableBody() {
           // sdss spectra
           if (schema.sdssSpectra) {
             row.sdssSpectra = undefined
+          }
+
+          // splus photospectra column
+          if (schema.splusPhotoSpectra) {
+            row.splusPhotoSpectra = splusService.getPhotoSpecUrl(
+              ra, dec, tcState.splusPhotoSpectra.selectedLines
+            )
           }
 
           initialData[i] = row

@@ -23,6 +23,7 @@ export interface ISchema {
   legacyImaging: boolean,
   splusImaging: boolean,
   sdssSpectra: boolean,
+  splusPhotoSpectra: boolean,
 }
 
 export interface IState {
@@ -49,6 +50,7 @@ const initialState: IState = {
     legacyImaging: false,
     splusImaging: false,
     sdssSpectra: false,
+    splusPhotoSpectra: false,
   }
 }
 
