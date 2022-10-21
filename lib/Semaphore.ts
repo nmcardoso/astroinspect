@@ -83,7 +83,7 @@ class SemaphorePool {
     id: number | string,
     factory: (...args: any) => Promise<any>,
     ...args: any[]
-  ) {
+  ): Promise<any> {
     return this.pool[id].callFunction(factory, ...args)
   }
 
