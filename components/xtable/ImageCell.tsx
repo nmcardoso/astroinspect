@@ -62,19 +62,19 @@ const RedshiftMask = ({
 }
 
 
-const ImageModal = ({ show, onHide, src, ra, dec }: any) => {
+const ImageModal = ({ show, onHide, src, ra, dec, showFooter }: any) => {
   const [redshiftEnabled, setRedshiftEnabled] = useState(false)
   const [zInfo, setZInfo] = useState<any>(null)
 
   useEffect(() => {
-    if (redshiftEnabled && zInfo === null) {
+    if (showFooter && redshiftEnabled && zInfo === null) {
       console.log(ra, dec)
       service.getNearbyRedshift(ra, dec, 0).then(resp => {
         setZInfo(resp)
       })
     }
     console.log(zInfo)
-  }, [ra, dec, zInfo, redshiftEnabled])
+  }, [ra, dec, zInfo, redshiftEnabled, showFooter])
 
   return (
     <Modal
@@ -92,7 +92,7 @@ const ImageModal = ({ show, onHide, src, ra, dec }: any) => {
             redshifts={zInfo} />}
         </div>
       </Modal.Body>
-      <Modal.Footer className="py-2">
+      {showFooter && <Modal.Footer className="py-2">
         <Form.Check
           type="switch"
           id="image-modal-redshift-toogle"
@@ -100,14 +100,15 @@ const ImageModal = ({ show, onHide, src, ra, dec }: any) => {
           defaultChecked={redshiftEnabled}
           onChange={e => setRedshiftEnabled(e.target.checked)}
         />
-      </Modal.Footer>
+      </Modal.Footer>}
     </Modal>
   )
 }
 
 
-export default function ImageCell({ src, rowId }: { src: string, rowId: any }) {
-  const [asyncId, setAsyncId] = useState(null)
+export default function ImageCell({ src, rowId, showFooter = true }: {
+  src: string, rowId: any, showFooter?: boolean
+}) {
   const [showModal, setShowModal] = useState(false)
 
   const { tdState } = useXTableData()
@@ -129,7 +130,8 @@ export default function ImageCell({ src, rowId }: { src: string, rowId: any }) {
         onHide={() => setShowModal(false)}
         src={src}
         ra={ra}
-        dec={dec} />
+        dec={dec}
+        showFooter={showFooter} />
     </>
   )
 }
