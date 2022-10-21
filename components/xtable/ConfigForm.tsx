@@ -34,9 +34,9 @@ export default function ConfigForm() {
               <ListGroup.Item action href="#link1">
                 Classification
               </ListGroup.Item>
-              <ListGroup.Item action href="#link2">
+              {/* <ListGroup.Item action href="#link2">
                 S-PLUS Catalog
-              </ListGroup.Item>
+              </ListGroup.Item> */}
               <ListGroup.Item action href="#link3">
                 SDSS Catalog
               </ListGroup.Item>
@@ -75,9 +75,9 @@ export default function ConfigForm() {
               <Tab.Pane eventKey="#link1">
                 <ClassTab />
               </Tab.Pane>
-              <Tab.Pane eventKey="#link2">
+              {/* <Tab.Pane eventKey="#link2">
                 Nada
-              </Tab.Pane>
+              </Tab.Pane> */}
               <Tab.Pane eventKey="#link3">
                 <SdssCatalogTab />
               </Tab.Pane>
