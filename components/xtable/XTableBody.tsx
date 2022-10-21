@@ -231,32 +231,47 @@ export default function XTableBody() {
           dec: row[summary.decIndex]
         }))
 
+        const srcTabIdentity = {
+          name: tcState.table.file?.name,
+          lastModified: tcState.table.file?.lastModified
+        }
+
         // sddss catalog
         for (const c of schema.sdssCatalog) {
-          sdssService.chunckedQuery(positions, c.tableName, [c.colName], (r) => {
-            tdDispatch({
-              type: 'setBatchData',
-              payload: {
-                data: r,
-                keys: [`sdss:${c.tableName}.${c.colName}`],
-                columns: [c.colName]
-              }
+          sdssService.chunckedQuery(
+            positions,
+            c.tableName,
+            [c.colName],
+            srcTabIdentity,
+            (r) => {
+              tdDispatch({
+                type: 'setBatchData',
+                payload: {
+                  data: r,
+                  keys: [`sdss:${c.tableName}.${c.colName}`],
+                  columns: [c.colName]
+                }
+              })
             })
-          })
         }
 
         // sdss spectra
         if (schema.sdssSpectra) {
-          sdssService.chunckedQuery(positions, 'SpecObj', ['specObjId'], (r) => {
-            tdDispatch({
-              type: 'setBatchData',
-              payload: {
-                data: r,
-                keys: ['sdssSpectra'],
-                columns: ['specObjId']
-              }
+          sdssService.chunckedQuery(
+            positions,
+            'SpecObj',
+            ['specObjId'],
+            srcTabIdentity,
+            (r) => {
+              tdDispatch({
+                type: 'setBatchData',
+                payload: {
+                  data: r,
+                  keys: ['sdssSpectra'],
+                  columns: ['specObjId']
+                }
+              })
             })
-          })
         }
 
         tcDispatch({

@@ -1,9 +1,9 @@
 import { semaphore } from '../lib/Semaphore'
-import TableDataManager from '../lib/TableDataManager'
 import axios from 'axios'
-import { obj2formData } from '../lib/utils'
+import { obj2formData, timeConvert } from '../lib/utils'
 import JSONBigInt from 'json-bigint'
 import chunk from 'lodash/chunk'
+import { QueryClient } from '@tanstack/react-query'
 
 semaphore.create('sdss_cone_spec', 1)
 semaphore.create('sdss_sql', 2)
@@ -12,6 +12,15 @@ semaphore.create('sdss_batch_query', 2)
 const CONE_SPEC_URL = 'https://skyserver.sdss.org/dr17/SkyServerWS/SpectroQuery/ConeSpectro'
 const SQL_URL = 'https://skyserver.sdss.org/dr16/SkyServerWS/SearchTools/SqlSearch'
 const CROSSID_SEARCH = 'https://skyserver.sdss.org/dr17/SkyServerWS/SearchTools/CrossIdSearch'
+const CLIENT_STALE_TIME = timeConvert(10, 'day', 'ms')
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: CLIENT_STALE_TIME,
+    },
+  },
+})
 
 export type SdssColumnDesc = {
   name: string,
@@ -126,19 +135,22 @@ export default class SdssService {
     Promise<string | null | undefined> {
     return semaphore.enqueue('sdss_cone_spec', async () => {
       try {
-        const resp = await axios.get(CONE_SPEC_URL, {
-          params: {
-            ra,
-            dec,
-            radius: 0.01667,
-            limit: 1,
-            format: 'xml',
-            specparams: 'specObjID',
-            imgparams: 'none',
-            zWarning: 'on'
-          },
-          signal: semaphore.getSignal()
-        })
+        const resp = await queryClient.fetchQuery(
+          ['sdss-service-specid', ra, dec],
+          () => axios.get(CONE_SPEC_URL, {
+            params: {
+              ra,
+              dec,
+              radius: 0.01667,
+              limit: 1,
+              format: 'xml',
+              specparams: 'specObjID',
+              imgparams: 'none',
+              zWarning: 'on'
+            },
+            signal: semaphore.getSignal()
+          })
+        )
         const parser = new DOMParser()
         const xml = parser.parseFromString(resp.data, 'application/xml')
         const id = xml.querySelector('Table[name="Table1"] > Row > Item[name="specObjID"]')
@@ -179,35 +191,44 @@ export default class SdssService {
     }
     console.log(sql)
     const url = `${SQL_URL}?cmd=${encodeURIComponent(sql)}&format=json`
-    const resp = await fetch(url)
-    const data = await resp.json()
-    return data?.[0]?.Rows
+    const resp = await queryClient.fetchQuery(
+      ['sdss-service-columns', table],
+      () => axios.get(url)
+    )
+    return resp.data?.[0]?.Rows
   }
 
   async batchQuery(
     positions: { index: number, ra: number, dec: number }[],
     table: string,
-    columns: string[]
+    columns: string[],
+    batchId: number,
+    sourceTableName?: string,
+    sourceTableLastModified?: number
   ) {
     return semaphore.enqueue('sdss_batch_query', async () => {
       const strategy = SDSS_TABLES[table].searchStrategy
       const query = strategy.getCrossIdQuery(table, columns)
-      const r = await axios.get(CROSSID_SEARCH, {
-        params: {
-          searchtool: 'CrossID',
-          searchType: strategy.objType,
-          photoScope: 'nearPrim',
-          spectroScope: 'nearPrim',
-          photoUpType: 'ra-dec',
-          spectroUpType: 'ra-dec',
-          radius: 0.016667,
-          firstcol: 1,
-          paste: this.getCsv(positions),
-          uquery: query,
-          format: 'JSON',
-        },
-        transformResponse: [data => data]
-      })
+      const r = await queryClient.fetchQuery(
+        ['sdss-service-batchQuery', table, ...columns,
+          batchId, sourceTableName, sourceTableLastModified],
+        () => axios.get(CROSSID_SEARCH, {
+          params: {
+            searchtool: 'CrossID',
+            searchType: strategy.objType,
+            photoScope: 'nearPrim',
+            spectroScope: 'nearPrim',
+            photoUpType: 'ra-dec',
+            spectroUpType: 'ra-dec',
+            radius: 0.016667,
+            firstcol: 1,
+            paste: this.getCsv(positions),
+            uquery: query,
+            format: 'JSON',
+          },
+          transformResponse: [data => data]
+        })
+      )
       const parsed = JSONBigInt({ storeAsString: true }).parse(r.data)
       const data = parsed.find((e: any) => e.TableName == 'Table1').Rows
       return data.map((e: any) => ({ ...e, index: parseInt(e.index) }))
@@ -218,18 +239,23 @@ export default class SdssService {
     positions: { index: number, ra: number, dec: number }[],
     table: string,
     columns: string[],
+    srcTabIdentity: {
+      name?: string,
+      lastModified?: number
+    },
     handler: (r: any) => void,
-    elementWise: boolean = false
+    elementWise: boolean = false,
   ) {
-    const chunkSize = 50
+    const chunkSize = 25
     const chunkedPositions = chunk(positions, chunkSize)
     const nullObj = columns.reduce((prev: { [key: string]: any }, curr: string) => {
       prev[curr] = null
       return prev
     }, {})
 
-    chunkedPositions.map(batch => (
-      this.batchQuery(batch, table, columns)
+    chunkedPositions.map((batch, batchId) => (
+      this.batchQuery(batch, table, columns, batchId,
+        srcTabIdentity.name, srcTabIdentity.lastModified)
     )).forEach((promise, i) => {
       promise.then(queryResult => {
         const resultIdx = queryResult.map((e: any) => e.index)
