@@ -1,3 +1,4 @@
+import { Placeholder, Spinner } from 'react-bootstrap'
 import { useXTableData } from '../../contexts/XTableDataContext'
 import TableHelper from '../../lib/TableHelper'
 
@@ -8,7 +9,12 @@ export default function AsyncTextCell({ rowId, colId }:
   return (
     <>
       {content === undefined ? (
-        <>-</>
+        <Spinner
+          as="span"
+          size="sm"
+          role="status"
+          animation="border"
+          variant="secondary" />
       ) : (content === null ? (
         <>-</>
       ) : (
