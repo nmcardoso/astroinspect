@@ -199,31 +199,19 @@ export default function SdssCatalogTab() {
   return (
     <>
       {selectedColumns.length > 0 && <>
-        <Table>
-          <thead>
-            <tr>
-              <th>Table</th>
-              <th>Column</th>
-            </tr>
-          </thead>
-          <tbody>
-            {selectedTables.map(table => (
-              <tr key={table}>
-                <td>{table}</td>
-                <td>
-                  {selectedColumns.filter(col => col.table == table).map(col => (
-                    <Chip
-                      key={col.column}
-                      className="mb-1 me-1"
-                      onClose={() => handleRemoveColumn(col.table, col.column)}>
-                      {col.column}
-                    </Chip>
-                  ))}
-                </td>
-              </tr>
+        {selectedTables.map(table => (
+          <div key={table} className="mb-2">
+            <span className="me-2 fw-bold">{table}:</span>
+            {selectedColumns.filter(col => col.table == table).map(col => (
+              <Chip
+                key={col.column}
+                className="mb-1 me-1"
+                onClose={() => handleRemoveColumn(col.table, col.column)}>
+                {col.column}
+              </Chip>
             ))}
-          </tbody>
-        </Table>
+          </div>
+        ))}
       </>}
 
       <Button
