@@ -87,7 +87,7 @@ const ImageModal = ({ show, onHide, src, ra, dec, showFooter, size, zoomWidth, z
       <Modal.Body className="mx-auto px-0 py-2">
         <div className="img-overlay-wrap">
           <img src={src} width={zoomWidth} height={zoomHeight} alt="" />
-          {showFooter && zInfo && <RedshiftMask
+          {showFooter && redshiftEnabled && zInfo && <RedshiftMask
             centerRa={ra}
             centerDec={dec}
             redshifts={zInfo} />}
