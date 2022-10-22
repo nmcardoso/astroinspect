@@ -54,7 +54,7 @@ export default function ConfigForm() {
               className="mt-2 w-100 fw-bold"
               variant="success"
               onClick={handleLoadClick}
-              disabled={!tcState.table.file}>
+              disabled={!tcState.table.file || tcState.table.processing}>
               {tcState.table.processing ?
                 <>
                   <Spinner
