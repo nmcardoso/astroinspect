@@ -86,7 +86,7 @@ export interface IState {
   nearbyRedshifts: INearbyRedshifts,
 }
 
-export const SCHEMA_VERSION: number = 10
+export const SCHEMA_VERSION: number = 1
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
