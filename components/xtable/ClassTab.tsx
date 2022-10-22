@@ -13,8 +13,9 @@ import Chip from '../common/Chip'
 type handlerType = (value: string, classes: string[], dispatcher: any) => void
 
 const handleAddClass: handlerType = (value, classes, dispatcher) => {
-  if (!classes.includes(value)) {
-    classes.push(value)
+  const sanitizedValue = value.trim()
+  if (sanitizedValue && !classes.includes(sanitizedValue)) {
+    classes.push(sanitizedValue)
     dispatcher({
       type: 'setClassification',
       payload: { classNames: classes }
