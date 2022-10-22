@@ -1,12 +1,14 @@
+/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useMemo, useState } from 'react'
-import { LazyLoadImage } from 'react-lazy-load-image-component'
+import { LazyLoadComponent, LazyLoadImage } from 'react-lazy-load-image-component'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form'
 import LegacyService from '../../services/LegacyService'
 import TableHelper from '../../lib/TableHelper'
 import { useXTableData } from '../../contexts/XTableDataContext'
+import Spinner from 'react-bootstrap/Spinner'
 
 
 type RedshiftMaskProps = {
@@ -19,6 +21,7 @@ type RedshiftMaskProps = {
   }[]
 }
 
+const notFoundSrc = 'https://dummyimage.com/90x90/e8e8e8/474747.jpg&text=Not+Found'
 const service = new LegacyService()
 
 const RedshiftMask = ({
@@ -103,6 +106,14 @@ const ImageModal = ({ show, onHide, src, ra, dec, showFooter, size, zoomWidth, z
   )
 }
 
+const LoadPlaceholder = () =>
+  <Spinner
+    as="span"
+    size="sm"
+    role="status"
+    animation="border"
+    variant="secondary" />
+
 
 export default function ImageCell({
   src,
@@ -120,6 +131,7 @@ export default function ImageCell({
   modalSize?: string
 }) {
   const [showModal, setShowModal] = useState(false)
+  const [error, setError] = useState(false)
 
   const { tdState } = useXTableData()
   const ra = useMemo(() => TableHelper.getRa(rowId, tdState), [rowId, tdState])
@@ -128,12 +140,13 @@ export default function ImageCell({
   return (
     <>
       <LazyLoadImage
-        src={src}
+        src={error ? notFoundSrc : src}
         width={90}
         height={90}
-        // PlaceholderSrc={PlaceholderImage}
-        onClick={() => setShowModal(true)}
+        placeholder={<LoadPlaceholder />}
+        onClick={() => !error && setShowModal(true)}
         className="cursor-pointer"
+        onError={() => setError(true)}
       />
       <ImageModal
         show={showModal}
