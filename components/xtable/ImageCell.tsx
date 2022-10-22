@@ -68,10 +68,13 @@ const RedshiftMask = ({
 const ImageModal = ({ show, onHide, src, ra, dec, showFooter, size, zoomWidth, zoomHeight }: any) => {
   const [redshiftEnabled, setRedshiftEnabled] = useState(false)
   const [zInfo, setZInfo] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     if (showFooter && redshiftEnabled && zInfo === null) {
+      setIsLoading(true)
       service.getNearbyRedshift(ra, dec, 0).then(resp => {
+        setIsLoading(false)
         setZInfo(resp)
       })
     }
@@ -94,6 +97,17 @@ const ImageModal = ({ show, onHide, src, ra, dec, showFooter, size, zoomWidth, z
         </div>
       </Modal.Body>
       {showFooter && <Modal.Footer className="py-2">
+        {isLoading && <div className="me-3">
+          <Spinner
+            animation="border"
+            variant="secondary"
+            as="span"
+            size="sm"
+            className="me-2" />
+          <span className="text-muted">
+            Loading...
+          </span>
+        </div>}
         <Form.Check
           type="switch"
           id="image-modal-redshift-toogle"
