@@ -14,15 +14,15 @@ export default function XTable() {
 
         <AppNavbar />
 
-        <Container className="mt-3">
-          <ConfigForm />
-        </Container>
+        <XTableDataProvider>
+          <Container className="mt-3">
+            <ConfigForm />
+          </Container>
 
-        <Container fluid className="px-0">
-          <XTableDataProvider>
+          <Container fluid className="px-0">
             <XTableBody />
-          </XTableDataProvider>
-        </Container>
+          </Container>
+        </XTableDataProvider>
       </XTableConfigProvider>
     </>
   )

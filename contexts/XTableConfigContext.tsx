@@ -44,7 +44,8 @@ interface IClassification extends IterableInterface {
   type: string,
   classNames: string[],
   positiveClass: string | null,
-  negativeClass: string | null
+  negativeClass: string | null,
+  filterUnclassified: boolean,
 }
 
 interface ILegacyImaging extends IterableInterface {
@@ -104,7 +105,8 @@ const getInitialState = (): IState => ({
     type: 'categorical',
     classNames: [],
     positiveClass: '',
-    negativeClass: ''
+    negativeClass: '',
+    filterUnclassified: true,
   },
   splusCatalog: {
 

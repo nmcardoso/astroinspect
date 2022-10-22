@@ -8,7 +8,9 @@ import { AiOutlineCloudDownload } from 'react-icons/ai'
 import { useContext, useState } from 'react'
 import { useXTableConfig } from '../../contexts/XTableConfigContext'
 import Chip from '../common/Chip'
-
+import Papa from 'papaparse'
+import { useXTableData } from '../../contexts/XTableDataContext'
+import Emitter from '../../lib/Emitter'
 
 type handlerType = (value: string, classes: string[], dispatcher: any) => void
 
@@ -85,7 +87,46 @@ function CategoricalControl() {
 
 export default function ClassTab() {
   const { tcState, tcDispatch } = useXTableConfig()
+  const { tdState } = useXTableData()
   const cls = tcState.classification
+
+  const handleDownload = (e: any) => {
+    e.preventDefault()
+    let fname = e.target.classDownload.value
+    if (!fname || !fname?.trim()) return
+    fname = fname.endsWith('.csv') ? fname : fname + '.csv'
+
+    const data = tdState.data
+    const colMap: any = Object.keys(data[0]).map(col => {
+      if (col == 'classification') {
+        return { from: col, to: 'XTableClass' }
+      } else if (col.startsWith('sourceTable:')) {
+        return { from: col, to: col.split(':')[1] }
+      } else if (col.startsWith('sdss:')) {
+        return { from: col, to: col.split('.')[1] }
+      }
+      return null
+    }).filter(col => col != null)
+
+    const _data = !tcState.classification.filterUnclassified ? data :
+      data.filter((row: any) => !!row.classification)
+    const transformedData = _data.map((row: any) => {
+      const transformedRow: any = {}
+      for (const c of colMap) {
+        transformedRow[c.to] = row[c.from]
+      }
+      return transformedRow
+    })
+
+    const csvStr = Papa.unparse(transformedData, { header: true })
+    const fileStr = 'data:text/csv;charset=utf-8,' + csvStr
+    const linkEl = document.createElement('a')
+    linkEl.setAttribute('href', encodeURI(fileStr))
+    linkEl.setAttribute('download', fname)
+    document.body.appendChild(linkEl)
+    linkEl.click()
+    linkEl.remove()
+  }
 
   return (
     <>
@@ -144,25 +185,50 @@ export default function ClassTab() {
       {cls.type == 'categorical' ? <CategoricalControl /> :
         (cls.type == 'binary' ? null : null)}
 
-      <Form.Group as={Row} className="mb-2" controlId="classCheck">
-        <Form.Label column sm="1">
-          Save
-        </Form.Label>
-        <Col sm={8}>
-          <div className="d-flex align-items-center">
-            <InputGroup>
-              <Form.Control placeholder="File name" />
-              <Button variant="primary">
-                <AiOutlineCloudDownload size={18} className="me-1" />
-                {' '}Download classifications
-              </Button>
-            </InputGroup>
-            <Help title="Save Classifications" className="ms-1">
-              Choose a name and save your classifications in local computer
-            </Help>
-          </div>
-        </Col>
-      </Form.Group>
+      <Form
+        className="mt-3"
+        onSubmit={handleDownload}>
+        <Form.Group as={Row} className="mb-2" controlId="classDownload">
+          <Form.Label column sm="1">
+            Save
+          </Form.Label>
+          <Col sm={8}>
+            <div className="d-flex align-items-center">
+              <InputGroup>
+                <Form.Control placeholder="File name" />
+                <Button variant="primary" type="submit">
+                  <AiOutlineCloudDownload size={18} className="me-1" />
+                  {' '}Download classifications
+                </Button>
+              </InputGroup>
+              <Help title="Save Classifications" className="ms-1">
+                Choose a name and save your classifications in local computer
+              </Help>
+            </div>
+          </Col>
+        </Form.Group>
+
+        <Form.Group as={Row} className="mb-2" controlId="classFilter">
+          <Form.Label column sm="1">
+          </Form.Label>
+          <Col sm={8}>
+            <div className="d-flex align-items-center">
+              <Form.Check
+                type="switch"
+                label="Filter unclassified rows"
+                checked={tcState.classification.filterUnclassified}
+                onChange={e => tcDispatch({
+                  type: 'setClassification',
+                  payload: { filterUnclassified: e.target.checked }
+                })}
+              />
+              <Help title="Filter unclassified" className="ms-1">
+                Download file without the unclassified rows
+              </Help>
+            </div>
+          </Col>
+        </Form.Group>
+      </Form>
     </>
   )
 }
