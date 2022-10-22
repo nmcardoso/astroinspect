@@ -259,7 +259,7 @@ export default function XTableBody() {
         if (schema.sdssSpectra) {
           sdssService.chunckedQuery(
             positions,
-            'SpecObj',
+            'SpecObjAll',
             ['specObjId'],
             srcTabIdentity,
             (r) => {

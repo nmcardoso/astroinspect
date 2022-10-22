@@ -95,18 +95,18 @@ const SDSS_TABLES: {
     searchStrategy: new PositionStrategy(),
     type: 'view'
   },
-  'SpecObj': {
+  'SpecObjAll': {
     searchStrategy: new PositionStrategy({ objType: 'spectro' }),
-    type: 'view'
-  },
-  'GalaxyTag': {
-    searchStrategy: new PositionStrategy(),
-    type: 'view'
-  },
-  'StarTag': {
-    searchStrategy: new PositionStrategy(),
     type: 'table'
   },
+  // 'GalaxyTag': {
+  //   searchStrategy: new PositionStrategy(),
+  //   type: 'view'
+  // },
+  // 'StarTag': {
+  //   searchStrategy: new PositionStrategy(),
+  //   type: 'table'
+  // },
   'emissionLinesPort': {
     searchStrategy: new PositionStrategy({ objType: 'spectro' }),
     type: 'table'
