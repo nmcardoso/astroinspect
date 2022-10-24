@@ -128,8 +128,8 @@ const getInitialState = (): IState => ({
       R: 'I',
       G: 'R',
       B: 'G',
-      stretch: 3,
-      Q: 8
+      stretch: 1.4,
+      Q: 6.2
     }
   },
   legacyImaging: {
