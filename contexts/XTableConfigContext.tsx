@@ -144,7 +144,7 @@ const getInitialState = (): IState => ({
     selectedLines: ['iso', 'aper6']
   },
   nearbyRedshifts: {
-    enabled: true
+    enabled: false
   }
 })
 const initialState = getInitialState()
