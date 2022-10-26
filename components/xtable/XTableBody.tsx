@@ -97,7 +97,7 @@ export default function XTableBody() {
     const sourceTableCol = tdState.schema.sourceTable.map(col => {
       return columnsAccessors.sourceTable(col.colName)
     })
-    const legacyImagingCol = tdState.schema.legacyImaging ?
+    const legacyImagingCol = tdState.schema.legacyImaging?.enabled ?
       [columnsAccessors.legacyImaging(tdState.schema.legacyImaging.pixelScale)] : []
     const splusImagingCol = tdState.schema.splusImaging ?
       [columnsAccessors.splusImaging()] : []
