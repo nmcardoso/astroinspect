@@ -49,8 +49,12 @@ const fetchNearbyRedshifts = async (ra: any, dec: any) => {
 
 
 export default class LegacyService {
-  getRGBUrl(ra: number | string, dec: number | string) {
-    return `${LEGACY_RGB}?ra=${ra}&dec=${dec}&layer=ls-dr10-early-grz&pixscale=0.30`
+  getRGBUrl(
+    ra: number | string,
+    dec: number | string,
+    pixelScale: number | string = 0.55
+  ) {
+    return `${LEGACY_RGB}?ra=${ra}&dec=${dec}&layer=ls-dr10-early-grz&pixscale=${pixelScale}`
   }
 
   async getNearbyRedshift(ra: any, dec: any, radius: number) {
