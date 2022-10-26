@@ -81,7 +81,6 @@ export interface IState {
   splusImaging: ISplusImaging,
   legacyImaging: ILegacyImaging,
   sdssSpectra: ISdssSpectra,
-  loadId: number,
   splusPhotoSpectra: ISplusPhotoSpectra,
   nearbyRedshifts: INearbyRedshifts,
 }
@@ -138,7 +137,6 @@ const getInitialState = (): IState => ({
   sdssSpectra: {
     enabled: true
   },
-  loadId: 0,
   splusPhotoSpectra: {
     enabled: true,
     selectedLines: ['iso', 'aper6']
@@ -155,7 +153,7 @@ interface IAction<P> {
 }
 
 const persistStateAsync = (state: IState) => {
-  const s = { ...state, table: getInitialState().table, loadId: getInitialState().loadId }
+  const s = { ...state, table: getInitialState().table }
   localforage.setItem('tableConfigState', s, (err, value) => {
     if (err) console.error(err)
   })
@@ -237,12 +235,6 @@ const setSdssCatalogAction = (state: IState, action: IAction<ISdssCatalog>) => {
   return s
 }
 
-const setLoadId = (state: IState, action: IAction<{ id: number }>) => {
-  const s = { ...state }
-  s.loadId = action.payload.id
-  return s
-}
-
 const setSplusPhotoSpectra = (state: IState, action: IAction<ISplusPhotoSpectra>) => {
   const s = { ...state }
   for (const k in action.payload) {
@@ -285,8 +277,6 @@ const reducer = (state: IState, action: IAction<any>) => {
       return setSdssSpectraAction(state, action)
     case 'setSdssCatalog':
       return setSdssCatalogAction(state, action)
-    case 'setLoadId':
-      return setLoadId(state, action)
     case 'setSplusPhotoSpectra':
       return setSplusPhotoSpectra(state, action)
     case 'setNearbyRedshifts':
