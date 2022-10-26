@@ -2,6 +2,9 @@ import axios, { AxiosInstance } from 'axios'
 import { XMLParser } from 'fast-xml-parser'
 import { ILuptonConfig, ITrilogyConfig } from '../contexts/XTableConfigContext'
 import { obj2qs } from '../lib/utils'
+import { QueryClient } from '@tanstack/react-query'
+import { timeConvert } from '../lib/utils'
+import { semaphore } from '../lib/Semaphore'
 
 
 type TableType = {
@@ -21,7 +24,17 @@ const PRIVATE_TAP_URL = 'https://red-mirror.herokuapp.com/https://splus.cloud/ta
 const TRILOGY_URL = 'https://checker-melted-forsythia.glitch.me/trilogy.png'
 const LUPTON_URL = 'https://checker-melted-forsythia.glitch.me/lupton.png'
 const PHOTOSPEC_URL = 'https://splus-spectra.herokuapp.com/plot'
+const FLUX_RADIUS_URL = 'https://checker-melted-forsythia.glitch.me/fluxRadius'
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: timeConvert(2, 'hour', 'ms'),
+    },
+  },
+})
+
+semaphore.create('splus-flux-radius', 1)
 
 export default class SplusService {
   httpClient: AxiosInstance
@@ -96,5 +109,20 @@ export default class SplusService {
 
   getPhotoSpecUrl(ra: number, dec: number, lines: string[] = []) {
     return `${PHOTOSPEC_URL}?ra=${ra}&dec=${dec}&${lines.join('&')}`
+  }
+
+  async getFluxRadius(ra: number, dec: number) {
+    return semaphore.enqueue('splus-flux-radius', async () => {
+      const data = await queryClient.fetchQuery(
+        ['splus-service-flux-radius', ra, dec],
+        async () => {
+          const resp = await axios.get(FLUX_RADIUS_URL, {
+            params: { ra, dec }
+          })
+          return resp.data
+        }
+      )
+      return data
+    })
   }
 }
