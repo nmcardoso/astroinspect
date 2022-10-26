@@ -49,7 +49,8 @@ interface IClassification extends IterableInterface {
 }
 
 interface ILegacyImaging extends IterableInterface {
-  enabled: boolean
+  enabled: boolean,
+  pixelScale: number,
 }
 
 interface ISdssSpectra extends IterableInterface {
@@ -72,6 +73,12 @@ interface INearbyRedshifts extends IterableInterface {
   enabled: boolean,
 }
 
+interface IStampModal extends IterableInterface {
+  showRedshift: boolean,
+  showAutoFluxRadius: boolean,
+  showPetroFluxRadius: boolean,
+}
+
 export interface IState {
   schemaVersion: number,
   table: ITableConfig,
@@ -83,9 +90,10 @@ export interface IState {
   sdssSpectra: ISdssSpectra,
   splusPhotoSpectra: ISplusPhotoSpectra,
   nearbyRedshifts: INearbyRedshifts,
+  stampModal: IStampModal,
 }
 
-export const SCHEMA_VERSION: number = 1
+export const SCHEMA_VERSION: number = 3
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
@@ -132,7 +140,8 @@ const getInitialState = (): IState => ({
     }
   },
   legacyImaging: {
-    enabled: true
+    enabled: true,
+    pixelScale: 0.55,
   },
   sdssSpectra: {
     enabled: true
@@ -143,6 +152,11 @@ const getInitialState = (): IState => ({
   },
   nearbyRedshifts: {
     enabled: false
+  },
+  stampModal: {
+    showAutoFluxRadius: false,
+    showPetroFluxRadius: false,
+    showRedshift: false
   }
 })
 const initialState = getInitialState()
@@ -253,6 +267,15 @@ const setNearbyRedshifts = (state: IState, action: IAction<ISplusPhotoSpectra>) 
   return s
 }
 
+const setStampModal = (state: IState, action: IAction<IStampModal>) => {
+  const s = { ...state }
+  for (const k in action.payload) {
+    s.stampModal[k] = action.payload[k]
+  }
+  persistStateAsync(s)
+  return s
+}
+
 type PayloadType = IState | ITrilogyConfig | ISplusImaging | ILuptonConfig
   | ITableConfig | IClassification | ILegacyImaging | ISdssSpectra
   | ISdssCatalog | ISplusPhotoSpectra
@@ -281,6 +304,8 @@ const reducer = (state: IState, action: IAction<any>) => {
       return setSplusPhotoSpectra(state, action)
     case 'setNearbyRedshifts':
       return setNearbyRedshifts(state, action)
+    case 'setStampModal':
+      return setStampModal(state, action)
     default:
       console.log(`Action ${action.type} not found`)
       return { ...state }

@@ -1,6 +1,7 @@
 import Form from 'react-bootstrap/Form'
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
+import InputGroup from 'react-bootstrap/InputGroup'
 import { useContext } from 'react'
 import { useXTableConfig } from '../../contexts/XTableConfigContext'
 
@@ -26,6 +27,26 @@ export default function LegacyImagingTab() {
           />
         </Col>
       </Form.Group>
+
+      <Row>
+        <Col sm={5}>
+          <InputGroup className="mb-3">
+            <InputGroup.Text id="legacyImagingPixScale">
+              Pixel Scale
+            </InputGroup.Text>
+            <Form.Control
+              aria-label="Pixel Scale"
+              aria-describedby="legacyImagingPixScale"
+              value={legacy.pixelScale}
+              onChange={e => tcDispatch({
+                type: 'setLegacyImaging',
+                payload: { pixelScale: e.target.value }
+              })}
+            />
+          </InputGroup>
+        </Col>
+      </Row>
+
     </>
   )
 }

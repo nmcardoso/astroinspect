@@ -32,22 +32,24 @@ const columnsAccessors = {
     cell: info => info.getValue(),
     header: column
   }),
-  legacyImaging: () => columnHelper.accessor('legacyImaging', {
+  legacyImaging: (pixScale: number) => columnHelper.accessor('legacyImaging', {
     cell: info =>
       <ImageCell
         src={info.getValue()}
         rowId={info.row.index}
-        zoomWidth={400}
-        zoomHeight={400} />,
+        pixScale={pixScale}
+        zoomWidth={460}
+        zoomHeight={460} />,
     header: 'Legacy'
   }),
   splusImaging: () => columnHelper.accessor('splusImaging', {
     cell: info =>
       <ImageCell
+        pixScale={0.55}
         src={info.getValue()}
         rowId={info.row.index}
-        zoomWidth={400}
-        zoomHeight={400} />,
+        zoomWidth={460}
+        zoomHeight={460} />,
     header: 'S-PLUS'
   }),
   classification: () => columnHelper.accessor('classification', {
@@ -96,7 +98,7 @@ export default function XTableBody() {
       return columnsAccessors.sourceTable(col.colName)
     })
     const legacyImagingCol = tdState.schema.legacyImaging ?
-      [columnsAccessors.legacyImaging()] : []
+      [columnsAccessors.legacyImaging(tdState.schema.legacyImaging.pixelScale)] : []
     const splusImagingCol = tdState.schema.splusImaging ?
       [columnsAccessors.splusImaging()] : []
     const classificationCol = tdState.schema.classification ?
@@ -148,7 +150,10 @@ export default function XTableBody() {
             tableName: e.table,
             colName: e.column
           })),
-          legacyImaging: tcState.legacyImaging.enabled,
+          legacyImaging: {
+            enabled: tcState.legacyImaging.enabled,
+            pixelScale: tcState.legacyImaging.pixelScale
+          },
           splusImaging: !!tcState.splusImaging.enabled,
           classification: tcState.classification.enabled,
           sdssSpectra: tcState.sdssSpectra.enabled,
@@ -174,7 +179,7 @@ export default function XTableBody() {
 
           // legacy imaging column
           if (schema.legacyImaging) {
-            row.legacyImaging = legacyService.getRGBUrl(ra, dec)
+            row.legacyImaging = legacyService.getRGBUrl(ra, dec, tcState.legacyImaging.pixelScale)
           }
 
           // splus imaging column

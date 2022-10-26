@@ -200,8 +200,6 @@ export default function FileInputTab() {
     })
   }
 
-  console.log(tcState.table.columns)
-
   return (
     <>
       {/* <Form.Group as={Row} className="mb-2" controlId="tableFile">

@@ -9,11 +9,16 @@ import LegacyService from '../../services/LegacyService'
 import TableHelper from '../../lib/TableHelper'
 import { useXTableData } from '../../contexts/XTableDataContext'
 import Spinner from 'react-bootstrap/Spinner'
+import { useXTableConfig } from '../../contexts/XTableConfigContext'
+import SplusService from '../../services/SplusService'
 
 
 type RedshiftMaskProps = {
-  centerRa: number,
-  centerDec: number,
+  refRa: number,
+  refDec: number,
+  sourceSize: number,
+  targetSize: number,
+  pixScale: number,
   redshifts: {
     ra: number,
     dec: number,
@@ -21,16 +26,33 @@ type RedshiftMaskProps = {
   }[]
 }
 
+type EllipseMaskProps = {
+  targetSize: number,
+  pixScale: number,
+  majorAxis: number,
+  minorAxis: number,
+  rotation: number,
+}
+
 const notFoundSrc = 'https://dummyimage.com/90x90/e8e8e8/474747.jpg&text=Not+Found'
-const service = new LegacyService()
+const legacyService = new LegacyService()
+const splusService = new SplusService()
+
+const textOffset = 35
 
 const RedshiftMask = ({
-  centerRa,
-  centerDec,
+  refRa,
+  refDec,
+  sourceSize,
+  targetSize,
+  pixScale,
   redshifts
 }: RedshiftMaskProps) => {
+  const targetCenter = targetSize / 2
+  const k = (targetSize / (pixScale * sourceSize / 3600))
+
   return (
-    <svg viewBox="0 0 400 400">
+    <svg viewBox={`0 0 ${targetSize} ${targetSize}`}>
       <defs>
         <filter x="-0.03" y="-0.03" width="1.06" height="1.06" id="bg-text">
           <feFlood floodColor="#FFFFFF" />
@@ -41,44 +63,86 @@ const RedshiftMask = ({
           <feComposite in="SourceGraphic" operator="over" />
         </filter>
       </defs>
-      {redshifts.map((redshift, i) => (
-        <g className="circle-group" key={i}>
-          <circle
-            cx={200 + (centerRa - redshift.ra) * (400 / 0.0212)}
-            cy={200 + (centerDec - redshift.dec) * (400 / 0.0213)}
-            r="40"
-            strokeWidth="2px"
-            fill="transparent" />
-          <text
-            x={200 + (centerRa - redshift.ra) * (400 / 0.0212)}
-            y={230 + (centerDec - redshift.dec) * (400 / 0.0213)}
-            fill="black"
-            stroke="transparent"
-            textAnchor="middle"
-            alignmentBaseline="hanging">
-            {redshift.z}
-          </text>
-        </g>
-      ))}
+      {redshifts.map((redshift, i) => {
+        return (
+          <g className="circle-group" key={i}>
+            <circle
+              cx={targetCenter + (refRa - redshift.ra) * k}
+              cy={targetCenter + (refDec - redshift.dec) * k}
+              r="40"
+              strokeWidth="2px"
+              fill="transparent" />
+            <text
+              x={targetCenter + (refRa - redshift.ra) * k}
+              y={targetCenter + textOffset + (refDec - redshift.dec) * k}
+              fill="black"
+              stroke="transparent"
+              textAnchor="middle"
+              alignmentBaseline="hanging">
+              {redshift.z}
+            </text>
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
+
+const EllipseMask = ({
+  targetSize,
+  pixScale,
+  majorAxis,
+  minorAxis,
+  rotation
+}: EllipseMaskProps) => {
+  const targetCenter = targetSize / 2
+  return (
+    <svg viewBox={`0 0 ${targetSize} ${targetSize}`}>
+      <g>
+        <ellipse
+          cx={targetCenter}
+          cy={targetCenter}
+          rx={majorAxis / pixScale}
+          ry={minorAxis / pixScale}
+          transform={`rotate(${90 + rotation}, ${targetCenter}, ${targetCenter})`}
+          stroke="#FFF"
+          strokeWidth={1.5}
+          fill="transparent" />
+      </g>
     </svg>
   )
 }
 
 
-const ImageModal = ({ show, onHide, src, ra, dec, showFooter, size, zoomWidth, zoomHeight }: any) => {
-  const [redshiftEnabled, setRedshiftEnabled] = useState(false)
+const ImageModal = ({ show, onHide, src, ra, dec, showFooter, size, zoomWidth, zoomHeight, pixScale }: any) => {
   const [zInfo, setZInfo] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [fluxInfo, setFluxInfo] = useState<any>(null)
+  const [isZLoading, setZLoading] = useState(false)
+  const [isFluxLoading, setFluxLoading] = useState(false)
+  const { tcState, tcDispatch } = useXTableConfig()
+  const showRedshift = tcState.stampModal.showRedshift
+  const showAutoFluxRadius = tcState.stampModal.showAutoFluxRadius
+  const showPetroFluxRadius = tcState.stampModal.showPetroFluxRadius
 
   useEffect(() => {
-    if (showFooter && redshiftEnabled && zInfo === null) {
-      setIsLoading(true)
-      service.getNearbyRedshift(ra, dec, 0).then(resp => {
-        setIsLoading(false)
+    if (show && showFooter && showRedshift && zInfo === null) {
+      setZLoading(true)
+      legacyService.getNearbyRedshift(ra, dec, 0).then(resp => {
+        setZLoading(false)
         setZInfo(resp)
       })
     }
-  }, [ra, dec, zInfo, redshiftEnabled, showFooter])
+  }, [ra, dec, show, zInfo, showRedshift, showFooter])
+
+  useEffect(() => {
+    if (show && showFooter && showAutoFluxRadius && fluxInfo === null) {
+      setFluxLoading(true)
+      splusService.getFluxRadius(ra, dec).then(data => {
+        setFluxLoading(false)
+        setFluxInfo(data)
+      })
+    }
+  }, [ra, dec, show, fluxInfo, showFooter, showAutoFluxRadius])
 
   return (
     <Modal
@@ -90,32 +154,67 @@ const ImageModal = ({ show, onHide, src, ra, dec, showFooter, size, zoomWidth, z
       <Modal.Body className="mx-auto px-0 py-2">
         <div className="img-overlay-wrap">
           <img src={src} width={zoomWidth} height={zoomHeight} alt="" />
-          {showFooter && redshiftEnabled && zInfo && <RedshiftMask
-            centerRa={ra}
-            centerDec={dec}
-            redshifts={zInfo} />}
+          {showFooter && showRedshift && zInfo &&
+            <RedshiftMask
+              refRa={ra}
+              refDec={dec}
+              sourceSize={256}
+              targetSize={zoomWidth}
+              pixScale={pixScale}
+              redshifts={zInfo} />
+          }
+          {showFooter && showAutoFluxRadius && fluxInfo &&
+            <EllipseMask
+              targetSize={zoomWidth}
+              pixScale={pixScale}
+              majorAxis={fluxInfo.A * fluxInfo.kronRadius}
+              minorAxis={fluxInfo.B * fluxInfo.kronRadius}
+              rotation={fluxInfo.theta} />
+          }
         </div>
       </Modal.Body>
-      {showFooter && <Modal.Footer className="py-2">
-        {isLoading && <div className="me-3">
-          <Spinner
-            animation="border"
-            variant="secondary"
-            as="span"
-            size="sm"
-            className="me-2" />
-          <span className="text-muted">
-            Loading...
-          </span>
-        </div>}
-        <Form.Check
-          type="switch"
-          id="image-modal-redshift-toogle"
-          label="Show Redshit"
-          defaultChecked={redshiftEnabled}
-          onChange={e => setRedshiftEnabled(e.target.checked)}
-        />
-      </Modal.Footer>}
+      {showFooter &&
+        <Modal.Footer className="py-2">
+          {(isZLoading || isFluxLoading) &&
+            <div className="me-3">
+              <Spinner
+                animation="border"
+                variant="secondary"
+                as="span"
+                size="sm"
+                className="me-2" />
+              <span className="text-muted">
+                Loading...
+              </span>
+            </div>
+          }
+
+          <Form.Check
+            type="switch"
+            className="me-3"
+            id="image-modal-auto-flux-toogle"
+            label="Auto flux"
+            defaultChecked={showAutoFluxRadius}
+            onChange={e => tcDispatch({
+              type: 'setStampModal',
+              payload: {
+                showAutoFluxRadius: e.target.checked
+              }
+            })} />
+
+          <Form.Check
+            type="switch"
+            id="image-modal-redshift-toogle"
+            label="Redshit"
+            defaultChecked={showRedshift}
+            onChange={e => tcDispatch({
+              type: 'setStampModal',
+              payload: {
+                showRedshift: e.target.checked
+              }
+            })} />
+        </Modal.Footer>
+      }
     </Modal>
   )
 }
@@ -132,6 +231,7 @@ const LoadPlaceholder = () =>
 export default function ImageCell({
   src,
   rowId,
+  pixScale,
   zoomWidth,
   zoomHeight,
   showFooter = true,
@@ -139,10 +239,11 @@ export default function ImageCell({
 }: {
   src: string,
   rowId: any,
+  pixScale?: number
   zoomWidth?: number | string,
   zoomHeight?: number | string,
   showFooter?: boolean,
-  modalSize?: string
+  modalSize?: string,
 }) {
   const [showModal, setShowModal] = useState(false)
   const [error, setError] = useState(false)
@@ -171,7 +272,8 @@ export default function ImageCell({
         showFooter={showFooter}
         size={modalSize}
         zoomWidth={zoomWidth}
-        zoomHeight={zoomHeight} />
+        zoomHeight={zoomHeight}
+        pixScale={pixScale} />
     </>
   )
 }
