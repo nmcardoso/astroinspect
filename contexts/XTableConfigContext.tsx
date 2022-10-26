@@ -101,7 +101,7 @@ const getInitialState = (): IState => ({
     processing: false,
   },
   classification: {
-    enabled: true,
+    enabled: false,
     type: 'categorical',
     classNames: [],
     positiveClass: '',
