@@ -153,6 +153,8 @@ function HotkeyModal({ show, onHide }: any) {
         <p className="mb-3">
           Select a class below and press an alphanumeric (A-Z, 0-9)
           character on the keyboard.
+          After associating the keyboard shortcuts for the desired classes,
+          just click on the table row and press the key referring to the class.
         </p>
         <Form onSubmit={e => e.preventDefault()}>
           <Form.Group as={Row} className="mb-3" controlId="hotkeyClass">
