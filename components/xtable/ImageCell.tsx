@@ -195,6 +195,7 @@ const ImageModal = ({ show, onHide, src, ra, dec, showFooter, size, zoomWidth, z
             id="image-modal-auto-flux-toogle"
             label="Auto flux"
             defaultChecked={showAutoFluxRadius}
+            disabled={isFluxLoading}
             onChange={e => tcDispatch({
               type: 'setStampModal',
               payload: {
@@ -207,6 +208,7 @@ const ImageModal = ({ show, onHide, src, ra, dec, showFooter, size, zoomWidth, z
             id="image-modal-redshift-toogle"
             label="Redshit"
             defaultChecked={showRedshift}
+            disabled={isZLoading}
             onChange={e => tcDispatch({
               type: 'setStampModal',
               payload: {
