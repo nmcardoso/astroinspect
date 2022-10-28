@@ -46,6 +46,7 @@ interface IClassification extends IterableInterface {
   positiveClass: string | null,
   negativeClass: string | null,
   filterUnclassified: boolean,
+  keyMap: { [key: string]: any }
 }
 
 interface ILegacyImaging extends IterableInterface {
@@ -93,7 +94,7 @@ export interface IState {
   stampModal: IStampModal,
 }
 
-export const SCHEMA_VERSION: number = 3
+export const SCHEMA_VERSION: number = 4
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
@@ -114,6 +115,7 @@ const getInitialState = (): IState => ({
     positiveClass: '',
     negativeClass: '',
     filterUnclassified: true,
+    keyMap: {}
   },
   splusCatalog: {
 

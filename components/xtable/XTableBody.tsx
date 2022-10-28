@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { useXTableConfig } from '../../contexts/XTableConfigContext'
 import Table from 'react-bootstrap/Table'
 import Emitter from '../../lib/Emitter'
@@ -89,6 +89,7 @@ const columnsAccessors = {
 export default function XTableBody() {
   const { tcState, tcDispatch } = useXTableConfig()
   const { tdState, tdDispatch } = useXTableData()
+  const [selectedRow, setSelectedRow] = useState('-1')
 
   const data = tdState.data
 
@@ -289,6 +290,32 @@ export default function XTableBody() {
     })
   }, [tcState, tcDispatch, tdState, tdDispatch])
 
+  const handleKeyDown = useCallback((event: any) => {
+    event.stopPropagation()
+    if (/^[\w\d]$/i.test(event.key) && parseInt(selectedRow) >= 0) {
+      const cls = Object.keys(tcState.classification.keyMap)
+        .find(e => tcState.classification.keyMap[e] == event.key)
+      tdDispatch({
+        type: 'setClass',
+        payload: {
+          class: cls,
+          rowId: parseInt(selectedRow)
+        }
+      })
+    } else if (event.key == 'ArrowDown') {
+      setSelectedRow(String(parseInt(selectedRow) + 1))
+    } else if (event.key == 'ArrowUp') {
+      setSelectedRow(String(parseInt(selectedRow) - 1))
+    }
+  }, [tcState, tdDispatch, selectedRow])
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown, true)
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown, true)
+    }
+  }, [handleKeyDown])
 
   return (
     <>
@@ -311,7 +338,16 @@ export default function XTableBody() {
         </thead>
         <tbody>
           {table.getRowModel().rows.map(row => (
-            <tr key={row.id}>
+            <tr
+              key={row.id}
+              className={row.id == selectedRow ? 'table-primary' : ''}
+              onClick={() => {
+                if (row.id == selectedRow) {
+                  setSelectedRow('-1')
+                } else {
+                  setSelectedRow(row.id)
+                }
+              }}>
               {row.getVisibleCells().map(cell => (
                 <td key={cell.id} className="p-1">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}

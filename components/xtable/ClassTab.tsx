@@ -5,12 +5,13 @@ import InputGroup from 'react-bootstrap/InputGroup'
 import Button from 'react-bootstrap/Button'
 import Help from '../common/Help'
 import { AiOutlineCloudDownload } from 'react-icons/ai'
-import { useContext, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useXTableConfig } from '../../contexts/XTableConfigContext'
 import Chip from '../common/Chip'
 import Papa from 'papaparse'
 import { useXTableData } from '../../contexts/XTableDataContext'
-import Emitter from '../../lib/Emitter'
+import { FaRegKeyboard } from 'react-icons/fa'
+import Modal from 'react-bootstrap/Modal'
 
 type handlerType = (value: string, classes: string[], dispatcher: any) => void
 
@@ -37,6 +38,7 @@ function CategoricalControl() {
   const { tcState, tcDispatch } = useXTableConfig()
   const cls = tcState.classification
   const [classInput, setClassInput] = useState('')
+  const [showHotkeyModal, setHotkeyModal] = useState(false)
 
   return (
     <Form.Group as={Row} className="mb-2" controlId="classNames">
@@ -69,6 +71,20 @@ function CategoricalControl() {
           <Help title="Class Name" className="ms-1">
             Type the class name and press `ENTER` or click `Add`
           </Help>
+          <Button
+            style={{ whiteSpace: 'nowrap' }}
+            className="ms-4"
+            variant="outline-primary"
+            disabled={tcState.classification.classNames.length == 0}
+            onClick={() => setHotkeyModal(true)}>
+            <FaRegKeyboard size={20} className="me-1" /> Hotkeys
+          </Button>
+          <Help title="Hotkeys" className="ms-1">
+            Classify your table quickly by configuring keyboard keys to select classes
+          </Help>
+          <HotkeyModal
+            show={showHotkeyModal}
+            onHide={() => setHotkeyModal(false)} />
         </div>
         {cls.classNames.map(className => (
           <Chip
@@ -76,10 +92,122 @@ function CategoricalControl() {
             className="mb-1 me-1"
             onClose={() => handleDelClass(className, cls.classNames, tcDispatch)}>
             {className}
+            {className in tcState.classification.keyMap && (
+              <span>
+                {' ('}
+                <b>{tcState.classification.keyMap[className].toUpperCase()}</b>
+                {')'}
+              </span>
+            )}
           </Chip>
         ))}
       </Col>
     </Form.Group>
+  )
+}
+
+function HotkeyModal({ show, onHide }: any) {
+  const { tcState, tcDispatch } = useXTableConfig()
+  const cls = tcState.classification
+  const [selectedClass, setSelectedClass] = useState<any>(-1)
+
+  const handleKeyDown = useCallback((event: any) => {
+    event.stopPropagation()
+    if (/^[\w\d]$/i.test(event.key) && selectedClass != -1) {
+      tcDispatch({
+        type: 'setClassification',
+        payload: {
+          keyMap: {
+            ...tcState.classification.keyMap,
+            [selectedClass]: event.key
+          }
+        }
+      })
+    }
+  }, [tcDispatch, tcState, selectedClass])
+
+  useEffect(() => {
+    if (show) {
+      document.addEventListener("keydown", handleKeyDown, true)
+    } else {
+      document.removeEventListener("keydown", handleKeyDown, true)
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown, true)
+    }
+  }, [handleKeyDown, show])
+
+  return (
+    <Modal
+      show={show}
+      onHide={onHide}
+      animation={false}
+      centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Hotkeys configuration
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p className="mb-3">
+          Select a class below and press an alphanumeric (A-Z, 0-9)
+          character on the keyboard.
+        </p>
+        <Form onSubmit={e => e.preventDefault()}>
+          <Form.Group as={Row} className="mb-3" controlId="hotkeyClass">
+            <Form.Label column sm={2}>
+              Class
+            </Form.Label>
+            <Col sm={10}>
+              <Form.Select
+                value={selectedClass}
+                onChange={(e) => setSelectedClass(e.target.value)}>
+                <option value={-1}>Select a class</option>
+                {cls.classNames.map(className => (
+                  <option
+                    key={className}
+                    value={className}>
+                    {className}
+                  </option>
+                ))}
+              </Form.Select>
+            </Col>
+          </Form.Group>
+
+          <Row className="d-inline-flex align-items-center">
+            <Col sm={2}>
+              Hotkey
+            </Col>
+            <Col sm={3}>
+              <Form.Control
+                readOnly
+                type="text"
+                size="lg"
+                value={cls.keyMap[selectedClass] ? cls.keyMap[selectedClass].toUpperCase() : ''}
+                style={{ fontWeight: 800, textAlign: 'center' }} />
+            </Col>
+            <Col>
+              <Button
+                className="ps-0"
+                variant="link"
+                onClick={() => {
+                  const keyMap = tcState.classification.keyMap
+                  if (selectedClass in keyMap) {
+                    delete keyMap[selectedClass]
+                    tcDispatch({
+                      type: 'setClassification',
+                      payload: { keyMap }
+                    })
+                  }
+                }}>
+                Clear
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      </Modal.Body>
+    </Modal>
   )
 }
 
