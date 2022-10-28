@@ -74,7 +74,7 @@ class SemaphorePool {
 }
 
 const sp = new SemaphorePool()
-sp.create('legacy-rgb', 2)
+sp.create('legacy-rgb', 1)
 sp.create('splus-trilogy', 2)
 sp.create('splus-lupton', 2)
 sp.create('splus-photospec', 2)
@@ -94,8 +94,6 @@ self.addEventListener('install', function (event) {
 
 self.addEventListener('fetch', function (event) {
   const url = event.request.url
-  console.log(url)
-
   for (const uk of urlMap) {
     if (url.startsWith(uk.url)) {
       event.respondWith(
