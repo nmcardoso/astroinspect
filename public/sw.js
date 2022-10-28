@@ -73,6 +73,10 @@ class SemaphorePool {
   }
 }
 
+const sleep = (time) => new Promise((resolve, reject) => {
+  setTimeout(() => resolve(), time)
+})
+
 const sp = new SemaphorePool()
 sp.create('legacy-rgb', 1)
 sp.create('splus-trilogy', 2)
@@ -97,8 +101,17 @@ self.addEventListener('fetch', function (event) {
   for (const uk of urlMap) {
     if (url.startsWith(uk.url)) {
       event.respondWith(
-        sp.enqueue(uk.key, () => {
-          return fetch(event.request, { signal: sp.getSignal() })
+        sp.enqueue(uk.key, async () => {
+          let attempt = 0
+          let sleepTime = 500
+          let resp
+          do {
+            if (url.startsWith(urlMap[0].url)) await sleep(sleepTime)
+            resp = await fetch(event.request, { signal: sp.getSignal() })
+            attempt++
+            sleepTime += 250
+          } while (resp.status == 429 && attempt <= 3)
+          return resp
         })
       )
       break
