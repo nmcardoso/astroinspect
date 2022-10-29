@@ -238,8 +238,9 @@ export default function ClassTab() {
       return null
     }).filter(col => col != null)
 
-    const _data = !tcState.classification.filterUnclassified ? data :
-      data.filter((row: any) => !!row.classification)
+    const _data = cls.enabled && cls.filterUnclassified ?
+      data.filter((row: any) => !!row.classification) : data
+
     const transformedData = _data.map((row: any) => {
       const transformedRow: any = {}
       for (const c of colMap) {
