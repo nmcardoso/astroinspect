@@ -31,7 +31,7 @@ function LocalStorageControl({ onChange }: { onChange: (e: any) => void }) {
             type="file"
             onChange={onChange} />
           <Help title="Local Upload" className="ms-1">
-            Loads a table available in local computer
+            Loads a CSV table available in local computer
           </Help>
         </div>
       </Col>

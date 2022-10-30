@@ -64,7 +64,7 @@ function CategoricalControl() {
               </Button>
             </InputGroup>
             <Help title="Class Name" className="ms-1">
-              Type the class name and press `ENTER` or click `Add`
+              Type the class name and press <kbd>ENTER</kbd> or click Add button
             </Help>
             <Button
               style={{ whiteSpace: 'nowrap' }}
