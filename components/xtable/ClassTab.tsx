@@ -219,11 +219,12 @@ export default function ClassTab() {
 
   const handleDownload = (e: any) => {
     e.preventDefault()
+    const data = tdState.data
     let fname = e.target.classDownload.value
-    if (!fname || !fname?.trim()) return
+
+    if (!fname || !fname?.trim() || !data?.length) return
     fname = fname.endsWith('.csv') ? fname : fname + '.csv'
 
-    const data = tdState.data
     const colMap: any = Object.keys(data[0]).map(col => {
       if (col == 'classification') {
         return { from: col, to: 'XTableClass' }
