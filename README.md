@@ -1,34 +1,66 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<p align="center">
+  <img alt="AstroTools" src="public/galaxy_128.png" width="128" height="128" />
+  <h1 align="center">AstroTools</h1>
+</p>
 
-## Getting Started
+<p align="center">
+  <a aria-label="License" href="https://github.com/nmcardoso/astrotools/blob/main/LICENSE">
+    <img alt="" src="https://img.shields.io/badge/LICENSE-GNU--GPLv3-sucess?style=for-the-badge&labelColor=000">
+  </a>
+  <a aria-label="Nextjs" href="https://github.com/vercel/next.js">
+    <img alt="" src="https://img.shields.io/badge/MADE%20WITH%20NEXTJS-blueviolet.svg?style=for-the-badge&logo=Next.js&labelColor=000000&logoWidth=20">
+  </a>
+  <a aria-label="Leaflet" href="https://typescript.org">
+    <img alt="" src="https://img.shields.io/badge/WRITTEN%20IN%20TYPESCRIPT-blue.svg?style=for-the-badge&logo=typescript&labelColor=000&logoWidth=20&logoColor=blue">
+  </a>
+</p>
 
-First, run the development server:
+<p align="center">
+  <a aria-label="Vercel" href="https://replit.com">
+    <img src="https://img.shields.io/badge/POWERED%20BY%20REPLIT-000.svg?style=for-the-badge&logo=replit&labelColor=000&logoWidth=20">
+  </a>
+  <a aria-label="Open Street Map" href="https://glitch.com">
+    <img src="https://img.shields.io/badge/POWERED%20BY%20GLITCH-000.svg?style=for-the-badge&logo=glitch&labelColor=000&logoWidth=20">
+  </a>
+</p>
 
-```bash
-npm run dev
-# or
-yarn dev
+
+# About
+
+Web-based astronomical tools that can support scientific research
+
+
+# XTable
+
+[XTable](https://nmcardoso.github.io/astrotools/xtable.html) is a tool designed to quickly merge an input table with data (catalog and images) obtained from web services provided by [S-PLUS](https://splus.cloud), [Legacy Survey](https://legacysurvey.org) and [SDSS](https://sdss.org). 
+
+
+# Development
+
+## Pre-requisites
+
+* Nodejs
+* NPM
+
+## Quick Start
+
+Clone this repo
+
+```sh
+git clone https://github.com/nmcardoso/astrotools.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Go to downloaded folder and install the dependencies
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+```ssh
+cd astrotools
+npm i
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+Finally, run the development server
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+```sh
+npm run dev
+```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Access the local server at [http://localhost:3001](http://localhost:3001) and start developing.
