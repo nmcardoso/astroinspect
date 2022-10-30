@@ -283,38 +283,7 @@ export default function ClassTab() {
         </Col>
       </Form.Group>
 
-      {/* <Form.Group as={Row} className="mb-2" controlId="classCheck">
-        <Form.Label column sm="1">
-          Type
-        </Form.Label>
-        <Col sm="11">
-          <div className="d-flex align-items-center">
-            <Form.Select
-              value={cls.type}
-              onChange={(e) => tcDispatch({
-                type: 'setClassification',
-                payload: { type: e.target.value }
-              })}>
-              <option value="categorical">Categorical</option>
-              <option value="binary">Binary</option>
-              <option value="filter">Filter</option>
-            </Form.Select>
-            <Help title="Classification Type" className="ms-1">
-              Classification types are designed for 3 different use cases:<br />
-              <b>Categorical: </b> you can classify as many classes you want and
-              the classes will be displayed in a dropdown<br />
-              <b>Binary: </b> you can classify between two classes, but this
-              is faster than categorical since you can just click in row to
-              toggle the class of the object<br />
-              <b>Filter: </b> is a binary classification were only the positive
-              class (selected rows) will be saved
-            </Help>
-          </div>
-        </Col>
-      </Form.Group> */}
-
-      {cls.type == 'categorical' ? <CategoricalControl /> :
-        (cls.type == 'binary' ? null : null)}
+      <CategoricalControl />
 
       <Form
         className="mt-3"
