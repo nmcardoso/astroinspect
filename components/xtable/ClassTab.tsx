@@ -46,46 +46,43 @@ function CategoricalControl() {
         Classes
       </Form.Label>
       <Col sm={8}>
-        <div className="d-flex align-items-center mb-2">
-          <InputGroup>
-            <Form.Control
-              placeholder="Class name"
-              value={classInput}
-              onChange={e => setClassInput(e.target.value)}
-              onKeyDown={e => {
-                const key = e.key || e.keyCode
-                if (key === 'Enter' || key === 13) {
-                  handleAddClass(classInput, cls.classNames, tcDispatch)
-                  setClassInput('')
-                }
-              }} />
+        <Form
+          onSubmit={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            handleAddClass(classInput, cls.classNames, tcDispatch)
+            setClassInput('')
+          }}>
+          <div className="d-flex align-items-center mb-2">
+            <InputGroup>
+              <Form.Control
+                placeholder="Class name"
+                value={classInput}
+                onChange={e => setClassInput(e.target.value)} />
+              <Button variant="success" type="submit">
+                Add
+              </Button>
+            </InputGroup>
+            <Help title="Class Name" className="ms-1">
+              Type the class name and press `ENTER` or click `Add`
+            </Help>
             <Button
-              variant="success"
-              onClick={() => {
-                handleAddClass(classInput, cls.classNames, tcDispatch)
-                setClassInput('')
-              }}>
-              Add
+              style={{ whiteSpace: 'nowrap' }}
+              className="ms-4"
+              variant="outline-primary"
+              disabled={tcState.classification.classNames.length == 0}
+              onClick={() => setHotkeyModal(true)}>
+              <FaRegKeyboard size={20} className="me-1" /> Hotkeys
             </Button>
-          </InputGroup>
-          <Help title="Class Name" className="ms-1">
-            Type the class name and press `ENTER` or click `Add`
-          </Help>
-          <Button
-            style={{ whiteSpace: 'nowrap' }}
-            className="ms-4"
-            variant="outline-primary"
-            disabled={tcState.classification.classNames.length == 0}
-            onClick={() => setHotkeyModal(true)}>
-            <FaRegKeyboard size={20} className="me-1" /> Hotkeys
-          </Button>
-          <Help title="Hotkeys" className="ms-1">
-            Classify your table quickly by configuring keyboard keys to select classes
-          </Help>
-          <HotkeyModal
-            show={showHotkeyModal}
-            onHide={() => setHotkeyModal(false)} />
-        </div>
+            <Help title="Hotkeys" className="ms-1">
+              Classify your table quickly by configuring keyboard keys to
+              select classes
+            </Help>
+            <HotkeyModal
+              show={showHotkeyModal}
+              onHide={() => setHotkeyModal(false)} />
+          </div>
+        </Form>
         {cls.classNames.map(className => (
           <Chip
             key={`cname_${className}`}
