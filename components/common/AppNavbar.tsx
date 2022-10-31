@@ -13,15 +13,14 @@ import { getBaseURL } from '../../lib/utils'
 
 
 const DOI = '10.5281/zenodo.7268504'
-const CITATION = `@article{astrotools,
+const CITATION = `@software{astrotools,
     doi = {10.5281/zenodo.7268504},
     url = {https://doi.org/10.5281/zenodo.7268504},
     year = {2022},
     month = oct,
     publisher = {Zenodo},
     author = {Natanael M. Cardoso},
-    title = {Astrotools: Web-based astronomical tools},
-    journal = {Zenodo}
+    title = {Astrotools: Web-based astronomical tools}
 }`
 
 
