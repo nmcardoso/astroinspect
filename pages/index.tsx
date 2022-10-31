@@ -14,13 +14,13 @@ const MyCard = ({ title, children, url }: any) => {
   return (
     <Card title="Cosias">
       <Row>
-        <Col md={4}>
+        <Col md={5}>
           <Card.Img
             variant="top"
             src={`${getBaseURL()}${url}`}
             className="img-fluid rounded-start" />
         </Col>
-        <Col md={8}>
+        <Col md={7} className="g-0">
           <Card.Body>
             <Card.Title>{title}</Card.Title>
             {children}
@@ -38,22 +38,19 @@ const Home: NextPage = () => {
 
       <Container className="mt-5">
         <Row>
-          <Col md={8} className="mx-auto">
+          <Col lg={8} className="mx-auto">
             <MyCard title="XTable" url="xtable_screenshot.png">
-              <Card.Text>
+              <Card.Text className="mb-2">
                 Tool designed to quickly merge an input table with data{' '}
                 (catalog and images) obtained from web services provided by{' '}
                 <a href="https://splus.cloud">S-PLUS</a>,{' '}
                 <a href="https://legacysurvey.org">Legacy Survey</a> and{' '}
                 <a href="https://sdss.org">SDSS</a>.
               </Card.Text>
-              {/* <Button
-                variant="primary"
-                href={`${getBaseURL()}xtable`}>
-                Access
-              </Button> */}
-              <Link href="/xtable">
-                Access
+              <Link href="/xtable" className="btn btn-primary">
+                <Button>
+                  Access
+                </Button>
               </Link>
             </MyCard>
           </Col>
