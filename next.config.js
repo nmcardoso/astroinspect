@@ -11,15 +11,6 @@ const nextConfig = {
     unoptimized: true
   },
   basePath,
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/xtable',
-        permanent: false,
-      },
-    ]
-  },
 }
 
 module.exports = nextConfig
