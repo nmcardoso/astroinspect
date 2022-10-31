@@ -2,9 +2,9 @@ cff-version: 1.2.0
 message: "If you use Astrotools in your research, please cite it using these metadata."
 abstract: "Astrotools: web-based astronomy tools"
 authors:
-  - family-names: Magalhães Cardoso
-    given-names: Natanael
-    orcid: https://orcid.org/0000-0003-4925-7248
+  - family-names: Cardoso
+    given-names: Natanael Magalhães
+    orcid: https://orcid.org/0000-0002-2238-9665
 title: "Astrotools: web-based astronomy tools"
 version: 0.1.0
 identifiers:
