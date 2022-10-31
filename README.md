@@ -10,8 +10,8 @@
   <a aria-label="Nextjs" href="https://github.com/vercel/next.js">
     <img alt="" src="https://img.shields.io/badge/MADE%20WITH%20NEXTJS-blueviolet.svg?style=for-the-badge&logo=Next.js&labelColor=000000&logoWidth=20">
   </a>
-  <a aria-label="Leaflet" href="https://typescript.org">
-    <img alt="" src="https://img.shields.io/badge/WRITTEN%20IN%20TYPESCRIPT-blue.svg?style=for-the-badge&logo=typescript&labelColor=000&logoWidth=20&logoColor=blue">
+  <a aria-label="Leaflet" href="https://doi.org/0.5281/zenodo.726850">
+    <img alt="" src="https://img.shields.io/badge/DOI-0.5281%2Fzenodo.7268504-blue.svg?style=for-the-badge&labelColor=000&logoWidth=20&logoColor=blue">
   </a>
 </p>
 
