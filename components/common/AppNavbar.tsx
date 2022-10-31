@@ -83,7 +83,7 @@ const CitationModal = ({ show, onHide }: any) => {
 }
 
 
-export default function AppNavbar() {
+export default function AppNavbar({ title = '' }: any) {
   const [showModal, setShowModal] = useState(false)
 
   return (
@@ -102,7 +102,7 @@ export default function AppNavbar() {
         </Navbar.Brand>
 
         <div className="mx-auto">
-          <span className="fw-bold">XTable</span>
+          <span className="fw-bold">{title}</span>
         </div>
 
         <div>

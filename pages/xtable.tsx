@@ -12,7 +12,7 @@ export default function XTable() {
       <XTableConfigProvider>
         <LoadInitialState />
 
-        <AppNavbar />
+        <AppNavbar title="XTable" />
 
         <XTableDataProvider>
           <Container className="mt-3">
