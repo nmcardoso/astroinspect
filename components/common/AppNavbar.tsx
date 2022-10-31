@@ -8,6 +8,8 @@ import Modal from 'react-bootstrap/Modal'
 import { useEffect, useState } from 'react'
 import Badge from 'react-bootstrap/Badge'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
+import Link from 'next/link'
+import { getBaseURL } from '../../lib/utils'
 
 
 const DOI = '10.5281/zenodo.7237378'
@@ -32,8 +34,6 @@ const CitationModal = ({ show, onHide }: any) => {
     if (isDoiCopied) setTimeout(() => setDoiCopied(false), 3000)
     if (isCitationCopied) setTimeout(() => setCitationCopied(false), 3000)
   }, [isDoiCopied, isCitationCopied])
-  import Link from 'next/link'
-  import { getBaseURL } from '../../lib/utils'
 
   return (
     <Modal
