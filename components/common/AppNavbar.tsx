@@ -19,7 +19,7 @@ const CITATION = `@software{astrotools,
     year = {2022},
     month = oct,
     publisher = {Zenodo},
-    author = {Natanael M. Cardoso},
+    author = {Cardoso, N. M.},
     title = {Astrotools: Web-based astronomical tools}
 }`
 
