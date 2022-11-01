@@ -12,7 +12,7 @@ import Link from 'next/link'
 
 const MyCard = ({ title, children, url }: any) => {
   return (
-    <Card title="Cosias">
+    <Card title={title}>
       <Row>
         <Col md={5}>
           <Card.Img
