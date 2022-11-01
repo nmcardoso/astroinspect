@@ -3,8 +3,8 @@ import { semaphore } from '../lib/Semaphore'
 import { QueryClient } from '@tanstack/react-query'
 import { timeConvert } from '../lib/utils'
 
-// const LEGACY_RGB = 'https://www.legacysurvey.org/viewer/cutout.jpg'
-const LEGACY_RGB = 'https://checker-melted-forsythia.glitch.me/legacy.jpg'
+const LEGACY_RGB = 'https://www.legacysurvey.org/viewer/cutout.jpg'
+// const LEGACY_RGB = 'https://checker-melted-forsythia.glitch.me/legacy.jpg'
 const NEARBY_REDSHIFT = 'https://red-mirror.herokuapp.com/https://www.legacysurvey.org/viewer/spec/1/cat.json'
 
 semaphore.create('legacy_nearby_z', 1)
