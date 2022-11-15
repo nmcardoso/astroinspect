@@ -52,6 +52,7 @@ interface IClassification extends IterableInterface {
 interface ILegacyImaging extends IterableInterface {
   enabled: boolean,
   pixelScale: number,
+  dataRelease: string,
 }
 
 interface ISdssSpectra extends IterableInterface {
@@ -94,7 +95,7 @@ export interface IState {
   stampModal: IStampModal,
 }
 
-export const SCHEMA_VERSION: number = 4
+export const SCHEMA_VERSION: number = 5
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
@@ -144,6 +145,7 @@ const getInitialState = (): IState => ({
   legacyImaging: {
     enabled: true,
     pixelScale: 0.55,
+    dataRelease: '10'
   },
   sdssSpectra: {
     enabled: true

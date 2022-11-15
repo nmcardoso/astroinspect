@@ -180,7 +180,12 @@ export default function XTableBody() {
 
           // legacy imaging column
           if (schema.legacyImaging) {
-            row.legacyImaging = legacyService.getRGBUrl(ra, dec, tcState.legacyImaging.pixelScale)
+            row.legacyImaging = legacyService.getRGBUrl(
+              ra,
+              dec,
+              tcState.legacyImaging.pixelScale,
+              tcState.legacyImaging.dataRelease
+            )
           }
 
           // splus imaging column

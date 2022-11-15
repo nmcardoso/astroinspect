@@ -47,6 +47,23 @@ export default function LegacyImagingTab() {
         </Col>
       </Row>
 
+      <Row>
+        <Col sm={5}>
+          <InputGroup>
+            <InputGroup.Text>DR</InputGroup.Text>
+            <Form.Select
+              value={legacy.dataRelease}
+              onChange={e => tcDispatch({
+                type: 'setLegacyImaging',
+                payload: { dataRelease: e.target.value }
+              })}>
+              <option value="10">10</option>
+              <option value="9">9</option>
+            </Form.Select>
+          </InputGroup>
+        </Col>
+      </Row>
+
     </>
   )
 }
