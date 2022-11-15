@@ -79,12 +79,14 @@ const sleep = (time) => new Promise((resolve, reject) => {
 
 const sp = new SemaphorePool()
 sp.create('legacy-rgb', 1)
+sp.create('legacy-rgb-proxy', 1)
 sp.create('splus-trilogy', 2)
 sp.create('splus-lupton', 2)
 sp.create('splus-photospec', 2)
 
 const urlMap = [
   { url: 'https://www.legacysurvey.org/viewer/cutout.jpg', key: 'legacy-rgb' },
+  { url: 'https://checker-melted-forsythia.glitch.me/legacy.jpg', key: 'legacy-rgb-proxy' },
   { url: 'https://checker-melted-forsythia.glitch.me/trilogy.png', key: 'splus-trilogy' },
   { url: 'https://checker-melted-forsythia.glitch.me/lupton.png', key: 'splus-lupton' },
   { url: 'https://splus-spectra.herokuapp.com/plot', key: 'splus-photospec' }
