@@ -23,7 +23,8 @@ const PUBLIC_TAP_URL = 'https://red-mirror.herokuapp.com/https://splus.cloud/pub
 const PRIVATE_TAP_URL = 'https://red-mirror.herokuapp.com/https://splus.cloud/tap/tap/'
 const TRILOGY_URL = 'https://checker-melted-forsythia.glitch.me/trilogy.png'
 const LUPTON_URL = 'https://checker-melted-forsythia.glitch.me/lupton.png'
-const PHOTOSPEC_URL = 'https://splus-spectra.herokuapp.com/plot'
+// const PHOTOSPEC_URL = 'https://splus-spectra.herokuapp.com/plot'
+const PHOTOSPEC_URL = 'https://s-spectra.nmcardoso.repl.co/plot'
 const FLUX_RADIUS_URL = 'https://checker-melted-forsythia.glitch.me/fluxRadius'
 
 const queryClient = new QueryClient({
