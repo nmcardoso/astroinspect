@@ -19,8 +19,8 @@ type SchemaType = {
 
 
 
-const PUBLIC_TAP_URL = 'https://red-mirror.herokuapp.com/https://splus.cloud/public-TAP/tap/'
-const PRIVATE_TAP_URL = 'https://red-mirror.herokuapp.com/https://splus.cloud/tap/tap/'
+const PUBLIC_TAP_URL = 'https://bittersweet-large-ticket.glitch.me/https://splus.cloud/public-TAP/tap/'
+const PRIVATE_TAP_URL = 'https://bittersweet-large-ticket.glitch.me/https://splus.cloud/tap/tap/'
 const TRILOGY_URL = 'https://checker-melted-forsythia.glitch.me/trilogy.png'
 const LUPTON_URL = 'https://checker-melted-forsythia.glitch.me/lupton.png'
 // const PHOTOSPEC_URL = 'https://splus-spectra.herokuapp.com/plot'
