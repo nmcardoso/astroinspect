@@ -164,11 +164,11 @@ export default class SdssService {
 
   async getSpecPlotUrl(ra: number | string | null, dec: number | string | null): Promise<string> {
     const specObjId = await this.getObjSpecId(ra, dec)
-    return `https://skyserver.sdss.org/dr17/en/get/SpecById.ashx?id=${specObjId}`
+    return `https://skyserver.sdss.org/dr16/en/get/SpecById.ashx?id=${specObjId}`
   }
 
   getSpecPlotUrlById(specObjId: string): string {
-    return `https://skyserver.sdss.org/dr17/en/get/SpecById.ashx?id=${specObjId}`
+    return `https://skyserver.sdss.org/dr16/en/get/SpecById.ashx?id=${specObjId}`
   }
 
   getTables() {
