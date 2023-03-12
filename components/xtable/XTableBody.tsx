@@ -52,6 +52,17 @@ const columnsAccessors = {
         zoomHeight={460} />,
     header: 'S-PLUS'
   }),
+  customImaging: () => columnHelper.accessor('customImaging', {
+    cell: info =>
+      <ImageCell
+        src={info.getValue()}
+        rowId={info.row.index}
+        showFooter={false}
+        zoomWidth={460}
+        zoomHeight={460}
+      />,
+    header: 'Custom'
+  }),
   classification: () => columnHelper.accessor('classification', {
     cell: info => <ClassCell rowId={info.row.index} />,
     header: 'Class'
@@ -102,6 +113,8 @@ export default function XTableBody() {
       [columnsAccessors.legacyImaging(tdState.schema.legacyImaging.pixelScale)] : []
     const splusImagingCol = tdState.schema.splusImaging ?
       [columnsAccessors.splusImaging()] : []
+    const customImagingCol = tdState.schema.customImaging ?
+      [columnsAccessors.customImaging()] : []
     const classificationCol = tdState.schema.classification ?
       [columnsAccessors.classification()] : []
     const sdssSpectraCol = tdState.schema.sdssSpectra ?
@@ -116,7 +129,7 @@ export default function XTableBody() {
     return [
       ...classificationCol, ...sourceTableCol, ...sdssCatalog,
       ...nearbyRedshiftsCol, ...splusPhotoSpectraCol, ...sdssSpectraCol,
-      ...legacyImagingCol, ...splusImagingCol
+      ...legacyImagingCol, ...splusImagingCol, ...customImagingCol,
     ]
   }, [tdState.schema])
 
@@ -156,6 +169,7 @@ export default function XTableBody() {
             pixelScale: tcState.legacyImaging.pixelScale
           },
           splusImaging: !!tcState.splusImaging.enabled,
+          customImaging: !!tcState.customImaging.enabled,
           classification: tcState.classification.enabled,
           sdssSpectra: tcState.sdssSpectra.enabled,
           splusPhotoSpectra: tcState.splusPhotoSpectra.enabled,
@@ -196,6 +210,13 @@ export default function XTableBody() {
             ) : splusService.getLuptonUrl(
               ra, dec, tcState.splusImaging.luptonConfig
             )
+          }
+
+          // custom imaging column
+          if (schema.customImaging) {
+            const refRow = src[i + 1][tcState.customImaging.columnIndex]
+            const filePath = `${refRow}${tcState.customImaging.fileExtension}`
+            row.customImaging = new URL(filePath, tcState.customImaging.url)
           }
 
           // classification column

@@ -13,6 +13,7 @@ import { useXTableConfig } from '../../contexts/XTableConfigContext'
 import Emitter from '../../lib/Emitter'
 import Spinner from 'react-bootstrap/Spinner'
 import SdssCatalogTab from './SdssCatalogTab'
+import CustomImagingTab from './CustomImagingTab'
 
 
 export default function ConfigForm() {
@@ -46,7 +47,10 @@ export default function ConfigForm() {
               <ListGroup.Item action href="#link5">
                 Legacy Imaging
               </ListGroup.Item>
-              <ListGroup.Item action href="#link6">
+              <ListGroup.Item action href="#custom-imaging">
+                Custom Imaging
+              </ListGroup.Item>
+              <ListGroup.Item action href="#spectra">
                 Spectra & PhotoSpectra
               </ListGroup.Item>
             </ListGroup>
@@ -87,7 +91,10 @@ export default function ConfigForm() {
               <Tab.Pane eventKey="#link5">
                 <LegacyImagingTab />
               </Tab.Pane>
-              <Tab.Pane eventKey="#link6">
+              <Tab.Pane eventKey="#custom-imaging">
+                <CustomImagingTab />
+              </Tab.Pane>
+              <Tab.Pane eventKey="#spectra">
                 <SdssSpectraTab />
               </Tab.Pane>
             </Tab.Content>

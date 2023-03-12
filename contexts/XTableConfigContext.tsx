@@ -81,6 +81,13 @@ interface IStampModal extends IterableInterface {
   showPetroFluxRadius: boolean,
 }
 
+interface ICustomImaging extends IterableInterface {
+  enabled: boolean,
+  url: string,
+  fileExtension: string,
+  columnIndex: number,
+}
+
 export interface IState {
   schemaVersion: number,
   table: ITableConfig,
@@ -93,9 +100,10 @@ export interface IState {
   splusPhotoSpectra: ISplusPhotoSpectra,
   nearbyRedshifts: INearbyRedshifts,
   stampModal: IStampModal,
+  customImaging: ICustomImaging,
 }
 
-export const SCHEMA_VERSION: number = 5
+export const SCHEMA_VERSION: number = 6
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
@@ -161,6 +169,12 @@ const getInitialState = (): IState => ({
     showAutoFluxRadius: false,
     showPetroFluxRadius: false,
     showRedshift: false
+  },
+  customImaging: {
+    enabled: false,
+    url: '',
+    fileExtension: '',
+    columnIndex: -1,
   }
 })
 const initialState = getInitialState()
@@ -280,6 +294,15 @@ const setStampModal = (state: IState, action: IAction<IStampModal>) => {
   return s
 }
 
+const setCustomImaging = (state: IState, action: IAction<ICustomImaging>) => {
+  const s = { ...state }
+  for (const k in action.payload) {
+    s.customImaging[k] = action.payload[k]
+  }
+  persistStateAsync(s)
+  return s
+}
+
 type PayloadType = IState | ITrilogyConfig | ISplusImaging | ILuptonConfig
   | ITableConfig | IClassification | ILegacyImaging | ISdssSpectra
   | ISdssCatalog | ISplusPhotoSpectra
@@ -310,6 +333,8 @@ const reducer = (state: IState, action: IAction<any>) => {
       return setNearbyRedshifts(state, action)
     case 'setStampModal':
       return setStampModal(state, action)
+    case 'setCustomImaging':
+      return setCustomImaging(state, action)
     default:
       console.log(`Action ${action.type} not found`)
       return { ...state }
