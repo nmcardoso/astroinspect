@@ -29,22 +29,22 @@ export default function ConfigForm() {
         <Row>
           <Col sm={3}>
             <ListGroup>
-              <ListGroup.Item action href="#link0">
+              <ListGroup.Item action href="#select-table">
                 Select Table
               </ListGroup.Item>
-              <ListGroup.Item action href="#link1">
+              <ListGroup.Item action href="#classification">
                 Classification
               </ListGroup.Item>
               {/* <ListGroup.Item action href="#link2">
                 S-PLUS Catalog
               </ListGroup.Item> */}
-              <ListGroup.Item action href="#link3">
+              <ListGroup.Item action href="#sdss">
                 SDSS Catalog
               </ListGroup.Item>
-              <ListGroup.Item action href="#link4">
+              <ListGroup.Item action href="#splus">
                 S-PLUS Imaging
               </ListGroup.Item>
-              <ListGroup.Item action href="#link5">
+              <ListGroup.Item action href="#legacy">
                 Legacy Imaging
               </ListGroup.Item>
               <ListGroup.Item action href="#custom-imaging">
@@ -73,22 +73,22 @@ export default function ConfigForm() {
           </Col>
           <Col sm={9}>
             <Tab.Content>
-              <Tab.Pane eventKey="#link0">
+              <Tab.Pane eventKey="#select-table">
                 <FileInputTab />
               </Tab.Pane>
-              <Tab.Pane eventKey="#link1">
+              <Tab.Pane eventKey="#classification">
                 <ClassTab />
               </Tab.Pane>
               {/* <Tab.Pane eventKey="#link2">
                 Nada
               </Tab.Pane> */}
-              <Tab.Pane eventKey="#link3">
+              <Tab.Pane eventKey="#sdss">
                 <SdssCatalogTab />
               </Tab.Pane>
-              <Tab.Pane eventKey="#link4">
+              <Tab.Pane eventKey="#splus">
                 <SplusImagingTab />
               </Tab.Pane>
-              <Tab.Pane eventKey="#link5">
+              <Tab.Pane eventKey="#legacy">
                 <LegacyImagingTab />
               </Tab.Pane>
               <Tab.Pane eventKey="#custom-imaging">
