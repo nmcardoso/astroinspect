@@ -84,17 +84,17 @@ export default function CustomImagingTab() {
               <option value=".jpg">.jpg</option>
               <option value=".jpeg">.jpeg</option>
               <option value=".png">.png</option>
-              <option value=".apng">.apng</option>
-              <option value=".avif">.avif</option>
               <option value=".gif">.gif</option>
-              <option value=".jfif">.jfif</option>
-              <option value=".pjpeg">.pjpeg</option>
-              <option value=".pjp">.pjp</option>
               <option value=".svg">.svg</option>
               <option value=".webp">.webp</option>
               <option value=".bmp">.bmp</option>
               <option value=".tif">.tif</option>
               <option value=".tiff">.tiff</option>
+              <option value=".apng">.apng</option>
+              <option value=".avif">.avif</option>
+              <option value=".jfif">.jfif</option>
+              <option value=".pjpeg">.pjpeg</option>
+              <option value=".pjp">.pjp</option>
             </Form.Select>
           </InputGroup>
         </Col>
