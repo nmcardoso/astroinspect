@@ -139,7 +139,7 @@ const SelectColumnModal = ({
               <Form.Select
                 defaultValue={-1}
                 onChange={e => setSelectedId(parseInt(e.target.value))}>
-                <option value={-1}>Select one column to add</option>
+                <option value={-1}>Select a column to add</option>
                 {filterColumns().map((col) => (
                   <option
                     value={col.originalIndex}
