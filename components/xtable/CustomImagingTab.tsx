@@ -37,7 +37,7 @@ export default function CustomImagingTab() {
             <Form.Control
               aria-label="URL"
               aria-describedby="customImagingUrl"
-              value={custom.pixelScale}
+              value={custom.url}
               onChange={e => tcDispatch({
                 type: 'setCustomImaging',
                 payload: { url: e.target.value }
