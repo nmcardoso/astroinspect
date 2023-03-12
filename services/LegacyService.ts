@@ -4,7 +4,7 @@ import { QueryClient } from '@tanstack/react-query'
 import { timeConvert } from '../lib/utils'
 
 const LEGACY_RGB = 'https://www.legacysurvey.org/viewer/cutout.jpg'
-// const LEGACY_RGB = 'https://checker-melted-forsythia.glitch.me/legacy.jpg'
+const LEGACY_RGB_PROXY = 'https://checker-melted-forsythia.glitch.me/legacy.jpg'
 const NEARBY_REDSHIFT = 'https://bittersweet-large-ticket.glitch.me/https://www.legacysurvey.org/viewer/spec/1/cat.json'
 
 semaphore.create('legacy_nearby_z', 1)
@@ -49,6 +49,12 @@ const fetchNearbyRedshifts = async (ra: any, dec: any) => {
 
 
 export default class LegacyService {
+  rgb_url: string
+
+  constructor(useProxy = false) {
+    this.rgb_url = useProxy ? LEGACY_RGB_PROXY : LEGACY_RGB
+  }
+
   getRGBUrl(
     ra: number | string,
     dec: number | string,
@@ -56,7 +62,7 @@ export default class LegacyService {
     dataRelease: string = '10',
   ) {
     const layer = dataRelease == '10' ? 'ls-dr10' : 'ls-dr9'
-    return `${LEGACY_RGB}?ra=${ra}&dec=${dec}&layer=${layer}&pixscale=${pixelScale}`
+    return `${this.rgb_url}?ra=${ra}&dec=${dec}&layer=${layer}&pixscale=${pixelScale}`
   }
 
   async getNearbyRedshift(ra: any, dec: any, radius: number) {
