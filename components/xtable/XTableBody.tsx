@@ -345,18 +345,35 @@ export default function XTableBody() {
 
   return (
     <>
-      <Table striped bordered hover className="mt-3">
+      <Table
+        striped
+        bordered
+        hover
+        className="mt-3"
+        style={{ position: 'relative', borderCollapse: 'collapse' }}>
         <thead>
           {table.getHeaderGroups().map(headerGroup => (
-            <tr key={headerGroup.id}>
+            <tr key={headerGroup.id} style={{}}>
               {headerGroup.headers.map(header => (
-                <th key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
+                <th
+                  key={header.id}
+                  style={{
+                    position: 'sticky',
+                    top: 0,
+                    backgroundClip: 'padding-box',
+                    backgroundColor: 'white',
+                    padding: '0px'
+                  }}>
+                  <div
+                    className="border-bottom border-1"
+                    style={{ padding: '8px' }}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                  </div>
                 </th>
               ))}
             </tr>
