@@ -22,6 +22,7 @@ import NearbyRedshiftCell from './NearbyRedshiftCell'
 
 
 const splusService = new SplusService()
+const legacyService = new LegacyService()
 const sdssService = new SdssService()
 
 const columnHelper = createColumnHelper<any>()
@@ -96,8 +97,7 @@ const columnsAccessors = {
 }
 
 
-export default function XTableBody({ useProxy = false }: any) {
-  const legacyService = useMemo(() => new LegacyService(useProxy), [useProxy])
+export default function XTableBody() {
   const { tcState, tcDispatch } = useXTableConfig()
   const { tdState, tdDispatch } = useXTableData()
   const [selectedRow, setSelectedRow] = useState('-1')
@@ -105,6 +105,7 @@ export default function XTableBody({ useProxy = false }: any) {
   const data = tdState.data
 
   const columns = useMemo(() => {
+    console.log('useMemo')
     const sourceTableCol = tdState.schema.sourceTable.map(col => {
       return columnsAccessors.sourceTable(col.colName)
     })
@@ -313,7 +314,7 @@ export default function XTableBody({ useProxy = false }: any) {
         })
       })
     })
-  }, [tcState, tcDispatch, tdState, tdDispatch, legacyService])
+  }, [tcState, tcDispatch, tdState, tdDispatch])
 
   const handleKeyDown = useCallback((event: any) => {
     event.stopPropagation()
