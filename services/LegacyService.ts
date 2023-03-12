@@ -55,7 +55,7 @@ export default class LegacyService {
     pixelScale: number | string = 0.55,
     dataRelease: string = '10',
   ) {
-    const layer = dataRelease == '10' ? 'ls-dr10-early-grz' : 'ls-dr9'
+    const layer = dataRelease == '10' ? 'ls-dr10' : 'ls-dr9'
     return `${LEGACY_RGB}?ra=${ra}&dec=${dec}&layer=${layer}&pixscale=${pixelScale}`
   }
 
