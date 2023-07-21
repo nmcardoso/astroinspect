@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react'
 import Badge from 'react-bootstrap/Badge'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Link from 'next/link'
+import { BsGithub } from 'react-icons/bs'
 import { getBaseURL } from '../../lib/utils'
 
 
@@ -110,12 +111,20 @@ export default function AppNavbar({ title = '' }: any) {
 
         <div>
           <Button
+            className="me-2"
+            size="sm"
+            variant="outline-primary"
+            href="https://github.com/nmcardoso/astrotools"
+            target="_BLANK">
+            <BsGithub size={20} />
+          </Button>
+
+          <Button
             size="sm"
             variant="outline-primary"
             onClick={() => setShowModal(true)}>
             Cite this software
           </Button>
-
           <CitationModal
             show={showModal}
             onHide={() => setShowModal(false)} />
