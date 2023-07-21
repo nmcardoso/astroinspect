@@ -75,7 +75,7 @@ function TrilogyParams() {
             <Help title="Red Composition" className="ms-1">
               Choose the S-PLUS bands that will be mapped to the{' '}
               <span className="text-danger">red</span> channel of the{' '}
-              RGB image. Each channel must be mapped by at least 1 S-PLUS filter
+              RGB image. Each channel must be mapped by up to 1 S-PLUS filter
             </Help>
           </div>
         </Col>
@@ -97,7 +97,7 @@ function TrilogyParams() {
             <Help title="Green Composition" className="ms-1">
               Choose the S-PLUS bands that will be mapped to the{' '}
               <span className="text-success">green</span> channel of the{' '}
-              RGB image. Each channel must be mapped by at least 1 S-PLUS filter
+              RGB image. Each channel must be mapped by up to 1 S-PLUS filter
             </Help>
           </div>
         </Col>
@@ -119,7 +119,7 @@ function TrilogyParams() {
             <Help title="Blue Composition" className="ms-1">
               Choose the S-PLUS bands that will be mapped to the{' '}
               <span className="text-primary">blue</span> channel of the{' '}
-              RGB image. Each channel must be mapped by at least 1 S-PLUS filter
+              RGB image. Each channel must be mapped by up to 1 S-PLUS filter
             </Help>
           </div>
         </Col>
