@@ -4,6 +4,111 @@ import Row from 'react-bootstrap/Row'
 import InputGroup from 'react-bootstrap/InputGroup'
 import { useContext } from 'react'
 import { useXTableConfig } from '../../contexts/XTableConfigContext'
+import { Button } from 'react-bootstrap'
+import { BiPlus } from 'react-icons/bi'
+import { HiMinusSm } from 'react-icons/hi'
+import Help from '../common/Help'
+
+const CustomImagingColumnGroup = ({ index }: { index: number }) => {
+  const { tcState, tcDispatch } = useXTableConfig()
+  const custom = tcState.customImaging.columns[index]
+
+  return (
+    <>
+      <Row>
+        <Col sm={8}>
+          <div className="d-flex align-items-center">
+            <InputGroup className="mb-2" size="sm">
+              <InputGroup.Text>
+                Base URL
+              </InputGroup.Text>
+              <Form.Control
+                value={custom.url}
+                onChange={e => tcDispatch({
+                  type: 'updateCustomImaging',
+                  payload: { index, url: e.target.value }
+                })}
+              />
+            </InputGroup>
+            <Help title="Base Resource URL" className="mb-2 ms-1">
+              The <b>base resource url</b> is the first (static) part of the URL.
+              This value must starts with <code>http://</code>{" "}
+              or <code>https://</code><br />
+              The final url for each row is:<br />
+              <kbd>Base URL</kbd> + <kbd>RI Column</kbd> + <kbd>suffix</kbd>
+            </Help>
+          </div>
+        </Col>
+
+        <Col sm={4}>
+          <div className="d-flex align-items-center">
+            <InputGroup size="sm">
+              <InputGroup.Text>Suffix</InputGroup.Text>
+              <Form.Control
+                value={custom.fileExtension}
+                onChange={e => tcDispatch({
+                  type: 'updateCustomImaging',
+                  payload: { index, fileExtension: e.target.value }
+                })}
+              />
+            </InputGroup>
+            <Help title="URL Suffix" className="ms-1">
+              The <b>url suffix</b> is the last (static) part of the URL and {" "}
+              is used to specify the file extension, for example.<br />
+              The final url for each row is:<br />
+              <kbd>Base URL</kbd> + <kbd>RI Column</kbd> + <kbd>suffix</kbd>
+            </Help>
+          </div>
+        </Col>
+      </Row>
+
+      <Row>
+        <Col sm={8}>
+          <div className="d-flex align-items-center">
+            <InputGroup className="" size="sm">
+              <InputGroup.Text>RI Column</InputGroup.Text>
+              <Form.Select
+                defaultValue={-1}
+                onChange={e => tcDispatch({
+                  type: 'updateCustomImaging',
+                  payload: { index, columnIndex: (parseInt(e.target.value)) }
+                })}>
+                <option value={-1}>Select a column</option>
+                {tcState.table.columns.map((colName, idx) => (
+                  <option
+                    value={idx}
+                    key={idx}>
+                    {colName}
+                  </option>
+                ))}
+              </Form.Select>
+            </InputGroup>
+            <Help title="Resource Identification Column" className=" ms-1">
+              The <b>resource identification column</b> (RI column) is the {" "}
+              only variable part of the url. This field must specify the {" "}
+              column to use to make a specific url for each row.<br />
+              The final url for each row is:<br />
+              <kbd>Base URL</kbd> + <kbd>RI Column</kbd> + <kbd>suffix</kbd>
+            </Help>
+          </div>
+        </Col>
+
+        <Col sm={4}>
+          <Button
+            variant="outline-danger"
+            size="sm"
+            onClick={() => tcDispatch({
+              type: 'removeCustomImaging',
+              payload: { index, prevColumns: tcState.customImaging.columns }
+            })}
+          >
+            <HiMinusSm /> Remove Column
+          </Button>
+        </Col>
+      </Row>
+    </>
+  )
+}
 
 export default function CustomImagingTab() {
   const { tcState, tcDispatch } = useXTableConfig()
@@ -21,85 +126,33 @@ export default function CustomImagingTab() {
             label="Show Custom Images Column"
             checked={custom.enabled}
             onChange={e => tcDispatch({
-              type: 'setCustomImaging',
+              type: 'enableCustomImaging',
               payload: { enabled: e.target.checked }
             })}
           />
         </Col>
       </Form.Group>
 
-      <Row>
-        <Col sm={6}>
-          <InputGroup className="mb-3">
-            <InputGroup.Text id="customImagingUrl">
-              URL
-            </InputGroup.Text>
-            <Form.Control
-              aria-label="URL"
-              aria-describedby="customImagingUrl"
-              value={custom.url}
-              onChange={e => tcDispatch({
-                type: 'setCustomImaging',
-                payload: { url: e.target.value }
-              })}
-            />
-          </InputGroup>
-        </Col>
-      </Row>
+      {custom.columns.map((_, i) => (
+        <>
+          <CustomImagingColumnGroup index={i} />
+          <hr className="my-4" />
+        </>
+      ))}
 
       <Row>
-        <Col sm={6}>
-          <InputGroup className="mb-3">
-            <InputGroup.Text>Column</InputGroup.Text>
-            <Form.Select
-              defaultValue={-1}
-              onChange={e => tcDispatch({
-                type: 'setCustomImaging',
-                payload: { columnIndex: (parseInt(e.target.value)) }
-              })}>
-              <option value={-1}>Select a column</option>
-              {tcState.table.columns.map((colName, index) => (
-                <option
-                  value={index}
-                  key={index}>
-                  {colName}
-                </option>
-              ))}
-            </Form.Select>
-          </InputGroup>
+        <Col>
+          <Button
+            size="sm"
+            onClick={() => tcDispatch({
+              type: 'addCustomImaging',
+              payload: { prevColumns: tcState.customImaging.columns }
+            })}
+          >
+            <BiPlus size={16} /> Add Custom Imaging Column
+          </Button>
         </Col>
       </Row>
-
-      <Row>
-        <Col sm={4}>
-          <InputGroup>
-            <InputGroup.Text>File Extension</InputGroup.Text>
-            <Form.Select
-              value={custom.fileExtension}
-              onChange={e => tcDispatch({
-                type: 'setCustomImaging',
-                payload: { fileExtension: e.target.value }
-              })}>
-              <option value="">None</option>
-              <option value=".jpg">.jpg</option>
-              <option value=".jpeg">.jpeg</option>
-              <option value=".png">.png</option>
-              <option value=".gif">.gif</option>
-              <option value=".svg">.svg</option>
-              <option value=".webp">.webp</option>
-              <option value=".bmp">.bmp</option>
-              <option value=".tif">.tif</option>
-              <option value=".tiff">.tiff</option>
-              <option value=".apng">.apng</option>
-              <option value=".avif">.avif</option>
-              <option value=".jfif">.jfif</option>
-              <option value=".pjpeg">.pjpeg</option>
-              <option value=".pjp">.pjp</option>
-            </Form.Select>
-          </InputGroup>
-        </Col>
-      </Row>
-
     </>
   )
 }

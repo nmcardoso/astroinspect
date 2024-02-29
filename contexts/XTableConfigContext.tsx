@@ -81,11 +81,15 @@ interface IStampModal extends IterableInterface {
   showPetroFluxRadius: boolean,
 }
 
-interface ICustomImaging extends IterableInterface {
-  enabled: boolean,
+interface ICustomImagingColumn extends IterableInterface {
   url: string,
   fileExtension: string,
   columnIndex: number,
+}
+
+interface ICustomImaging extends IterableInterface {
+  enabled: boolean,
+  columns: ICustomImagingColumn[],
 }
 
 export interface IState {
@@ -103,7 +107,7 @@ export interface IState {
   customImaging: ICustomImaging,
 }
 
-export const SCHEMA_VERSION: number = 6
+export const SCHEMA_VERSION: number = 7
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
@@ -172,9 +176,13 @@ const getInitialState = (): IState => ({
   },
   customImaging: {
     enabled: false,
-    url: '',
-    fileExtension: '',
-    columnIndex: -1,
+    columns: [
+      {
+        url: '',
+        fileExtension: '',
+        columnIndex: -1,
+      }
+    ]
   }
 })
 const initialState = getInitialState()
@@ -294,11 +302,39 @@ const setStampModal = (state: IState, action: IAction<IStampModal>) => {
   return s
 }
 
-const setCustomImaging = (state: IState, action: IAction<ICustomImaging>) => {
+const addCustomImaging = (state: IState, action: IAction<{ prevColumns: ICustomImagingColumn[] }>) => {
+  const s = { ...state }
+  s.customImaging.columns = [
+    ...action.payload.prevColumns,
+    {
+      url: '',
+      fileExtension: '',
+      columnIndex: -1
+    }
+  ]
+  persistStateAsync(s)
+  return s
+}
+
+const updateCustomImaging = (state: IState, action: IAction<ICustomImagingColumn & { index: number }>) => {
   const s = { ...state }
   for (const k in action.payload) {
-    s.customImaging[k] = action.payload[k]
+    s.customImaging.columns[action.payload.index][k] = action.payload[k]
   }
+  persistStateAsync(s)
+  return s
+}
+
+const removeCustomImaging = (state: IState, action: IAction<{ index: number, prevColumns: ICustomImagingColumn[] }>) => {
+  const s = { ...state }
+  s.customImaging.columns = action.payload.prevColumns.filter((_, i) => i != action.payload.index)
+  persistStateAsync(s)
+  return s
+}
+
+const enableCustomImaging = (state: IState, action: IAction<{ enabled: boolean }>) => {
+  const s = { ...state }
+  s.customImaging.enabled = action.payload.enabled
   persistStateAsync(s)
   return s
 }
@@ -333,8 +369,14 @@ const reducer = (state: IState, action: IAction<any>) => {
       return setNearbyRedshifts(state, action)
     case 'setStampModal':
       return setStampModal(state, action)
-    case 'setCustomImaging':
-      return setCustomImaging(state, action)
+    case 'addCustomImaging':
+      return addCustomImaging(state, action)
+    case 'updateCustomImaging':
+      return updateCustomImaging(state, action)
+    case 'removeCustomImaging':
+      return removeCustomImaging(state, action)
+    case 'enableCustomImaging':
+      return enableCustomImaging(state, action)
     default:
       console.log(`Action ${action.type} not found`)
       return { ...state }

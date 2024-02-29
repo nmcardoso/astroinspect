@@ -23,7 +23,7 @@ export interface ISchema {
   legacyImaging: { enabled: boolean, pixelScale: number },
   splusImaging: boolean,
   sdssSpectra: boolean,
-  customImaging: boolean,
+  customImaging: { enabled: boolean, nCols: number },
   splusPhotoSpectra: boolean,
   nearbyRedshifts: boolean,
 }
@@ -51,7 +51,7 @@ const initialState: IState = {
     classification: false,
     legacyImaging: { enabled: false, pixelScale: 0.55 },
     splusImaging: false,
-    customImaging: false,
+    customImaging: { enabled: false, nCols: 0 },
     sdssSpectra: false,
     splusPhotoSpectra: false,
     nearbyRedshifts: false,

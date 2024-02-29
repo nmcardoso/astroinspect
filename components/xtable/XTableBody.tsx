@@ -52,7 +52,7 @@ const columnsAccessors = {
         zoomHeight={460} />,
     header: 'S-PLUS'
   }),
-  customImaging: () => columnHelper.accessor('customImaging', {
+  customImaging: (i: number) => columnHelper.accessor(`customImaging:${i}`, {
     cell: info =>
       <ImageCell
         src={info.getValue()}
@@ -113,8 +113,8 @@ export default function XTableBody() {
       [columnsAccessors.legacyImaging(tdState.schema.legacyImaging.pixelScale)] : []
     const splusImagingCol = tdState.schema.splusImaging ?
       [columnsAccessors.splusImaging()] : []
-    const customImagingCol = tdState.schema.customImaging ?
-      [columnsAccessors.customImaging()] : []
+    // const customImagingCol = tdState.schema.customImaging ?
+    //   [columnsAccessors.customImaging()] : []
     const classificationCol = tdState.schema.classification ?
       [columnsAccessors.classification()] : []
     const sdssSpectraCol = tdState.schema.sdssSpectra ?
@@ -126,6 +126,12 @@ export default function XTableBody() {
       [columnsAccessors.splusPhotoSpectra()] : []
     const nearbyRedshiftsCol = tdState.schema.nearbyRedshifts ?
       [columnsAccessors.nearbyRedshifts()] : []
+    const customImagingCol = []
+    if (tdState.schema.customImaging.enabled) {
+      for (let i = 0; i < tdState.schema.customImaging.nCols; i++) {
+        customImagingCol.push(columnsAccessors.customImaging(i))
+      }
+    }
     return [
       ...classificationCol, ...sourceTableCol, ...sdssCatalog,
       ...nearbyRedshiftsCol, ...splusPhotoSpectraCol, ...sdssSpectraCol,
@@ -169,7 +175,11 @@ export default function XTableBody() {
             pixelScale: tcState.legacyImaging.pixelScale
           },
           splusImaging: !!tcState.splusImaging.enabled,
-          customImaging: !!tcState.customImaging.enabled,
+          // customImaging: !!tcState.customImaging.enabled,
+          customImaging: {
+            enabled: !!tcState.customImaging.enabled,
+            nCols: tcState.customImaging.columns.length
+          },
           classification: tcState.classification.enabled,
           sdssSpectra: tcState.sdssSpectra.enabled,
           splusPhotoSpectra: tcState.splusPhotoSpectra.enabled,
@@ -214,9 +224,10 @@ export default function XTableBody() {
 
           // custom imaging column
           if (schema.customImaging) {
-            const refRow = src[i + 1][tcState.customImaging.columnIndex]
-            const filePath = `${refRow}${tcState.customImaging.fileExtension}`
-            row.customImaging = new URL(filePath, tcState.customImaging.url)
+            tcState.customImaging.columns.forEach((col, colId) => {
+              const refRow = src[i + 1][col.columnIndex]
+              row[`customImaging:${colId}`] = `${col.url}${refRow}${col.fileExtension}`
+            })
           }
 
           // classification column

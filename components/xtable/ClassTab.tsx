@@ -283,6 +283,8 @@ export default function ClassTab() {
 
       <CategoricalControl />
 
+      <hr className='my-4' />
+
       <Form
         className="mt-3"
         onSubmit={handleDownload}>
