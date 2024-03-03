@@ -258,8 +258,8 @@ export default function ImageCell({
     <>
       <LazyLoadImage
         src={error ? notFoundSrc : src}
-        width={90}
-        height={90}
+        // width={100}
+        height={100}
         placeholder={<LoadPlaceholder />}
         onClick={() => !error && setShowModal(true)}
         className="cursor-pointer"
