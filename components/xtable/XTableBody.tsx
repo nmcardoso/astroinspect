@@ -58,8 +58,9 @@ const columnsAccessors = {
         src={info.getValue()}
         rowId={info.row.index}
         showFooter={false}
-        zoomWidth={460}
-        zoomHeight={460}
+        zoomWidth={700}
+        zoomHeight={700}
+        modalSize="lg"
       />,
     header: 'Custom'
   }),
