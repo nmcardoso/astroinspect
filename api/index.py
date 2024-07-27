@@ -18,7 +18,6 @@ session = aiohttp.ClientSession()
 
 _TOKEN = {'value': None, 'date': None}
 
-
 async def get_token():
   if _TOKEN['value'] is not None:
     date_now = datetime.now()
