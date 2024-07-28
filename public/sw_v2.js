@@ -89,7 +89,7 @@ const urlMap = [
   { url: 'https://checker-melted-forsythia.glitch.me/legacy.jpg', key: 'legacy-rgb-proxy' },
   { url: 'https://checker-melted-forsythia.glitch.me/trilogy.png', key: 'splus-trilogy' },
   { url: 'https://checker-melted-forsythia.glitch.me/lupton.png', key: 'splus-lupton' },
-  { url: 'https://splus-spectra.herokuapp.com/plot', key: 'splus-photospec' }
+  { url: 'https://astrotools.vercel.app/plot', key: 'splus-photospec' }
 ]
 
 

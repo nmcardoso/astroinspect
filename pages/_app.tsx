@@ -7,7 +7,7 @@ import { getBaseURL } from '../lib/utils'
 function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     navigator.serviceWorker
-      .register(getBaseURL() + 'sw.js', {
+      .register(getBaseURL() + 'sw_v2.js', {
         updateViaCache: 'none'
       })
       .then((registration) =>
