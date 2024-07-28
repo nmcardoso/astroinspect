@@ -4,7 +4,7 @@ import urllib.parse
 from datetime import datetime, timedelta
 from io import BytesIO
 
-from flask import Flask, send_file
+from flask import Flask, request, send_file
 from flask_cors import CORS, cross_origin
 from matplotlib.figure import Figure
 from requests import Session
@@ -49,30 +49,30 @@ def get_token():
 
 
 @app.get('/')
-def hello(request):
+def hello():
   return 'Hello, world'
 
 
 @app.get('/plot')
 @cross_origin()
-def plot(request):
+def plot():
   token = get_token()
   if token is None:
     return 'Auth failed.'
 
-  obj_id = request.query.get('id', None)
-  ra = request.query.get('ra')
-  dec = request.query.get('dec')
+  obj_id = request.args.get('id', None)
+  ra = request.args.get('ra')
+  dec = request.args.get('dec')
 
-  use_iso = request.query.get('iso') in ['1', '']
-  use_aper3 = request.query.get('aper3') in ['1', '']
-  use_aper6 = request.query.get('aper6') in ['1', '']
-  use_auto = request.query.get('auto') in ['1', '']
-  use_petro = request.query.get('petro') in ['1', '']
-  use_pstotal = request.query.get('pstotal') in ['1', '']
+  use_iso = request.args.get('iso') in ['1', '']
+  use_aper3 = request.args.get('aper3') in ['1', '']
+  use_aper6 = request.args.get('aper6') in ['1', '']
+  use_auto = request.args.get('auto') in ['1', '']
+  use_petro = request.args.get('petro') in ['1', '']
+  use_pstotal = request.args.get('pstotal') in ['1', '']
   use_id = obj_id is not None
 
-  if request.query.get('all') in ['1', '']:
+  if request.args.get('all') in ['1', '']:
     use_iso, use_aper3, use_aper6, use_auto, use_petro, use_pstotal = (
       True, ) * 6
   elif (not use_iso and not use_aper3 and not use_aper6 and not use_auto
