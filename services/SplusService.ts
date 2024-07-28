@@ -24,7 +24,7 @@ const PRIVATE_TAP_URL = 'https://bittersweet-large-ticket.glitch.me/https://splu
 const TRILOGY_URL = 'https://checker-melted-forsythia.glitch.me/trilogy.png'
 const LUPTON_URL = 'https://checker-melted-forsythia.glitch.me/lupton.png'
 // const PHOTOSPEC_URL = 'https://splus-spectra.herokuapp.com/plot'
-const PHOTOSPEC_URL = 'https://s-spectra.nmcardoso.repl.co/plot'
+const PHOTOSPEC_URL = 'https://astrotools.vercel.app/plot'
 const FLUX_RADIUS_URL = 'https://checker-melted-forsythia.glitch.me/fluxRadius'
 
 const queryClient = new QueryClient({
