@@ -107,7 +107,7 @@ export interface IState {
   customImaging: ICustomImaging,
 }
 
-export const SCHEMA_VERSION: number = 7
+export const SCHEMA_VERSION: number = 8
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
@@ -144,7 +144,7 @@ const getInitialState = (): IState => ({
       G: ['G', 'F515', 'F660'],
       B: ['U', 'F378', 'F395', 'F410', 'F430'],
       noise: 0.15,
-      Q: 0.15
+      Q: 0.2
     },
     luptonConfig: {
       R: 'I',
