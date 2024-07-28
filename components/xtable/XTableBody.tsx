@@ -206,7 +206,7 @@ export default function XTableBody() {
 
           // legacy imaging column
           if (schema.legacyImaging) {
-            const size = Math.round((tcState.legacyImaging.pixelScale * 600) / 0.327)
+            const size = Math.round((tcState.legacyImaging.pixelScale * 600) / 0.4)
             row.legacyImaging = legacyService.getRGBUrl(
               ra,
               dec,

@@ -108,7 +108,7 @@ export interface IState {
   customImaging: ICustomImaging,
 }
 
-export const SCHEMA_VERSION: number = 8
+export const SCHEMA_VERSION: number = 9
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
@@ -140,7 +140,7 @@ const getInitialState = (): IState => ({
   splusImaging: {
     enabled: true,
     type: 'trilogy',
-    pixelScale: 0.45,
+    pixelScale: 0.25,
     trilogyConfig: {
       R: ['R', 'I', 'F861', 'Z'],
       G: ['G', 'F515', 'F660'],
@@ -158,7 +158,7 @@ const getInitialState = (): IState => ({
   },
   legacyImaging: {
     enabled: true,
-    pixelScale: 0.45,
+    pixelScale: 0.25,
     dataRelease: '10'
   },
   sdssSpectra: {
