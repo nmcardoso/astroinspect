@@ -430,18 +430,14 @@
 # if __name__ == '__main__':
 #   web.run_app(app)
 
+from flask import Flask
 
+app = Flask(__name__)
 
+@app.route('/')
+def home():
+    return 'Hello, World!'
 
-
-from mangum import Mangum
-from sanic import Sanic
-from sanic.response import html, json
-
-app = Sanic('app') 
- 
-@app.route('/<path:path>')
-async def index(request, path=""):
-    return html('hello ' + path)
-  
-handler = Mangum(app, lifespan="off")
+@app.route('/about')
+def about():
+    return 'About'
