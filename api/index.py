@@ -39,7 +39,7 @@ def get_token():
   }
 
   resp = session.post('https://splus.cloud/api/auth/login', json=credentials)
-  if resp.status == 200:
+  if resp.status_code == 200:
     data = resp.json()
     if 'token' in data:
       token = data['token']
@@ -223,7 +223,7 @@ def plot():
   query_start_time = datetime.now()
   resp = session.post(query_url, headers=headers)
   print('>>> Query duration:', str(datetime.now() - query_start_time))
-  if resp.status != 200 or 'application/json' not in resp.headers['Content-Type']:
+  if resp.status_code != 200 or 'application/json' not in resp.headers['Content-Type']:
     return 'Query Error'
 
   data = resp.json()
