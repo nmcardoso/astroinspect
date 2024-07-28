@@ -52,11 +52,11 @@ export default class LegacyService {
   getRGBUrl(
     ra: number | string,
     dec: number | string,
-    pixelScale: number | string = 0.55,
+    size: number | string = 600,
     dataRelease: string = '10',
   ) {
     const layer = dataRelease == '10' ? 'ls-dr10' : 'ls-dr9'
-    return `${LEGACY_RGB}?ra=${ra}&dec=${dec}&layer=${layer}&pixscale=${pixelScale}`
+    return `${LEGACY_RGB}?ra=${ra}&dec=${dec}&layer=${layer}&pixscale=0.327&size=${size}`
   }
 
   async getNearbyRedshift(ra: any, dec: any, radius: number) {

@@ -38,8 +38,9 @@ const columnsAccessors = {
         src={info.getValue()}
         rowId={info.row.index}
         pixScale={pixScale}
-        zoomWidth={460}
-        zoomHeight={460} />,
+        zoomWidth={600}
+        zoomHeight={600}
+        modalSize="lg" />,
     header: 'Legacy'
   }),
   splusImaging: () => columnHelper.accessor('splusImaging', {
@@ -48,8 +49,9 @@ const columnsAccessors = {
         pixScale={0.55}
         src={info.getValue()}
         rowId={info.row.index}
-        zoomWidth={460}
-        zoomHeight={460} />,
+        zoomWidth={600}
+        zoomHeight={600}
+        modalSize="lg" />,
     header: 'S-PLUS'
   }),
   customImaging: (i: number) => columnHelper.accessor(`customImaging:${i}`, {
@@ -106,7 +108,6 @@ export default function XTableBody() {
   const data = tdState.data
 
   const columns = useMemo(() => {
-    console.log('useMemo')
     const sourceTableCol = tdState.schema.sourceTable.map(col => {
       return columnsAccessors.sourceTable(col.colName)
     })
@@ -205,10 +206,11 @@ export default function XTableBody() {
 
           // legacy imaging column
           if (schema.legacyImaging) {
+            const size = Math.round((tcState.legacyImaging.pixelScale * 600) / 0.327)
             row.legacyImaging = legacyService.getRGBUrl(
               ra,
               dec,
-              tcState.legacyImaging.pixelScale,
+              size,
               tcState.legacyImaging.dataRelease
             )
           }
@@ -216,10 +218,11 @@ export default function XTableBody() {
           // splus imaging column
           if (schema.splusImaging) {
             const imgType = tcState.splusImaging.type
+            const size = Math.round((tcState.splusImaging.pixelScale * 600) / 0.55)
             row.splusImaging = imgType == 'trilogy' ? splusService.getTrilogyUrl(
-              ra, dec, tcState.splusImaging.trilogyConfig
+              ra, dec, size, tcState.splusImaging.trilogyConfig
             ) : splusService.getLuptonUrl(
-              ra, dec, tcState.splusImaging.luptonConfig
+              ra, dec, size, tcState.splusImaging.luptonConfig
             )
           }
 

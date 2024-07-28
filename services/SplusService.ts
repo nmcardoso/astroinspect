@@ -80,10 +80,11 @@ export default class SplusService {
     }
   }
 
-  getTrilogyUrl(ra: number, dec: number, config?: ITrilogyConfig) {
+  getTrilogyUrl(ra: number, dec: number, size: number, config?: ITrilogyConfig) {
     const params = {
       ra,
       dec,
+      size,
       r: config?.R?.join(','),
       g: config?.G?.join(','),
       b: config?.B?.join(','),
@@ -94,10 +95,11 @@ export default class SplusService {
     return `${TRILOGY_URL}?${qs}`
   }
 
-  getLuptonUrl(ra: number, dec: number, config: ILuptonConfig) {
+  getLuptonUrl(ra: number, dec: number, size: number, config: ILuptonConfig) {
     const params = {
       ra,
       dec,
+      size,
       r: config?.R,
       g: config?.G,
       b: config?.B,

@@ -35,6 +35,7 @@ export interface ILuptonConfig extends IterableInterface {
 interface ISplusImaging extends IterableInterface {
   enabled?: boolean,
   type?: string,
+  pixelScale: number,
   trilogyConfig: ITrilogyConfig,
   luptonConfig: ILuptonConfig
 }
@@ -139,6 +140,7 @@ const getInitialState = (): IState => ({
   splusImaging: {
     enabled: true,
     type: 'trilogy',
+    pixelScale: 0.45,
     trilogyConfig: {
       R: ['R', 'I', 'F861', 'Z'],
       G: ['G', 'F515', 'F660'],
@@ -156,7 +158,7 @@ const getInitialState = (): IState => ({
   },
   legacyImaging: {
     enabled: true,
-    pixelScale: 0.55,
+    pixelScale: 0.45,
     dataRelease: '10'
   },
   sdssSpectra: {

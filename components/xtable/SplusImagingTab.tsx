@@ -129,7 +129,7 @@ function TrilogyParams() {
         <Form.Label column sm="1">
           Params
         </Form.Label>
-        <Col sm={8}>
+        <Col sm={9}>
           <Row>
             <Col>
               <InputGroup className="mb-3">
@@ -159,6 +159,22 @@ function TrilogyParams() {
                   onChange={(e) => tcDispatch({
                     type: 'setSplusTrilogyConfig',
                     payload: { Q: e.target.value }
+                  })}
+                />
+              </InputGroup>
+            </Col>
+            <Col>
+              <InputGroup className="mb-3">
+                <InputGroup.Text id="pixelScale">
+                  Pixel Scale
+                </InputGroup.Text>
+                <Form.Control
+                  aria-label="Pixel Scale"
+                  aria-describedby="pixelScale"
+                  value={tcState.splusImaging.pixelScale}
+                  onChange={(e) => tcDispatch({
+                    type: 'setSplusImaging',
+                    payload: { pixelScale: e.target.value }
                   })}
                 />
               </InputGroup>
@@ -272,6 +288,22 @@ function LuptonParams() {
                   onChange={(e) => tcDispatch({
                     type: 'setSplusLuptonConfig',
                     payload: { Q: e.target.value }
+                  })}
+                />
+              </InputGroup>
+            </Col>
+            <Col>
+              <InputGroup className="mb-3">
+                <InputGroup.Text id="pixelScale">
+                  Pixel Scale
+                </InputGroup.Text>
+                <Form.Control
+                  aria-label="Pixel Scale"
+                  aria-describedby="pixelScale"
+                  value={tcState.splusImaging.pixelScale}
+                  onChange={(e) => tcDispatch({
+                    type: 'setSplusImaging',
+                    payload: { pixelScale: e.target.value }
                   })}
                 />
               </InputGroup>
