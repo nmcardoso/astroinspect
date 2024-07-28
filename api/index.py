@@ -154,18 +154,18 @@ def plot():
       {get_columns2('J0861', all_names)},
       {get_columns_error2('J0861', all_names)}
     FROM 
-      (SELECT TOP 1 ID, {get_columns('g', all_names)}, {get_columns_error('g', all_names)} FROM "idr4_dual"."idr4_dual_g" WHERE ID = '{obj_id}') AS g, 
-      (SELECT TOP 1 ID, {get_columns('z', all_names)}, {get_columns_error('z', all_names)} FROM "idr4_dual"."idr4_dual_z" WHERE ID = '{obj_id}') AS z, 
-      (SELECT TOP 1 ID, {get_columns('r', all_names)}, {get_columns_error('r', all_names)} FROM "idr4_dual"."idr4_dual_r" WHERE ID = '{obj_id}') AS r, 
-      (SELECT TOP 1 ID, {get_columns('i', all_names)}, {get_columns_error('i', all_names)} FROM "idr4_dual"."idr4_dual_i" WHERE ID = '{obj_id}') AS i, 
-      (SELECT TOP 1 ID, {get_columns('u', all_names)}, {get_columns_error('u', all_names)} FROM "idr4_dual"."idr4_dual_u" WHERE ID = '{obj_id}') AS u, 
-      (SELECT TOP 1 ID, {get_columns('J0378', all_names)}, {get_columns_error('J0378', all_names)} FROM "idr4_dual"."idr4_dual_j0378" WHERE ID = '{obj_id}') AS j0378,
-      (SELECT TOP 1 ID, {get_columns('J0395', all_names)}, {get_columns_error('J0395', all_names)} FROM "idr4_dual"."idr4_dual_j0395" WHERE ID = '{obj_id}') AS j0395,
-      (SELECT TOP 1 ID, {get_columns('J0410', all_names)}, {get_columns_error('J0410', all_names)} FROM "idr4_dual"."idr4_dual_j0410" WHERE ID = '{obj_id}') AS j0410,
-      (SELECT TOP 1 ID, {get_columns('J0430', all_names)}, {get_columns_error('J0430', all_names)} FROM "idr4_dual"."idr4_dual_j0430" WHERE ID = '{obj_id}') AS j0430,
-      (SELECT TOP 1 ID, {get_columns('J0515', all_names)}, {get_columns_error('J0515', all_names)} FROM "idr4_dual"."idr4_dual_j0515" WHERE ID = '{obj_id}') AS j0515,
-      (SELECT TOP 1 ID, {get_columns('J0660', all_names)}, {get_columns_error('J0660', all_names)} FROM "idr4_dual"."idr4_dual_j0660" WHERE ID = '{obj_id}') AS j0660,
-      (SELECT TOP 1 ID, {get_columns('J0861', all_names)}, {get_columns_error('J0861', all_names)} FROM "idr4_dual"."idr4_dual_j0861" WHERE ID = '{obj_id}') AS j0861'''
+      (SELECT TOP 1 ID, {get_columns('g', all_names)}, {get_columns_error('g', all_names)} FROM "idr5_dual"."idr5_dual_g" WHERE ID = '{obj_id}') AS g, 
+      (SELECT TOP 1 ID, {get_columns('z', all_names)}, {get_columns_error('z', all_names)} FROM "idr5_dual"."idr5_dual_z" WHERE ID = '{obj_id}') AS z, 
+      (SELECT TOP 1 ID, {get_columns('r', all_names)}, {get_columns_error('r', all_names)} FROM "idr5_dual"."idr5_dual_r" WHERE ID = '{obj_id}') AS r, 
+      (SELECT TOP 1 ID, {get_columns('i', all_names)}, {get_columns_error('i', all_names)} FROM "idr5_dual"."idr5_dual_i" WHERE ID = '{obj_id}') AS i, 
+      (SELECT TOP 1 ID, {get_columns('u', all_names)}, {get_columns_error('u', all_names)} FROM "idr5_dual"."idr5_dual_u" WHERE ID = '{obj_id}') AS u, 
+      (SELECT TOP 1 ID, {get_columns('J0378', all_names)}, {get_columns_error('J0378', all_names)} FROM "idr5_dual"."idr5_dual_j0378" WHERE ID = '{obj_id}') AS j0378,
+      (SELECT TOP 1 ID, {get_columns('J0395', all_names)}, {get_columns_error('J0395', all_names)} FROM "idr5_dual"."idr5_dual_j0395" WHERE ID = '{obj_id}') AS j0395,
+      (SELECT TOP 1 ID, {get_columns('J0410', all_names)}, {get_columns_error('J0410', all_names)} FROM "idr5_dual"."idr5_dual_j0410" WHERE ID = '{obj_id}') AS j0410,
+      (SELECT TOP 1 ID, {get_columns('J0430', all_names)}, {get_columns_error('J0430', all_names)} FROM "idr5_dual"."idr5_dual_j0430" WHERE ID = '{obj_id}') AS j0430,
+      (SELECT TOP 1 ID, {get_columns('J0515', all_names)}, {get_columns_error('J0515', all_names)} FROM "idr5_dual"."idr5_dual_j0515" WHERE ID = '{obj_id}') AS j0515,
+      (SELECT TOP 1 ID, {get_columns('J0660', all_names)}, {get_columns_error('J0660', all_names)} FROM "idr5_dual"."idr5_dual_j0660" WHERE ID = '{obj_id}') AS j0660,
+      (SELECT TOP 1 ID, {get_columns('J0861', all_names)}, {get_columns_error('J0861', all_names)} FROM "idr5_dual"."idr5_dual_j0861" WHERE ID = '{obj_id}') AS j0861'''
   else:
     print('query by ra-dec')
     query = f'''SELECT top 1 det.id, det.ra, det.dec,
@@ -194,19 +194,19 @@ def plot():
       {get_columns_error('j0660', all_names)},
       {get_columns('j0861', all_names)},
       {get_columns_error('j0861', all_names)}
-    FROM idr4_dual.idr4_detection_image AS det JOIN
-      idr4_dual.idr4_dual_g AS g on g.id = det.id JOIN
-      idr4_dual.idr4_dual_z AS z on z.id = det.id JOIN
-      idr4_dual.idr4_dual_r AS r on r.id = det.id JOIN
-      idr4_dual.idr4_dual_i AS i on i.id = det.id JOIN
-      idr4_dual.idr4_dual_u AS u on u.id = det.id JOIN
-      idr4_dual.idr4_dual_j0378 AS j0378 on j0378.id = det.id JOIN
-      idr4_dual.idr4_dual_j0395 AS j0395 on j0395.id = det.id JOIN
-      idr4_dual.idr4_dual_j0410 AS j0410 on j0410.id = det.id JOIN
-      idr4_dual.idr4_dual_j0430 AS j0430 on j0430.id = det.id JOIN
-      idr4_dual.idr4_dual_j0515 AS j0515 on j0515.id = det.id JOIN
-      idr4_dual.idr4_dual_j0660 AS j0660 on j0660.id = det.id JOIN
-      idr4_dual.idr4_dual_j0861 AS j0861 on j0861.id = det.id 
+    FROM idr5_dual.detection_image AS det JOIN
+      idr5_dual.idr5_dual_g AS g on g.id = det.id JOIN
+      idr5_dual.idr5_dual_z AS z on z.id = det.id JOIN
+      idr5_dual.idr5_dual_r AS r on r.id = det.id JOIN
+      idr5_dual.idr5_dual_i AS i on i.id = det.id JOIN
+      idr5_dual.idr5_dual_u AS u on u.id = det.id JOIN
+      idr5_dual.idr5_dual_j0378 AS j0378 on j0378.id = det.id JOIN
+      idr5_dual.idr5_dual_j0395 AS j0395 on j0395.id = det.id JOIN
+      idr5_dual.idr5_dual_j0410 AS j0410 on j0410.id = det.id JOIN
+      idr5_dual.idr5_dual_j0430 AS j0430 on j0430.id = det.id JOIN
+      idr5_dual.idr5_dual_j0515 AS j0515 on j0515.id = det.id JOIN
+      idr5_dual.idr5_dual_j0660 AS j0660 on j0660.id = det.id JOIN
+      idr5_dual.idr5_dual_j0861 AS j0861 on j0861.id = det.id 
     WHERE 1 = CONTAINS(POINT('ICRS', det.ra, det.dec), 
       CIRCLE('ICRS', {ra}, {dec}, 0.0015))
     ORDER BY dist ASC'''
