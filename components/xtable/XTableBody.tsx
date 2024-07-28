@@ -90,7 +90,7 @@ const columnsAccessors = {
         rowId={info.row.index}
         showFooter={false}
         modalSize="lg"
-        zoomWidth={720} />,
+        zoomWidth={780} />,
     header: 'PhotoSpec'
   }),
   nearbyRedshifts: () => columnHelper.accessor('nearbyRedshifts', {
