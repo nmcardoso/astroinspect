@@ -1,3 +1,4 @@
+import logging
 import math
 import os
 import urllib.parse
@@ -415,6 +416,12 @@ def plot():
   # response = web.StreamResponse(headers={'Content-Type': 'image/jpg'})
   # await response.prepare(request)
   # await response.write(buff.read())
+
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+  logging.exception(e)
+
 
 
 # app = web.Application(middlewares=[cors_middleware(allow_all=True)])
