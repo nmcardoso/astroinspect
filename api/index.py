@@ -417,9 +417,9 @@ async def plot(request):
   # await response.write(buff.read())
 
 
-# app = web.Application(middlewares=[cors_middleware(allow_all=True)])
-# app.add_routes(routes)
-app = web.Application(routes=routes, middlewares=cors_middleware(allow_all=True))
+app = web.Application(middlewares=[cors_middleware(allow_all=True)])
+app.add_routes(routes)
+# app = web.Application(router=routes, middlewares=cors_middleware(allow_all=True))
 
 
 
