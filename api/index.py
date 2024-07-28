@@ -37,7 +37,6 @@ def get_token():
     'username': os.getenv('SPLUS_USERNAME'),
     'password': os.getenv('SPLUS_PASSWORD')
   }
-  print(credentials)
 
   resp = session.post('https://splus.cloud/api/auth/login', json=credentials)
   if resp.status_code == 200:
@@ -412,7 +411,7 @@ def plot():
     print('>>> Save duration:', str(datetime.now() - save_start_time))
   print('>>> Total plot duration:', str(datetime.now() - plot_start_time))
 
-  return send_file(buff, mimetype='image/jpeg', as_attachment=True, download_name='plot')
+  return send_file(buff, mimetype='image/jpeg', as_attachment=False, download_name='plot')
   # return web.Response(body=buff.read(), headers={'Content-Type': 'image/jpg'})
   # response = web.StreamResponse(headers={'Content-Type': 'image/jpg'})
   # await response.prepare(request)
