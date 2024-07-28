@@ -223,8 +223,7 @@ async def plot(request):
   query_start_time = datetime.now()
   async with session.post(query_url, headers=headers) as resp:
     print('>>> Query duration:', str(datetime.now() - query_start_time))
-    if resp.status != 200 or 'application/json' not in resp.headers[
-        'Content-Type']:
+    if resp.status != 200 or 'application/json' not in resp.headers['Content-Type']:
       return web.Response(text='Query Error')
 
     data = await resp.json()
@@ -418,8 +417,15 @@ async def plot(request):
   # await response.write(buff.read())
 
 
-app = web.Application(middlewares=[cors_middleware(allow_all=True)])
-app.add_routes(routes)
+# app = web.Application(middlewares=[cors_middleware(allow_all=True)])
+# app.add_routes(routes)
+app = web.Application(routes=routes, middlewares=cors_middleware(allow_all=True))
+
+
+
+def handler(event, context):
+  web.run_app(app)
+
 
 if __name__ == '__main__':
   web.run_app(app)
