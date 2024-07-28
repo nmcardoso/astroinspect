@@ -37,6 +37,7 @@ def get_token():
     'username': os.getenv('SPLUS_USERNAME'),
     'password': os.getenv('SPLUS_PASSWORD')
   }
+  print(credentials)
 
   resp = session.post('https://splus.cloud/api/auth/login', json=credentials)
   if resp.status_code == 200:
