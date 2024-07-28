@@ -373,7 +373,7 @@ async def plot(request):
                 color='tab:brown',
                 **plot_params)
 
-  ax.set_xlabel('Wavelength [$\AA$]')
+  ax.set_xlabel('Wavelength [$\\AA$]')
   ax.set_ylabel('Magnitude')
   if use_id:
     ax.set_title(f'S-PLUS PhotoSpec (ID: {obj_id})')
