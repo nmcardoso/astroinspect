@@ -5,3 +5,4 @@ gunicorn==20.0.4
 matplotlib
 python-dotenv==0.21.0
 sanic
+mangum

@@ -431,12 +431,17 @@
 #   web.run_app(app)
 
 
+
+
+
+from mangum import Mangum
 from sanic import Sanic
 from sanic.response import html, json
 
-app = Sanic('app')
- 
+app = Sanic('app') 
  
 @app.route('/<path:path>')
 async def index(request, path=""):
     return html('hello ' + path)
+  
+handler = Mangum(app, lifespan="off")
