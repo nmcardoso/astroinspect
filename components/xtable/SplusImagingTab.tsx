@@ -258,7 +258,7 @@ function LuptonParams() {
         <Form.Label column sm="1">
           Params
         </Form.Label>
-        <Col sm={6}>
+        <Col sm={8}>
           <Row>
             <Col>
               <InputGroup>
