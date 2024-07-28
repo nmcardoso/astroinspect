@@ -49,13 +49,13 @@ def get_token():
 
 
 @app.get('/')
-async def hello(request):
+def hello(request):
   return 'Hello, world'
 
 
 @app.get('/plot')
 @cross_origin()
-async def plot(request):
+def plot(request):
   token = get_token()
   if token is None:
     return 'Auth failed.'
