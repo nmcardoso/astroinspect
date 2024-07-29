@@ -2,7 +2,7 @@ import Form from 'react-bootstrap/Form'
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import InputGroup from 'react-bootstrap/InputGroup'
-import { useContext } from 'react'
+import { Fragment, useContext } from 'react'
 import { useXTableConfig } from '../../contexts/XTableConfigContext'
 import { Button } from 'react-bootstrap'
 import { BiPlus } from 'react-icons/bi'
@@ -68,7 +68,7 @@ const CustomImagingColumnGroup = ({ index }: { index: number }) => {
             <InputGroup className="" size="sm">
               <InputGroup.Text>RI Column</InputGroup.Text>
               <Form.Select
-                defaultValue={-1}
+                defaultValue={tcState.customImaging.columns?.[index]?.columnIndex || -1}
                 onChange={e => tcDispatch({
                   type: 'updateCustomImaging',
                   payload: { index, columnIndex: (parseInt(e.target.value)) }
@@ -134,10 +134,10 @@ export default function CustomImagingTab() {
       </Form.Group>
 
       {custom.columns.map((_, i) => (
-        <>
+        <Fragment key={i}>
           <CustomImagingColumnGroup index={i} />
           <hr className="my-4" />
-        </>
+        </Fragment>
       ))}
 
       <Row>
