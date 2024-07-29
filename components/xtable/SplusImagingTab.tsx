@@ -18,7 +18,7 @@ function toggleUnique(data: { [key: string]: string[] }, key: string, value: str
 
   for (const k in data) {
     if (k != key) d[k] = data[k].filter(e => e != value)
-    if (d[k].length < 1) return data
+    // if (d[k].length < 1) return data
   }
 
   if (d[key].includes(value)) {
