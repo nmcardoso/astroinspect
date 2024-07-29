@@ -108,7 +108,7 @@ export interface IState {
   customImaging: ICustomImaging,
 }
 
-export const SCHEMA_VERSION: number = 10
+export const SCHEMA_VERSION: number = 11
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
