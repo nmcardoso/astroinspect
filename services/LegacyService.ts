@@ -53,10 +53,11 @@ export default class LegacyService {
     ra: number | string,
     dec: number | string,
     size: number | string = 600,
+    pixscale: number | string = 0.55,
     dataRelease: string = '10',
   ) {
     const layer = dataRelease == '10' ? 'ls-dr10' : 'ls-dr9'
-    return `${LEGACY_RGB}?ra=${ra}&dec=${dec}&layer=${layer}&pixscale=0.4&size=${size}`
+    return `${LEGACY_RGB}?ra=${ra}&dec=${dec}&layer=${layer}&pixscale=${pixscale}&size=${size}`
   }
 
   async getNearbyRedshift(ra: any, dec: any, radius: number) {
