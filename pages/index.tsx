@@ -1,10 +1,10 @@
 import { Container } from 'react-bootstrap'
-import AppNavbar from '../app/components/common/AppNavbar'
-import LoadInitialState from '../app/components/common/LoadInitialState'
-import ConfigForm from '../app/components/setup/ConfigForm'
-import { XTableConfigProvider } from '../app/contexts/XTableConfigContext'
-import XTableBody from '../app/components/table/_XTableBody'
-import { XTableDataProvider } from '../app/contexts/XTableDataContext'
+import AppNavbar from '@/components/common/AppNavbar'
+import LoadInitialState from '@/components/common/LoadInitialState'
+import ConfigForm from '@/components/setup/ConfigForm'
+import { XTableConfigProvider } from '@/contexts/XTableConfigContext'
+import XTableBody from '@/components/table/_XTableBody'
+import { XTableDataProvider } from '@/contexts/XTableDataContext'
 import Head from 'next/head'
 
 export default function XTable() {

@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react'
-import { useXTableData } from '../contexts/XTableDataContext'
-import TableHelper from '../lib/TableHelper'
-import LegacyService from '../services/LegacyService'
+import { useXTableData } from '@/contexts/XTableDataContext'
+import TableHelper from '@/lib/TableHelper'
+import LegacyService from '@/services/LegacyService'
 import Spinner from 'react-bootstrap/Spinner'
 
 const legacyService = new LegacyService()

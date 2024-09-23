@@ -3,11 +3,11 @@ import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import InputGroup from 'react-bootstrap/InputGroup'
 import { Fragment, useContext } from 'react'
-import { useXTableConfig } from '../contexts/XTableConfigContext'
+import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import { Button } from 'react-bootstrap'
 import { BiPlus } from 'react-icons/bi'
 import { HiMinusSm } from 'react-icons/hi'
-import Help from '../components/common/Help'
+import Help from '@/components/common/Help'
 
 const CustomImagingColumnGroup = ({ index }: { index: number }) => {
   const { tcState, tcDispatch } = useXTableConfig()

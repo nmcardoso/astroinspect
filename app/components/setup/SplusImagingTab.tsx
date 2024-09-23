@@ -1,11 +1,11 @@
 import Form from 'react-bootstrap/Form'
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
-import ButtonChip from '../components/common/ButtonChip'
+import ButtonChip from '@/components/common/ButtonChip'
 import InputGroup from 'react-bootstrap/InputGroup'
 import { useState, useContext } from 'react'
-import Help from '../components/common/Help'
-import { useXTableConfig } from '../contexts/XTableConfigContext'
+import Help from '@/components/common/Help'
+import { useXTableConfig } from '@/contexts/XTableConfigContext'
 
 
 const splusBands = [

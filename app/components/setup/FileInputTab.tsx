@@ -3,12 +3,12 @@ import Row from 'react-bootstrap/Row'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form'
-import Help from '../components/common/Help'
-import { useXTableConfig } from '../contexts/XTableConfigContext'
+import Help from '@/components/common/Help'
+import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import { MouseEventHandler, useState } from 'react'
 import { HiCheck, HiX } from 'react-icons/hi'
-import Chip from '../components/common/Chip'
-import TableHelper from '../lib/TableHelper'
+import Chip from '@/components/common/Chip'
+import TableHelper from '@/lib/TableHelper'
 
 enum TableState {
   unloaded = 'unloaded',

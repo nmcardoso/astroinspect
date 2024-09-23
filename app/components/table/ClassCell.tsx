@@ -1,7 +1,7 @@
 import Form from 'react-bootstrap/Form'
-import { useXTableConfig } from '../contexts/XTableConfigContext'
-import { useXTableData } from '../contexts/XTableDataContext'
-import TableHelper from '../lib/TableHelper'
+import { useXTableConfig } from '@/contexts/XTableConfigContext'
+import { useXTableData } from '@/contexts/XTableDataContext'
+import TableHelper from '@/lib/TableHelper'
 
 export default function ClassCell({ rowId }: { rowId: number }) {
   const { tcState } = useXTableConfig()
