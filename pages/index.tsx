@@ -5,10 +5,15 @@ import ConfigForm from '../app/xtable/ConfigForm'
 import { XTableConfigProvider } from '../app/contexts/XTableConfigContext'
 import XTableBody from '../app/xtable/_XTableBody'
 import { XTableDataProvider } from '../app/contexts/XTableDataContext'
+import Head from 'next/head'
 
 export default function XTable() {
   return (
     <>
+      <Head>
+        <title>AstroInspect</title>
+      </Head>
+      
       <XTableConfigProvider>
         <LoadInitialState />
 
