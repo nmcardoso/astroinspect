@@ -5,8 +5,8 @@ import Col from 'react-bootstrap/Col'
 import Container from 'react-bootstrap/Container'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
-import AppNavbar from '../components/common/AppNavbar'
-import { getBaseURL } from '../lib/utils'
+import AppNavbar from '../app/common/AppNavbar'
+import { getBaseURL } from '../app/lib/utils'
 import Link from 'next/link'
 
 

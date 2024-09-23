@@ -5,7 +5,7 @@ import ButtonChip from '../common/ButtonChip'
 import InputGroup from 'react-bootstrap/InputGroup'
 import { useState, useContext } from 'react'
 import Help from '../common/Help'
-import { useXTableConfig } from '../../contexts/XTableConfigContext'
+import { useXTableConfig } from '../contexts/XTableConfigContext'
 
 
 const splusBands = [

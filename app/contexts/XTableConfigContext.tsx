@@ -140,7 +140,7 @@ const getInitialState = (): IState => ({
   splusImaging: {
     enabled: true,
     type: 'trilogy',
-    pixelScale: 0.25,
+    pixelScale: 0.4,
     trilogyConfig: {
       R: ['R', 'I', 'F861', 'Z'],
       G: ['G', 'F515', 'F660'],
@@ -158,7 +158,7 @@ const getInitialState = (): IState => ({
   },
   legacyImaging: {
     enabled: true,
-    pixelScale: 0.25,
+    pixelScale: 0.4,
     dataRelease: '10'
   },
   sdssSpectra: {

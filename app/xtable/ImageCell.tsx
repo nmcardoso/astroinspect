@@ -5,12 +5,12 @@ import { LazyLoadComponent, LazyLoadImage } from 'react-lazy-load-image-componen
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form'
-import LegacyService from '../../services/LegacyService'
-import TableHelper from '../../lib/TableHelper'
-import { useXTableData } from '../../contexts/XTableDataContext'
+import LegacyService from '../services/LegacyService'
+import TableHelper from '../lib/TableHelper'
+import { useXTableData } from '../contexts/XTableDataContext'
 import Spinner from 'react-bootstrap/Spinner'
-import { useXTableConfig } from '../../contexts/XTableConfigContext'
-import SplusService from '../../services/SplusService'
+import { useXTableConfig } from '../contexts/XTableConfigContext'
+import SplusService from '../services/SplusService'
 
 
 type RedshiftMaskProps = {

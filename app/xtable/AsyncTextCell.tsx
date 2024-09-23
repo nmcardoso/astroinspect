@@ -1,6 +1,6 @@
 import { Placeholder, Spinner } from 'react-bootstrap'
-import { useXTableData } from '../../contexts/XTableDataContext'
-import TableHelper from '../../lib/TableHelper'
+import { useXTableData } from '../contexts/XTableDataContext'
+import TableHelper from '../lib/TableHelper'
 
 export default function AsyncTextCell({ rowId, colId }:
   { rowId: number, colId: string }) {

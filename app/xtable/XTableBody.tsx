@@ -1,17 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
 import { useEffect, useMemo, useState, useCallback } from 'react'
-import { useXTableConfig } from '../../contexts/XTableConfigContext'
+import { useXTableConfig } from '../contexts/XTableConfigContext'
 import Table from 'react-bootstrap/Table'
-import Emitter from '../../lib/Emitter'
+import Emitter from '../lib/Emitter'
 import ImageCell from './ImageCell'
 import ClassCell from './ClassCell'
 import SdssSpectraCell from './SdssSpectraCell'
 import AsyncTextCell from './AsyncTextCell'
-import TableHelper from '../../lib/TableHelper'
-import SplusService from '../../services/SplusService'
-import LegacyService from '../../services/LegacyService'
-import SdssService from '../../services/SdssService'
-import { ISchema, useXTableData } from '../../contexts/XTableDataContext'
+import TableHelper from '../lib/TableHelper'
+import SplusService from '../services/SplusService'
+import LegacyService from '../services/LegacyService'
+import SdssService from '../services/SdssService'
+import { ISchema, useXTableData } from '../contexts/XTableDataContext'
 import {
   createColumnHelper,
   flexRender,

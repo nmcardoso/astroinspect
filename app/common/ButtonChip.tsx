@@ -1,5 +1,5 @@
 import { MouseEventHandler, ReactElement } from 'react'
-import styles from '../../styles/common/ButtonChip.module.css'
+import styles from '../../styles/ButtonChip.module.css'
 
 type PropsType = {
   children?: any,
