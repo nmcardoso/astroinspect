@@ -117,99 +117,39 @@ def plot():
   if use_pstotal:
     all_names.append('PStotal')
 
-  get_columns = lambda table, filters: ', '.join(
-    [f'{table}_{f}' for f in filters])
-  get_columns_error = lambda table, filters: ', '.join(
-    [f'e_{table}_{f}' for f in filters])
-  get_columns2 = lambda table, filters: ', '.join(
-    [f'{table}.{table}_{f}' for f in filters])
-  get_columns_error2 = lambda table, filters: ', '.join(
-    [f'{table}.e_{table}_{f}' for f in filters])
+  get_columns = lambda band, apper: ', '.join([f'p.{band}_{a}' for a in apper])
+  get_columns_error = lambda band, apper: ', '.join([f'p.e_{band}_{a}' for a in apper])
 
-  if use_id:
-    print('query by id')
-    query = f'''SELECT TOP 1 
-      {get_columns2('g', all_names)},
-      {get_columns_error2('g', all_names)},
-      {get_columns2('z', all_names)},
-      {get_columns_error2('z', all_names)},
-      {get_columns2('r', all_names)},
-      {get_columns_error2('r', all_names)},
-      {get_columns2('i', all_names)},
-      {get_columns_error2('i', all_names)},
-      {get_columns2('u', all_names)},
-      {get_columns_error2('u', all_names)},
-      {get_columns2('J0378', all_names)},
-      {get_columns_error2('J0378', all_names)},
-      {get_columns2('J0395', all_names)},
-      {get_columns_error2('J0395', all_names)},
-      {get_columns2('J0410', all_names)},
-      {get_columns_error2('J0410', all_names)},
-      {get_columns2('J0430', all_names)},
-      {get_columns_error2('J0430', all_names)},
-      {get_columns2('J0515', all_names)},
-      {get_columns_error2('J0515', all_names)},
-      {get_columns2('J0660', all_names)},
-      {get_columns_error2('J0660', all_names)},
-      {get_columns2('J0861', all_names)},
-      {get_columns_error2('J0861', all_names)}
-    FROM 
-      (SELECT TOP 1 ID, {get_columns('g', all_names)}, {get_columns_error('g', all_names)} FROM "idr4_dual"."idr4_dual_g" WHERE ID = '{obj_id}') AS g, 
-      (SELECT TOP 1 ID, {get_columns('z', all_names)}, {get_columns_error('z', all_names)} FROM "idr4_dual"."idr4_dual_z" WHERE ID = '{obj_id}') AS z, 
-      (SELECT TOP 1 ID, {get_columns('r', all_names)}, {get_columns_error('r', all_names)} FROM "idr4_dual"."idr4_dual_r" WHERE ID = '{obj_id}') AS r, 
-      (SELECT TOP 1 ID, {get_columns('i', all_names)}, {get_columns_error('i', all_names)} FROM "idr4_dual"."idr4_dual_i" WHERE ID = '{obj_id}') AS i, 
-      (SELECT TOP 1 ID, {get_columns('u', all_names)}, {get_columns_error('u', all_names)} FROM "idr4_dual"."idr4_dual_u" WHERE ID = '{obj_id}') AS u, 
-      (SELECT TOP 1 ID, {get_columns('J0378', all_names)}, {get_columns_error('J0378', all_names)} FROM "idr4_dual"."idr4_dual_j0378" WHERE ID = '{obj_id}') AS j0378,
-      (SELECT TOP 1 ID, {get_columns('J0395', all_names)}, {get_columns_error('J0395', all_names)} FROM "idr4_dual"."idr4_dual_j0395" WHERE ID = '{obj_id}') AS j0395,
-      (SELECT TOP 1 ID, {get_columns('J0410', all_names)}, {get_columns_error('J0410', all_names)} FROM "idr4_dual"."idr4_dual_j0410" WHERE ID = '{obj_id}') AS j0410,
-      (SELECT TOP 1 ID, {get_columns('J0430', all_names)}, {get_columns_error('J0430', all_names)} FROM "idr4_dual"."idr4_dual_j0430" WHERE ID = '{obj_id}') AS j0430,
-      (SELECT TOP 1 ID, {get_columns('J0515', all_names)}, {get_columns_error('J0515', all_names)} FROM "idr4_dual"."idr4_dual_j0515" WHERE ID = '{obj_id}') AS j0515,
-      (SELECT TOP 1 ID, {get_columns('J0660', all_names)}, {get_columns_error('J0660', all_names)} FROM "idr4_dual"."idr4_dual_j0660" WHERE ID = '{obj_id}') AS j0660,
-      (SELECT TOP 1 ID, {get_columns('J0861', all_names)}, {get_columns_error('J0861', all_names)} FROM "idr4_dual"."idr4_dual_j0861" WHERE ID = '{obj_id}') AS j0861'''
-  else:
-    print('query by ra-dec')
-    query = f'''SELECT top 1 det.id, det.ra, det.dec,
-      DISTANCE(POINT('ICRS', {ra}, {dec}),POINT('ICRS', det.ra, det.dec)) AS dist,
-      {get_columns('g', all_names)},
-      {get_columns_error('g', all_names)},
-      {get_columns('z', all_names)},
-      {get_columns_error('z', all_names)},
-      {get_columns('r', all_names)},
-      {get_columns_error('r', all_names)},
-      {get_columns('i', all_names)},
-      {get_columns_error('i', all_names)},
-      {get_columns('u', all_names)},
-      {get_columns_error('u', all_names)},
-      {get_columns('j0378', all_names)},
-      {get_columns_error('j0378', all_names)},
-      {get_columns('j0395', all_names)},
-      {get_columns_error('j0395', all_names)},
-      {get_columns('j0410', all_names)},
-      {get_columns_error('j0410', all_names)},
-      {get_columns('j0430', all_names)},
-      {get_columns_error('j0430', all_names)},
-      {get_columns('j0515', all_names)},
-      {get_columns_error('j0515', all_names)},
-      {get_columns('j0660', all_names)},
-      {get_columns_error('j0660', all_names)},
-      {get_columns('j0861', all_names)},
-      {get_columns_error('j0861', all_names)}
-    FROM idr4_dual.idr4_detection_image AS det JOIN
-      idr4_dual.idr4_dual_g AS g on g.id = det.id JOIN
-      idr4_dual.idr4_dual_z AS z on z.id = det.id JOIN
-      idr4_dual.idr4_dual_r AS r on r.id = det.id JOIN
-      idr4_dual.idr4_dual_i AS i on i.id = det.id JOIN
-      idr4_dual.idr4_dual_u AS u on u.id = det.id JOIN
-      idr4_dual.idr4_dual_j0378 AS j0378 on j0378.id = det.id JOIN
-      idr4_dual.idr4_dual_j0395 AS j0395 on j0395.id = det.id JOIN
-      idr4_dual.idr4_dual_j0410 AS j0410 on j0410.id = det.id JOIN
-      idr4_dual.idr4_dual_j0430 AS j0430 on j0430.id = det.id JOIN
-      idr4_dual.idr4_dual_j0515 AS j0515 on j0515.id = det.id JOIN
-      idr4_dual.idr4_dual_j0660 AS j0660 on j0660.id = det.id JOIN
-      idr4_dual.idr4_dual_j0861 AS j0861 on j0861.id = det.id 
-    WHERE 1 = CONTAINS(POINT('ICRS', det.ra, det.dec), 
-      CIRCLE('ICRS', {ra}, {dec}, 0.0015))
-    ORDER BY dist ASC'''
+  query = f'''SELECT top 1 p.id, p.ra, p.dec,
+    DISTANCE(POINT('ICRS', {ra}, {dec}),POINT('ICRS', p.ra, p.dec)) AS dist,
+    {get_columns('g', all_names)},
+    {get_columns_error('g', all_names)},
+    {get_columns('z', all_names)},
+    {get_columns_error('z', all_names)},
+    {get_columns('r', all_names)},
+    {get_columns_error('r', all_names)},
+    {get_columns('i', all_names)},
+    {get_columns_error('i', all_names)},
+    {get_columns('u', all_names)},
+    {get_columns_error('u', all_names)},
+    {get_columns('j0378', all_names)},
+    {get_columns_error('j0378', all_names)},
+    {get_columns('j0395', all_names)},
+    {get_columns_error('j0395', all_names)},
+    {get_columns('j0410', all_names)},
+    {get_columns_error('j0410', all_names)},
+    {get_columns('j0430', all_names)},
+    {get_columns_error('j0430', all_names)},
+    {get_columns('j0515', all_names)},
+    {get_columns_error('j0515', all_names)},
+    {get_columns('j0660', all_names)},
+    {get_columns_error('j0660', all_names)},
+    {get_columns('j0861', all_names)},
+    {get_columns_error('j0861', all_names)}
+  FROM idr5.idr5_dual AS p
+  WHERE 1 = CONTAINS(POINT('ICRS', p.ra, p.dec), 
+    CIRCLE('ICRS', {ra}, {dec}, 0.0015))
+  ORDER BY dist ASC'''
 
   query_url = ('https://splus.cloud/tap/tap/sync/?request=doQuery&version=1.0'
                '&lang=ADQL&phase=run&format=application/json&query=' +
