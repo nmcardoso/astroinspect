@@ -7,7 +7,7 @@ import { useXTableConfig } from '../contexts/XTableConfigContext'
 import { Button } from 'react-bootstrap'
 import { BiPlus } from 'react-icons/bi'
 import { HiMinusSm } from 'react-icons/hi'
-import Help from '../common/Help'
+import Help from '../components/common/Help'
 
 const CustomImagingColumnGroup = ({ index }: { index: number }) => {
   const { tcState, tcDispatch } = useXTableConfig()

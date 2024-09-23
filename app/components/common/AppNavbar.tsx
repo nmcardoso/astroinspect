@@ -10,7 +10,7 @@ import Badge from 'react-bootstrap/Badge'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Link from 'next/link'
 import { BsGithub } from 'react-icons/bs'
-import { getBaseURL } from '../lib/utils'
+import { getBaseURL } from '../../lib/utils'
 
 
 const DOI = '10.5281/zenodo.7268504'

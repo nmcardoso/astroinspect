@@ -3,11 +3,11 @@ import Row from 'react-bootstrap/Row'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form'
-import Help from '../common/Help'
+import Help from '../components/common/Help'
 import { useXTableConfig } from '../contexts/XTableConfigContext'
 import { MouseEventHandler, useState } from 'react'
 import { HiCheck, HiX } from 'react-icons/hi'
-import Chip from '../common/Chip'
+import Chip from '../components/common/Chip'
 import TableHelper from '../lib/TableHelper'
 
 enum TableState {

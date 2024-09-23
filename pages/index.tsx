@@ -1,9 +1,9 @@
 import { Container } from 'react-bootstrap'
-import AppNavbar from '../app/common/AppNavbar'
-import LoadInitialState from '../app/xtable/LoadInitialState'
-import ConfigForm from '../app/xtable/ConfigForm'
+import AppNavbar from '../app/components/common/AppNavbar'
+import LoadInitialState from '../app/components/common/LoadInitialState'
+import ConfigForm from '../app/components/setup/ConfigForm'
 import { XTableConfigProvider } from '../app/contexts/XTableConfigContext'
-import XTableBody from '../app/xtable/_XTableBody'
+import XTableBody from '../app/components/table/_XTableBody'
 import { XTableDataProvider } from '../app/contexts/XTableDataContext'
 import Head from 'next/head'
 
