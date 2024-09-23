@@ -85,7 +85,7 @@ const CitationModal = ({ show, onHide }: any) => {
 }
 
 
-export default function AppNavbar({ title = '' }: any) {
+export default function AppNavbar() {
   const [showModal, setShowModal] = useState(false)
 
   return (
@@ -100,13 +100,13 @@ export default function AppNavbar({ title = '' }: any) {
                 width="30"
                 height="30"
                 className="d-inline-block align-top" />
-              <span className="ms-2">AstroTools</span>
+              <span className="ms-2 fw-bold">AstroInspect</span>
             </div>
           </Link>
         </Navbar.Brand>
 
         <div className="mx-auto">
-          <span className="fw-bold">{title}</span>
+          <span className="fw-bold"></span>
         </div>
 
         <div>
