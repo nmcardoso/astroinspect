@@ -5,6 +5,7 @@ import urllib.parse
 from datetime import datetime, timedelta
 from io import BytesIO
 
+import requests
 from flask import Flask, request, send_file
 from flask_cors import CORS, cross_origin
 from matplotlib.figure import Figure
@@ -52,6 +53,16 @@ def get_token():
 @app.get('/')
 def hello():
   return 'Hello, world'
+
+
+
+@app.get('/spec')
+@cross_origin
+def spec():
+  specobjid = request.args.get('id')
+  res = requests.get(f'https://skyserver.sdss.org/dr18/en/get/SpecById.ashx?id={specobjid}', stream=True)
+  return res.raw.read(), res.status_code, res.headers.items()
+
 
 
 @app.get('/plot')
