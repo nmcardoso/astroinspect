@@ -59,7 +59,7 @@ def hello():
 def plot():
   token = get_token()
   if token is None:
-    return 'Auth failed.'
+    return 'Auth failed.', 500
 
   obj_id = request.args.get('id', None)
   ra = request.args.get('ra')
@@ -224,12 +224,12 @@ def plot():
   resp = session.post(query_url, headers=headers)
   print('>>> Query duration:', str(datetime.now() - query_start_time))
   if resp.status_code != 200 or 'application/json' not in resp.headers['Content-Type']:
-    return 'Query Error'
+    return 'Query Error', 500
 
   data = resp.json()
 
   if len(data['data']) < 1:
-    return 'ID not found'
+    return 'Not found', 404
 
   data_map = {}
   for i in range(len(data['metadata'])):
