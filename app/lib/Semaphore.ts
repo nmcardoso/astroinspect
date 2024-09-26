@@ -60,6 +60,11 @@ class Semaphore {
 
     }
   }
+
+  clear() {
+    this.currentRequests = []
+    this.runningRequests = 0
+  }
 }
 
 
@@ -91,13 +96,13 @@ class SemaphorePool {
     return this.controller.signal
   }
 
-  clear() {
-    // this.controller.abort()
-    Emitter.emit('cancel', null)
-    for (const k in this.pool) {
-      // this.pool[k].forEach(e => {
-
-      // });
+  clear(id?: number | string) {
+    if (!!id) {
+      this.pool[id].clear()
+    } else {
+      for (const k in this.pool) {
+        this.pool[k].clear()
+      }
     }
   }
 }
