@@ -27,7 +27,6 @@ export default function NearbyRedshiftCell({ rowId }: { rowId: number }) {
 
   useEffect(() => {
     legacyService.getNearbyRedshift(ra, dec, 0).then((resp: any) => {
-      console.log(resp[0]?.name.slice(0, 3))
       setRedshifts(resp[0]?.name.slice(0, 3))
     })
   }, [ra, dec])
