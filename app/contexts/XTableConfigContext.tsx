@@ -1,11 +1,11 @@
 import { createContext, Dispatch, ReactElement, useContext, useReducer } from 'react'
 import localforage from 'localforage'
 
-interface IterableInterface {
+export interface IterableInterface {
   [key: string]: any | undefined
 }
 
-interface ITableConfig extends IterableInterface {
+export interface ITableConfig extends IterableInterface {
   type: string,
   file: File | null,
   url: string | null,
@@ -32,7 +32,7 @@ export interface ILuptonConfig extends IterableInterface {
   Q?: number
 }
 
-interface ISplusImaging extends IterableInterface {
+export interface ISplusImaging extends IterableInterface {
   enabled?: boolean,
   type?: string,
   pixelScale: number,
@@ -40,7 +40,7 @@ interface ISplusImaging extends IterableInterface {
   luptonConfig: ILuptonConfig
 }
 
-interface IClassification extends IterableInterface {
+export interface IClassification extends IterableInterface {
   enabled: boolean,
   type: string,
   classNames: string[],
@@ -50,45 +50,45 @@ interface IClassification extends IterableInterface {
   keyMap: { [key: string]: any }
 }
 
-interface ILegacyImaging extends IterableInterface {
+export interface ILegacyImaging extends IterableInterface {
   enabled: boolean,
   pixelScale: number,
   dataRelease: string,
 }
 
-interface ISdssSpectra extends IterableInterface {
+export interface ISdssSpectra extends IterableInterface {
   enabled: boolean
 }
 
-interface ISdssCatalog extends IterableInterface {
+export interface ISdssCatalog extends IterableInterface {
   selectedColumns: {
     table: string,
     column: string
   }[]
 }
 
-interface ISplusPhotoSpectra extends IterableInterface {
+export interface ISplusPhotoSpectra extends IterableInterface {
   enabled: boolean,
   selectedLines: string[]
 }
 
-interface INearbyRedshifts extends IterableInterface {
+export interface INearbyRedshifts extends IterableInterface {
   enabled: boolean,
 }
 
-interface IStampModal extends IterableInterface {
+export interface IStampModal extends IterableInterface {
   showRedshift: boolean,
   showAutoFluxRadius: boolean,
   showPetroFluxRadius: boolean,
 }
 
-interface ICustomImagingColumn extends IterableInterface {
+export interface ICustomImagingColumn extends IterableInterface {
   url: string,
   fileExtension: string,
   columnIndex: number,
 }
 
-interface ICustomImaging extends IterableInterface {
+export interface ICustomImaging extends IterableInterface {
   enabled: boolean,
   columns: ICustomImagingColumn[],
 }
