@@ -26,6 +26,7 @@ const classificationColDef: ColDef = {
   field: 'ai:class',
   flex: 1,
   headerName: 'class',
+  filter: true,
   cellRenderer: ClassCell
 }
 
@@ -71,6 +72,7 @@ const sdssCatalogColDefFactory = (table: string, col: string): ColDef => {
     field: `sdss:${table}.${col}`,
     flex: 1,
     headerName: col.toLowerCase(),
+    filter: true,
     cellRenderer: AsyncTextCell,
   }
 }
@@ -78,9 +80,9 @@ const sdssCatalogColDefFactory = (table: string, col: string): ColDef => {
 const userTableColDefFactory = (colName: string): ColDef => {
   return {
     field: `tab:${colName}`,
-    // field: colName,
     flex: 1,
     headerName: colName.toLowerCase(),
+    filter: true,
   }
 }
 
