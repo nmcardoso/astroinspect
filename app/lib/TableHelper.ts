@@ -1,11 +1,12 @@
-import Papa, { ParseResult } from 'papaparse'
-import { useXTableConfig, IState } from '@/contexts/XTableConfigContext'
-import ClassCell from '@/components/table/ClassCell'
-import { ColDef } from '@ag-grid-community/core'
-import imageCellFactory from '@/components/table/ImageCell'
-import { findIndex } from './utils'
-import { queuedState } from './states'
 import AsyncTextCell from '@/components/table/AsyncTextCell'
+import ClassCell from '@/components/table/ClassCell'
+import imageCellFactory from '@/components/table/ImageCell'
+import { IState } from '@/contexts/XTableConfigContext'
+import { ColDef } from '@ag-grid-community/core'
+import Papa, { ParseResult } from 'papaparse'
+import { queuedState } from './states'
+import { findIndex } from './utils'
+import TableReader from './io'
 
 
 interface ITableSummary {
@@ -90,20 +91,9 @@ const userTableColDefFactory = (colName: string): ColDef => {
 
 
 class TableHelper {
-  constructor() { }
-
-  load(file: any, handle: (results: ParseResult<any>) => void) {
-    if (file) {
-      Papa.parse(file, {
-        complete: handle,
-        skipEmptyLines: true,
-        header: true,
-        dynamicTyping: true,
-        transformHeader(header, index) {
-          return `tab:${header}`
-        },
-      })
-    }
+  async load(file: any) {
+    const reader = new TableReader(file)
+    return await reader.read()
   }
 
   getHeaderSummary(header: string[]) {
@@ -118,24 +108,14 @@ class TableHelper {
     return summary
   }
 
-  getTableSummary(file: File): Promise<ITableSummary | null> {
-    return new Promise<ITableSummary | null>((resolve: any, reject: any) => {
-      const handleParseComplete = (result: ParseResult<any>) => {
-        if (result.errors.length > 0) {
-          return reject(result.errors)
-        }
-
-        const data = result.data
-        const header = data[0]
-        const summary = this.getHeaderSummary(header)
-        resolve(summary)
-      }
-
-      Papa.parse(file, {
-        complete: handleParseComplete,
-        preview: 1
-      })
-    })
+  async getTableSummary(file: File) {
+    const reader = new TableReader(file)
+    const cols = await reader.getColumns()
+    if (!!cols) {
+      return this.getHeaderSummary(cols)
+    } else {
+      return undefined
+    }
   }
 
   getColDefs(tcState: IState): {colDef: ColDef[], initVal: any} {
