@@ -1,24 +1,17 @@
 import Form from 'react-bootstrap/Form'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
-import { useXTableData } from '@/contexts/XTableDataContext'
-import TableHelper from '@/lib/TableHelper'
+import { CustomCellRendererProps } from '@ag-grid-community/react'
 
-export default function ClassCell({ rowId }: { rowId: number }) {
+
+export default function ClassCell(params: CustomCellRendererProps) {
   const { tcState } = useXTableConfig()
-  const { tdState, tdDispatch } = useXTableData()
 
   return (
     <Form.Select
       defaultValue=""
-      value={tdState.data[rowId].classification}
+      value={params.value}
       onChange={e => {
-        tdDispatch({
-          type: 'setClass',
-          payload: {
-            class: e.target.value,
-            rowId
-          }
-        })
+        params.api.getRowNode(params.data._id)?.setDataValue('class', e.target.value)
       }}>
       <option value="">-</option>
       {tcState.classification.classNames.map(cls => (
