@@ -9,9 +9,9 @@ semaphore.create('sdss_cone_spec', 1)
 semaphore.create('sdss_sql', 2)
 semaphore.create('sdss_batch_query', 2)
 
-const CONE_SPEC_URL = 'https://skyserver.sdss.org/dr16/SkyServerWS/SpectroQuery/ConeSpectro'
-const SQL_URL = 'https://skyserver.sdss.org/dr16/SkyServerWS/SearchTools/SqlSearch'
-const CROSSID_SEARCH = 'https://skyserver.sdss.org/dr16/SkyServerWS/SearchTools/CrossIdSearch'
+const CONE_SPEC_URL = 'https://skyserver.sdss.org/dr18/SkyServerWS/SpectroQuery/ConeSpectro'
+const SQL_URL = 'https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch'
+const CROSSID_SEARCH = 'https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/CrossIdSearch'
 const CLIENT_STALE_TIME = timeConvert(10, 'day', 'ms')
 
 const queryClient = new QueryClient({
