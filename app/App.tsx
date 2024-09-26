@@ -6,10 +6,10 @@ import { XTableDataProvider } from '@/contexts/XTableDataContext'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Emitter from '@/lib/Emitter'
 import { FaArrowLeft } from "react-icons/fa";
-import DownloadTableButton from './DownloadTableButton'
+import DownloadTableButton from '@/components/common/DownloadTableButton'
 
 
-export default function AstroInspect() {
+export default function App() {
   const [currPanel, setCurrPanel] = useState('config')
 
   useEffect(() => {

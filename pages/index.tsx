@@ -1,7 +1,7 @@
 import LoadInitialState from '@/components/common/LoadInitialState'
 import { XTableConfigProvider } from '@/contexts/XTableConfigContext'
 import Head from 'next/head'
-import AstroInspect from '@/components/common/AstroInspect'
+import App from '@/App'
 
 export default function XTable() {
   return (
@@ -13,7 +13,7 @@ export default function XTable() {
       <XTableConfigProvider>
         <LoadInitialState />
 
-        <AstroInspect />
+        <App />
       </XTableConfigProvider>
     </>
   )
