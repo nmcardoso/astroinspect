@@ -1,4 +1,8 @@
 import Papa, { ParseResult } from 'papaparse'
+import { parquetRead, parquetMetadata } from 'hyparquet'
+import { compressors } from 'hyparquet-compressors'
+
+
 const readCsv = (file: File) => {
   if (file) {
     return new Promise((resolve: any, reject: any) => {
@@ -29,6 +33,19 @@ const getCsvColumns = (file: File) => {
       complete: handleParseComplete,
       preview: 1
     })
+  })
+}
+
+const readParquet = (file: File) => {
+  return new Promise<{}[]>((resolve: any, reject: any) => {
+    const wrapper = async () => {
+      await parquetRead({
+        file: await file.arrayBuffer(),
+        onComplete: (data: any) => resolve(data),
+        compressors: compressors,
+      })
+    }
+    wrapper().catch((error) => reject(error))
   })
 }
 
