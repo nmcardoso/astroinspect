@@ -86,13 +86,17 @@ const CitationModal = ({ show, onHide }: any) => {
 }
 
 
-export default function AppNavbar() {
+export default function AppNavbar({left}: {left: any}) {
   const [showModal, setShowModal] = useState(false)
 
   return (
     <Navbar bg="light" expand="lg" className="border-bottom">
       <Container>
-        <Navbar.Brand as="div">
+        <div>
+          {left}
+        </div>
+
+        <Navbar.Brand as="div" className="mx-auto">
           <Link href="/">
             <div className="d-flex align-items-center">
               <Image
@@ -105,10 +109,6 @@ export default function AppNavbar() {
             </div>
           </Link>
         </Navbar.Brand>
-
-        <div className="mx-auto">
-          <span className="fw-bold"></span>
-        </div>
 
         <div>
           <Button
