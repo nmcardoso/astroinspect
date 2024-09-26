@@ -11,6 +11,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Link from 'next/link'
 import { BsGithub } from 'react-icons/bs'
 import { getBaseURL } from '@/lib/utils'
+import { BsBlockquoteLeft } from "react-icons/bs"
 
 
 const DOI = '10.5281/zenodo.7268504'
@@ -122,8 +123,10 @@ export default function AppNavbar() {
           <Button
             size="sm"
             variant="outline-primary"
+            className="d-inline-flex align-items-center"
             onClick={() => setShowModal(true)}>
-            Cite this software
+            <BsBlockquoteLeft className="me-1" size={18} />
+            <span>Cite this software</span>
           </Button>
           <CitationModal
             show={showModal}
