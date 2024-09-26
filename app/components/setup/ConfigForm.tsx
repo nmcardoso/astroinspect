@@ -7,13 +7,15 @@ import SdssSpectraTab from './SdssSpectraTab'
 import LegacyImagingTab from './LegacyImagingTab'
 import SplusImagingTab from './SplusImagingTab'
 import FileInputTab from './FileInputTab'
-import { Button } from 'react-bootstrap'
+import { Button, Container } from 'react-bootstrap'
 import { MouseEventHandler } from 'react'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import Emitter from '@/lib/Emitter'
 import Spinner from 'react-bootstrap/Spinner'
 import SdssCatalogTab from './SdssCatalogTab'
 import CustomImagingTab from './CustomImagingTab'
+import { VscServerProcess } from "react-icons/vsc"
+import { TbTableOptions } from "react-icons/tb"
 
 
 export default function ConfigForm() {
@@ -24,83 +26,99 @@ export default function ConfigForm() {
   }
 
   return (
-    <>
-      <Tab.Container id="list-group-tabs-example" defaultActiveKey="#link0">
-        <Row>
-          <Col sm={3}>
-            <ListGroup>
-              <ListGroup.Item action href="#select-table">
-                Select Table
-              </ListGroup.Item>
-              <ListGroup.Item action href="#classification">
-                Classification
-              </ListGroup.Item>
-              {/* <ListGroup.Item action href="#link2">
-                S-PLUS Catalog
-              </ListGroup.Item> */}
-              <ListGroup.Item action href="#sdss">
-                SDSS Catalog
-              </ListGroup.Item>
-              <ListGroup.Item action href="#splus">
-                S-PLUS Imaging
-              </ListGroup.Item>
-              <ListGroup.Item action href="#legacy">
-                Legacy Imaging
-              </ListGroup.Item>
-              <ListGroup.Item action href="#custom-imaging">
-                Custom Imaging
-              </ListGroup.Item>
-              <ListGroup.Item action href="#spectra">
-                Spectra & PhotoSpectra
-              </ListGroup.Item>
-            </ListGroup>
-            <Button
-              className="mt-2 w-100 fw-bold"
-              variant="success"
-              onClick={handleLoadClick}
-              disabled={!tcState.table.file || tcState.table.processing}>
-              {tcState.table.processing ?
-                <>
-                  <Spinner
-                    as="span"
-                    size="sm"
-                    role="status"
-                    animation="border"
-                    variant="light" /> Loading
-                </> :
-                <>Load Table</>}
-            </Button>
-          </Col>
-          <Col sm={9}>
-            <Tab.Content>
-              <Tab.Pane eventKey="#select-table">
-                <FileInputTab />
-              </Tab.Pane>
-              <Tab.Pane eventKey="#classification">
-                <ClassTab />
-              </Tab.Pane>
-              {/* <Tab.Pane eventKey="#link2">
-                Nada
-              </Tab.Pane> */}
-              <Tab.Pane eventKey="#sdss">
-                <SdssCatalogTab />
-              </Tab.Pane>
-              <Tab.Pane eventKey="#splus">
-                <SplusImagingTab />
-              </Tab.Pane>
-              <Tab.Pane eventKey="#legacy">
-                <LegacyImagingTab />
-              </Tab.Pane>
-              <Tab.Pane eventKey="#custom-imaging">
-                <CustomImagingTab />
-              </Tab.Pane>
-              <Tab.Pane eventKey="#spectra">
-                <SdssSpectraTab />
-              </Tab.Pane>
-            </Tab.Content>
-          </Col>
-        </Row>
-      </Tab.Container>
-    </>
+    <Container className="mt-3 h-100">
+      <div style={{marginTop: '12%'}}>
+      <h3 className="text-center mb-2 d-flex align-items-center justify-content-center">
+        <TbTableOptions className="me-2" size={28} />
+        <span>Table Settings</span>
+      </h3>
+      <div className="border rounded rounded-3 p-4" style={{backgroundColor: '#fafafa'}}>
+        <Tab.Container id="list-group-tabs-example" defaultActiveKey="#select-table">
+          <Row>
+            <Col sm={3}>
+              <ListGroup>
+                <ListGroup.Item action href="#select-table">
+                  Select a table
+                </ListGroup.Item>
+                <ListGroup.Item action href="#classification">
+                  Classification
+                </ListGroup.Item>
+                {/* <ListGroup.Item action href="#link2">
+                  S-PLUS Catalog
+                </ListGroup.Item> */}
+                <ListGroup.Item action href="#sdss">
+                  SDSS catalog
+                </ListGroup.Item>
+                <ListGroup.Item action href="#splus">
+                  S-PLUS images
+                </ListGroup.Item>
+                <ListGroup.Item action href="#legacy">
+                  Legacy images
+                </ListGroup.Item>
+                <ListGroup.Item action href="#custom-images">
+                  Custom images
+                </ListGroup.Item>
+                <ListGroup.Item action href="#spectra">
+                  Spectra & photo-spectra
+                </ListGroup.Item>
+              </ListGroup>
+            </Col>
+            <Col sm={9}>
+              <Tab.Content>
+                <Tab.Pane eventKey="#select-table">
+                  <FileInputTab />
+                </Tab.Pane>
+                <Tab.Pane eventKey="#classification">
+                  <ClassTab />
+                </Tab.Pane>
+                {/* <Tab.Pane eventKey="#link2">
+                  Nada
+                </Tab.Pane> */}
+                <Tab.Pane eventKey="#sdss">
+                  <SdssCatalogTab />
+                </Tab.Pane>
+                <Tab.Pane eventKey="#splus">
+                  <SplusImagingTab />
+                </Tab.Pane>
+                <Tab.Pane eventKey="#legacy">
+                  <LegacyImagingTab />
+                </Tab.Pane>
+                <Tab.Pane eventKey="#custom-images">
+                  <CustomImagingTab />
+                </Tab.Pane>
+                <Tab.Pane eventKey="#spectra">
+                  <SdssSpectraTab />
+                </Tab.Pane>
+              </Tab.Content>
+            </Col>
+          </Row>
+          <Row>
+            <Col sm={3} className="mx-auto">
+              <Button
+                className="mt-3 w-100 fw-bold"
+                variant="success"
+                size="lg"
+                onClick={handleLoadClick}
+                disabled={!tcState.table.file || tcState.table.processing}>
+                {tcState.table.processing ?
+                  <>
+                    <Spinner
+                      as="span"
+                      size="sm"
+                      role="status"
+                      animation="border"
+                      variant="light" /> Loading
+                  </> :
+                  <>
+                    <VscServerProcess className="me-2" size={30} /> Load Table
+                  </>
+                }
+              </Button>
+            </Col>
+          </Row>
+        </Tab.Container>
+        </div>
+      </div>
+    </Container>
   )
 }
