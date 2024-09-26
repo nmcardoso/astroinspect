@@ -25,7 +25,12 @@ class TableHelper {
     if (file) {
       Papa.parse(file, {
         complete: handle,
-        skipEmptyLines: true
+        skipEmptyLines: true,
+        header: true,
+        dynamicTyping: true,
+        transformHeader(header, index) {
+          return `tab:${header}`
+        },
       })
     }
   }
