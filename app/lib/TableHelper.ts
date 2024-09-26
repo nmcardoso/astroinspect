@@ -33,34 +33,28 @@ const splusImagingColDef: ColDef = {
   field: 'img:splus',
   flex: 1,
   headerName: 'splus',
-  cellRenderer: imageCellFactory({zoomHeight: 650, zoomWidth: 650, modalSize: 'lg'}),
+  cellRenderer: imageCellFactory({ zoomHeight: 650, modalSize: 'lg' }),
 }
 
 const legacyImagingColDef: ColDef = {
   field: 'img:legacy',
   flex: 1,
   headerName: 'legacy',
-  cellRenderer: imageCellFactory({zoomHeight: 650, zoomWidth: 650, modalSize: 'lg'}),
+  cellRenderer: imageCellFactory({ zoomHeight: 650, modalSize: 'lg' }),
 }
 
 const sdssSpectraColDef: ColDef = {
   field: 'img:sdss_spec',
   flex: 1,
   headerName: 'spec',
-  cellRenderer: imageCellFactory({zoomHeight: 650, zoomWidth: 650, modalSize: 'lg'}),
+  cellRenderer: imageCellFactory({ zoomHeight: 620, modalSize: 'lg' }),
 }
 
 const splusPhotoSpectraColDef: ColDef = {
   field: 'img:splus_photospec',
   flex: 1,
   headerName: 'photo spec',
-  cellRenderer: imageCellFactory({zoomHeight: 625, modalSize: 'lg'}),
-}
-
-const nearbyRedshiftsColDef: ColDef = {
-  field: 'ai:nearby_redshifts',
-  flex: 1,
-  headerName: 'nearby z'
+  cellRenderer: imageCellFactory({ zoomHeight: 625, modalSize: 'lg' }),
 }
 
 const customImagingColDefFactory = (id: number): ColDef => {
@@ -68,7 +62,7 @@ const customImagingColDefFactory = (id: number): ColDef => {
     field: `img:custom_${id}`,
     flex: 1,
     headerName: `custom ${id}`,
-    cellRenderer: imageCellFactory({zoomHeight: 650, zoomWidth: 650, modalSize: 'lg'}),
+    cellRenderer: imageCellFactory({ zoomHeight: 650, modalSize: 'lg' }),
   }
 }
 
