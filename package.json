@@ -19,6 +19,8 @@
     "bootstrap": "^5.3.3",
     "eventemitter3": "^5.0.1",
     "fast-xml-parser": "^4.5.0",
+    "hyparquet": "^1.4.0",
+    "hyparquet-compressors": "^0.1.4",
     "json-bigint": "^1.0.0",
     "localforage": "^1.10.0",
     "lock": "^1.1.0",
