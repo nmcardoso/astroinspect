@@ -49,3 +49,10 @@ const readParquet = (file: File) => {
   })
 }
 
+const getParquetColumns = async (file: File) => {
+  const meta = parquetMetadata(await file.arrayBuffer())
+  return meta.schema.filter((e) => e.name !== 'schema').map((e) => e.name)
+}
+
+
+
