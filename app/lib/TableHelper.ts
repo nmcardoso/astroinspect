@@ -18,8 +18,8 @@ interface ITableSummary {
 
 const idColDef: ColDef = {
   field: 'ai:id',
-  maxWidth: 65,
-  headerName: '#'
+  maxWidth: 50,
+  headerName: '#',
 }
 
 const classificationColDef: ColDef = {
