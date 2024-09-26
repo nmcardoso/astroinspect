@@ -15,3 +15,20 @@ const readCsv = (file: File) => {
     })
   }
 }
+
+const getCsvColumns = (file: File) => {
+  return new Promise<string[] | undefined>((resolve: any, reject: any) => {
+    const handleParseComplete = (result: ParseResult<any>) => {
+      if (result.errors.length > 0) {
+        return reject(result.errors)
+      }
+      resolve(result.data?.[0])
+    }
+
+    Papa.parse(file, {
+      complete: handleParseComplete,
+      preview: 1
+    })
+  })
+}
+
