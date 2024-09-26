@@ -62,7 +62,7 @@ const customImagingColDefFactory = (id: number): ColDef => {
   return {
     field: `img:custom_${id}`,
     flex: 1,
-    headerName: `custom ${id}`,
+    headerName: `custom ${id + 1}`,
     cellRenderer: imageCellFactory({ zoomHeight: 650, modalSize: 'lg' }),
   }
 }
