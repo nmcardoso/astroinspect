@@ -267,7 +267,7 @@ export default function ClassTab() {
           <div className="d-flex align-items-center">
             <Form.Check
               type="switch"
-              label="Show Classification Column"
+              label="Show classification column"
               checked={cls.enabled}
               onChange={(e) => tcDispatch({
                 type: 'setClassification',

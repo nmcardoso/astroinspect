@@ -166,10 +166,10 @@ function TrilogyParams() {
             <Col>
               <InputGroup className="mb-3">
                 <InputGroup.Text id="pixelScale">
-                  Pixel Scale
+                  Pixel scale
                 </InputGroup.Text>
                 <Form.Control
-                  aria-label="Pixel Scale"
+                  aria-label="Pixel scale"
                   aria-describedby="pixelScale"
                   value={tcState.splusImaging.pixelScale}
                   onChange={(e) => tcDispatch({
@@ -329,7 +329,7 @@ export default function SplusImagingTab() {
         <Col sm="11" className="d-flex align-items-center">
           <Form.Check
             type="switch"
-            label="Show S-PLUS RGB Images Column"
+            label="Show S-PLUS RGB images column"
             checked={splusImaging.enabled}
             onChange={(e) => tcDispatch({
               type: 'setSplusImaging',

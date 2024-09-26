@@ -35,7 +35,7 @@ const CustomImagingColumnGroup = ({ index }: { index: number }) => {
               This value must starts with <code>http://</code>{" "}
               or <code>https://</code><br />
               The final url for each row is:<br />
-              <kbd>Base URL</kbd> + <kbd>RI Column</kbd> + <kbd>suffix</kbd>
+              <kbd>Base URL</kbd> + <kbd>RI column</kbd> + <kbd>suffix</kbd>
             </Help>
           </div>
         </Col>
@@ -56,7 +56,7 @@ const CustomImagingColumnGroup = ({ index }: { index: number }) => {
               The <b>url suffix</b> is the last (static) part of the URL and {" "}
               is used to specify the file extension, for example.<br />
               The final url for each row is:<br />
-              <kbd>Base URL</kbd> + <kbd>RI Column</kbd> + <kbd>suffix</kbd>
+              <kbd>Base URL</kbd> + <kbd>RI column</kbd> + <kbd>suffix</kbd>
             </Help>
           </div>
         </Col>
@@ -66,7 +66,7 @@ const CustomImagingColumnGroup = ({ index }: { index: number }) => {
         <Col sm={8}>
           <div className="d-flex align-items-center">
             <InputGroup className="" size="sm">
-              <InputGroup.Text>RI Column</InputGroup.Text>
+              <InputGroup.Text>RI column</InputGroup.Text>
               <Form.Select
                 defaultValue={tcState.customImaging.columns?.[index]?.columnIndex || -1}
                 onChange={e => tcDispatch({
@@ -102,7 +102,7 @@ const CustomImagingColumnGroup = ({ index }: { index: number }) => {
               payload: { index, prevColumns: tcState.customImaging.columns }
             })}
           >
-            <HiMinusSm /> Remove Column
+            <HiMinusSm /> Remove column
           </Button>
         </Col>
       </Row>
@@ -123,7 +123,7 @@ export default function CustomImagingTab() {
         <Col sm="11" className="d-flex align-items-center">
           <Form.Check
             type="switch"
-            label="Show Custom Images Column"
+            label="Show custom images columns"
             checked={custom.enabled}
             onChange={e => tcDispatch({
               type: 'enableCustomImaging',
@@ -149,7 +149,7 @@ export default function CustomImagingTab() {
               payload: { prevColumns: tcState.customImaging.columns }
             })}
           >
-            <BiPlus size={16} /> Add Custom Imaging Column
+            <BiPlus size={16} /> Add custom image column
           </Button>
         </Col>
       </Row>

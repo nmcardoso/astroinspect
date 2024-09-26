@@ -217,7 +217,7 @@ export default function SdssCatalogTab() {
       <Button
         size="sm"
         onClick={() => setShowModal(true)}>
-        <BiPlus size={16} /> Add SDSS Columns
+        <BiPlus size={16} /> Add SDSS columns
       </Button>
 
       <SdssModal

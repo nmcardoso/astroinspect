@@ -21,22 +21,25 @@ enum TableState {
 
 function LocalStorageControl({ onChange }: { onChange: (e: any) => void }) {
   return (
-    <Form.Group as={Row} className="mb-2" controlId="tableFile">
-      <Form.Label column sm="1">
-        Table
-      </Form.Label>
-      <Col sm={6}>
-        <div className="d-flex align-items-center">
-          <Form.Control
-            type="file"
-            onChange={onChange} />
-          <Help title="Local Upload" className="ms-1">
-            Loads a CSV table available in local computer. The only required
-            columns are <code>RA</code> and <code>DEC</code> in degrees.
-          </Help>
-        </div>
-      </Col>
-    </Form.Group>
+    <>
+      <p>Select a table from computer to open</p>
+      <Form.Group as={Row} className="mb-2" controlId="tableFile">
+        <Form.Label column sm="1">
+          Table
+        </Form.Label>
+        <Col sm={6}>
+          <div className="d-flex align-items-center">
+            <Form.Control
+              type="file"
+              onChange={onChange} />
+            <Help title="Local Upload" className="ms-1">
+              Loads a CSV table available in local computer. The only required
+              columns are <code>RA</code> and <code>DEC</code> in degrees.
+            </Help>
+          </div>
+        </Col>
+      </Form.Group>
+    </>
   )
 }
 
@@ -235,7 +238,7 @@ export default function FileInputTab() {
 
       {table.selectedColumnsId.length > 0 && (
         <div>
-          Selected Columns: {table.selectedColumnsId.map(columnId => (
+          <span className="fw-bold">Selected columns:</span> {table.selectedColumnsId.map(columnId => (
             <Chip
               value={columnId}
               key={`sourceColIdx_${columnId}`}

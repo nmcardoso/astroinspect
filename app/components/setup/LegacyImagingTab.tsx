@@ -18,7 +18,7 @@ export default function LegacyImagingTab() {
         <Col sm="11" className="d-flex align-items-center">
           <Form.Check
             type="switch"
-            label="Show Legacy RGB Images Column"
+            label="Show Legacy Survey RGB images column"
             checked={legacy.enabled}
             onChange={e => tcDispatch({
               type: 'setLegacyImaging',

@@ -34,12 +34,12 @@ export default function SdssSpectraTab() {
     <>
       <Form.Group as={Row} className="mb-2" controlId="sloanSpecCheck">
         <Form.Label column sm={3}>
-          SDSS Spectra
+          SDSS spectra
         </Form.Label>
         <Col sm={9} className="d-flex align-items-center">
           <Form.Check
             type="switch"
-            label="Show SDSS Spectra Column"
+            label="Show SDSS spectra column"
             checked={sdss.enabled}
             onChange={e => tcDispatch({
               type: 'setSdssImaging',
@@ -72,12 +72,12 @@ export default function SdssSpectraTab() {
 
       <Form.Group as={Row} className="mb-2" controlId="splus-photospec-check">
         <Form.Label column sm={3}>
-          S-PLUS PhotoSpectra
+          S-PLUS photo-spectra
         </Form.Label>
         <Col sm={9} className="d-flex align-items-center">
           <Form.Check
             type="switch"
-            label="Show S-PLUS PhotoSpectra Column"
+            label="Show S-PLUS photo-spectra column"
             checked={tcState.splusPhotoSpectra.enabled}
             onChange={() => tcDispatch({
               type: 'setSplusPhotoSpectra',
@@ -89,7 +89,7 @@ export default function SdssSpectraTab() {
 
       <Form.Group as={Row} className="mb-2" controlId="splus-photospec-check">
         <Form.Label column sm={3}>
-          Selected Lines
+          Selected lines
         </Form.Label>
         <Col sm={9} className="d-flex align-items-center">
           {splusLines.map(line => (
