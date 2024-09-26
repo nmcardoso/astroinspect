@@ -135,9 +135,9 @@ export default class SdssService {
     Promise<string | null | undefined> {
     return semaphore.enqueue('sdss_cone_spec', async () => {
       try {
-        const resp = await queryClient.fetchQuery(
-          ['sdss-service-specid', ra, dec],
-          () => axios.get(CONE_SPEC_URL, {
+        const resp = await queryClient.fetchQuery({
+          queryKey: ['sdss-service-specid', ra, dec],
+          queryFn: () => axios.get(CONE_SPEC_URL, {
             params: {
               ra,
               dec,
@@ -191,10 +191,10 @@ export default class SdssService {
     }
     console.log(sql)
     const url = `${SQL_URL}?cmd=${encodeURIComponent(sql)}&format=json`
-    const resp = await queryClient.fetchQuery(
-      ['sdss-service-columns', table],
-      () => axios.get(url)
-    )
+    const resp = await queryClient.fetchQuery({
+      queryKey: ['sdss-service-columns', table],
+      queryFn: () => axios.get(url)
+    })
     return resp.data?.[0]?.Rows
   }
 
@@ -209,10 +209,10 @@ export default class SdssService {
     return semaphore.enqueue('sdss_batch_query', async () => {
       const strategy = SDSS_TABLES[table].searchStrategy
       const query = strategy.getCrossIdQuery(table, columns)
-      const r = await queryClient.fetchQuery(
-        ['sdss-service-batchQuery', table, ...columns,
-          batchId, sourceTableName, sourceTableLastModified],
-        () => axios.get(CROSSID_SEARCH, {
+      const r = await queryClient.fetchQuery({
+        queryKey: ['sdss-service-batchQuery', table, ...columns,
+          ...batchId, sourceTableName, sourceTableLastModified],
+        queryFn: () => axios.get(CROSSID_SEARCH, {
           params: {
             searchtool: 'CrossID',
             searchType: strategy.objType,
