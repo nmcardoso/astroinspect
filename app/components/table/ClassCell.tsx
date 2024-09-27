@@ -10,7 +10,8 @@ export default function ClassCell(params: CustomCellRendererProps) {
     <Form.Select
       value={params.value}
       onChange={e => {
-        params.api.getRowNode(params.data._id)?.setDataValue('class', e.target.value)
+        params.api.getRowNode(params.data['ai:id'])?.setDataValue('ai:class', e.target.value)
+        // console.log(params.api.getRowNode(params.data._id).data)
       }}>
       <option value="">-</option>
       {tcState.classification.classNames.map(cls => (
