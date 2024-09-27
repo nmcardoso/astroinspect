@@ -47,8 +47,10 @@ function LocalStorageControl({ onChange }: { onChange: (e: any) => void }) {
               onChange={onChange}
               ref={inputRef} />
             <Help title="Local Upload" className="ms-1">
-              Loads a CSV table available in local computer. The only required
-              columns are <code>RA</code> and <code>DEC</code> in degrees.
+              Load a table available in local computer. The only required
+              columns are <code>RA</code> and <code>DEC</code> in degrees.<br />
+              <u>Available formars</u>: <code>CSV</code>, <code>TSV</code>, <code>DAT</code>, 
+              &nbsp;<code>PARQUET</code>
             </Help>
           </div>
         </Col>
