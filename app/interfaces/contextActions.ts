@@ -3,6 +3,8 @@ export enum ContextActions {
 
   USER_FILE_INPUT,
 
+  GRID_UPDATE,
+
   CLASSIFICATION_CONFIG,
 
   SPLUS_TRILOGY_CONFIG,

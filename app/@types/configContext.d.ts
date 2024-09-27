@@ -13,6 +13,14 @@ interface ITableConfig extends IterableInterface {
   processing: boolean,
 }
 
+interface IGrid extends IterableInterface {
+  data?: any,
+  colDef?: any,
+  api?: any,
+  isLoaded: boolean,
+  shouldLoad: boolean,
+}
+
 interface ITrilogyConfig extends IterableInterface {
   R?: string[],
   G?: string[],
@@ -86,18 +94,13 @@ interface ICustomImaging extends IterableInterface {
   columns: ICustomImagingColumn[],
 }
 
+type CurrentViewType = 'settings' | 'grid'
+
 interface IState {
   schemaVersion: number,
   table: ITableConfig,
-  classification: IClassification,
-  splusCatalog: {},
-  sdssCatalog: ISdssCatalog,
-  splusImaging: ISplusImaging,
-  legacyImaging: ILegacyImaging,
-  sdssSpectra: ISdssSpectra,
-  splusPhotoSpectra: ISplusPhotoSpectra,
-  stampModal: IStampModal,
-  customImaging: ICustomImaging,
+  grid: IGrid,
+  currentView: CurrentViewType,
 }
 
 
@@ -108,7 +111,7 @@ interface IAction<P> {
 
 type PayloadType = IState | ITrilogyConfig | ISplusImaging | ILuptonConfig
   | ITableConfig | IClassification | ILegacyImaging | ISdssSpectra
-  | ISdssCatalog | ISplusPhotoSpectra;
+  | ISdssCatalog | ISplusPhotoSpectra | IGrid
 
 
 interface IContext {

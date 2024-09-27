@@ -2,6 +2,7 @@ import { AiOutlineCloudDownload } from 'react-icons/ai'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import { useEffect, useState } from 'react'
+import { useXTableConfig } from '@/contexts/XTableConfigContext'
 
 
 const CitationModal = ({ show, onHide }: any) => {
@@ -35,11 +36,13 @@ const CitationModal = ({ show, onHide }: any) => {
 
 
 export default function DownloadTableButton() {
+  const { tcState } = useXTableConfig()
+
   return (
     <Button 
       variant="outline-primary" 
       className="d-inline-flex align-items-center"
-      onClick={() => {}}>
+      onClick={() => {console.log(tcState.grid.data)}}>
       <AiOutlineCloudDownload size={19} className="me-1" />
       <span>Download</span>
     </Button>

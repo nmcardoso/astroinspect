@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
+import { ContextActions } from '@/interfaces/contextActions'
 import { semaphore } from '@/lib/Semaphore'
 import { loadErrorState, loadingState, queuedState } from '@/lib/states'
 import TableHelper from '@/lib/TableHelper'
@@ -16,7 +17,7 @@ import "ag-grid-community/styles/ag-grid.css"
 import "ag-grid-community/styles/ag-theme-quartz.css"
 import { AgGridReact } from 'ag-grid-react'
 import axios from 'axios'
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Container } from 'react-bootstrap'
 
 
@@ -179,18 +180,27 @@ const downloadSdssCat = async ({
 
 
 export default function AIGrid() {
-  const { tcState } = useXTableConfig()
-  const [rowData, setRowData] = useState<any>([])
-  const [colDefs, setColDefs] = useState<ColDef[]>([])
+  const { tcState, tcDispatch } = useXTableConfig()
 
   const onGridReady = useCallback((event: GridReadyEvent) => {
     if (tcState.table.file) {
       TableHelper.load(tcState.table.file).then((result) => {
-        console.log(result)
-        const { colDef, initVal } = TableHelper.getColDefs(tcState)
-        const data = result?.map((e, i, _) => ({ ...e, ...initVal, 'ai:id': String(i + 1) }))
-        setRowData(data)
-        setColDefs(colDef)
+        console.log(tcState.grid)
+        if (!tcState.grid.isLoaded || tcState.grid.shouldLoad) {  
+          const { colDef, initVal } = TableHelper.getColDefs(tcState)
+
+          const data = result?.map((e, i, _) => ({ ...e, ...initVal, 'ai:id': String(i + 1) }))
+          
+          tcDispatch({
+            type: ContextActions.GRID_UPDATE,
+            payload: {
+              data: data,
+              colDef: colDef,
+              isLoaded: true,
+              shouldLoad: false,
+            }
+          })
+        }
       })
     }
   }, [tcState])
@@ -325,16 +335,16 @@ export default function AIGrid() {
 
 
   const gridRef = useRef<AgGridReact>(null)
-  // useEffect(() => {
-  //   if (!!gridRef.current) {
-  //     tcDispatch({
-  //       type: 'gridRef',
-  //       payload: {
-  //         gridRef: gridRef.current
-  //       }
-  //     })
-  //   }
-  // }, [tcDispatch, gridRef])
+  useEffect(() => {
+    if (!!gridRef.current) {
+      tcDispatch({
+        type: ContextActions.GRID_UPDATE,
+        payload: {
+          api: gridRef.current.api
+        }
+      })
+    }
+  }, [tcDispatch, gridRef])
 
 
   const paginationPageSizeSelector = useMemo<number[] | boolean>(() => {
@@ -349,12 +359,11 @@ export default function AIGrid() {
       <div
         className="ag-theme-quartz"
         style={{ width: '100%', height: '100%', ...style }}>
-        {colDefs && (
           <AgGridReact
             gridOptions={{ rowHeight: 120 }}
             ref={gridRef}
-            rowData={rowData}
-            columnDefs={colDefs}
+            rowData={tcState.grid.data || []}
+            columnDefs={tcState.grid.colDef || []}
             getRowId={getRowId}
             style={{ height: '100%' }}
             pagination={true}
@@ -365,7 +374,6 @@ export default function AIGrid() {
             onSortChanged={onChange}
             onFilterChanged={onChange}
           />
-        )}
       </div>
     </Container>
   )

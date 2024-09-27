@@ -17,6 +17,13 @@ const getInitialState = (): IState => ({
     decIndex: null,
     processing: false,
   },
+  grid: {
+    data: undefined,
+    colDef: undefined,
+    api: undefined,
+    isLoaded: false,
+    shouldLoad: true,
+  },
   currentView: 'settings',
 })
 const initialState = getInitialState()
@@ -24,7 +31,12 @@ const initialState = getInitialState()
 
 
 const persistStateAsync = (state: IState) => {
-  const s = { ...state, table: getInitialState().table }
+  const s = { 
+    ...state, 
+    table: getInitialState().table, 
+    grid: getInitialState().grid,
+    currentView: getInitialState().currentView,
+  }
   localforage.setItem('tableConfigState', s, (err, value) => {
     if (err) console.error(err)
   })
@@ -79,8 +91,8 @@ const setSplusPhotoSpectra = (state: IState, action: IAction<ISplusPhotoSpectra>
   return setAttributes(state, action, (s) => s.splusPhotoSpectra)
 }
 
-const setStampModal = (state: IState, action: IAction<IStampModal>) => {
-  return setAttributes(state, action, (s) => s.stampModal)
+const updateGridValues = (state: IState, action: IAction<IGrid>) => {
+  return setAttributes(state, action, (s) => s.grid)
 }
 
 const addCustomImaging = (state: IState, action: IAction<{ prevColumns: ICustomImagingColumn[] }>) => {
@@ -133,6 +145,7 @@ const reducerMap = {
   [ContextActions.CUSTOM_IMAGE_UPDATE]: updateCustomImaging,
   [ContextActions.CUSTOM_IMAGE_REMOVE]: removeCustomImaging,
   [ContextActions.CUSTOM_IMAGE_ENABLE]: enableCustomImaging,
+  [ContextActions.GRID_UPDATE]: updateGridValues,
   [ContextActions.CURRENT_VIEW_CHANGE]: changeCurrentView,
 }
 
