@@ -1,25 +1,41 @@
 import { Placeholder, Spinner } from 'react-bootstrap'
 import { useXTableData } from '@/contexts/XTableDataContext'
 import TableHelper from '@/lib/TableHelper'
+import { CustomCellRendererProps } from 'ag-grid-react'
+import { MdErrorOutline, MdDownload } from "react-icons/md"
+import { IoMdTime } from "react-icons/io"
+import { useMemo } from 'react'
+import { loadErrorState, loadingState, queuedState } from '@/lib/states'
 
-export default function AsyncTextCell({ rowId, colId }:
-  { rowId: number, colId: string }) {
-  const { tdState } = useXTableData()
-  const content = TableHelper.getCellValue(rowId, colId, tdState)
+
+const QueuedPlaceholder = () =>
+  <span className="text-dark"><IoMdTime size={15} /> Queued</span>
+
+const LoadingPlaceholder = () =>
+  <span className="text-primary"><MdDownload size={15} /> Downloading</span>
+
+const ErrorPlaceholder = () =>
+  <span className="text-danger"><MdErrorOutline size={15} /> Server Error</span>
+
+
+
+export default function AsyncTextCell(params: CustomCellRendererProps) {
+  const AsyncText = useMemo(() => {
+    if (params.value === queuedState) {
+      return QueuedPlaceholder
+    } else if (params.value === loadingState) {
+      return LoadingPlaceholder
+    } else if (params.value === loadErrorState) {
+      return ErrorPlaceholder
+    } else {
+      const Text = () => <span>{params.value}</span>
+      return Text
+    }
+  }, [params.value])
+
+  
   return (
-    <>
-      {content === undefined ? (
-        <Spinner
-          as="span"
-          size="sm"
-          role="status"
-          animation="border"
-          variant="secondary" />
-      ) : (content === null ? (
-        <>-</>
-      ) : (
-        <>{content}</>
-      ))}
-    </>
+    <AsyncText />
+    // <span>{params.value}</span>
   )
 }
