@@ -22,7 +22,10 @@ export default function ConfigForm() {
   const { tcState, tcDispatch } = useXTableConfig()
 
   const handleLoadClick: MouseEventHandler<HTMLElement> = (e) => {
-    Emitter.emit('load_table', true)
+    tcDispatch({
+      type: ContextActions.CURRENT_VIEW_CHANGE,
+      payload: 'grid',
+    })
   }
 
   return (

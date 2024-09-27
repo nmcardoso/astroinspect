@@ -17,67 +17,7 @@ const getInitialState = (): IState => ({
     decIndex: null,
     processing: false,
   },
-  classification: {
-    enabled: false,
-    type: 'categorical',
-    classNames: [],
-    positiveClass: '',
-    negativeClass: '',
-    filterUnclassified: true,
-    keyMap: {}
-  },
-  splusCatalog: {
-
-  },
-  sdssCatalog: {
-    selectedColumns: []
-  },
-  splusImaging: {
-    enabled: true,
-    type: 'trilogy',
-    pixelScale: 0.4,
-    trilogyConfig: {
-      R: ['R', 'I', 'F861', 'Z'],
-      G: ['G', 'F515', 'F660'],
-      B: ['U', 'F378', 'F395', 'F410', 'F430'],
-      noise: 0.15,
-      Q: 0.2
-    },
-    luptonConfig: {
-      R: 'I',
-      G: 'R',
-      B: 'G',
-      stretch: 1.4,
-      Q: 6.2
-    }
-  },
-  legacyImaging: {
-    enabled: true,
-    pixelScale: 0.4,
-    dataRelease: '10'
-  },
-  sdssSpectra: {
-    enabled: true
-  },
-  splusPhotoSpectra: {
-    enabled: true,
-    selectedLines: ['iso', 'aper6']
-  },
-  stampModal: {
-    showAutoFluxRadius: false,
-    showPetroFluxRadius: false,
-    showRedshift: false
-  },
-  customImaging: {
-    enabled: false,
-    columns: [
-      {
-        url: '',
-        fileExtension: '',
-        columnIndex: -1,
-      }
-    ]
-  }
+  currentView: 'settings',
 })
 const initialState = getInitialState()
 
@@ -169,8 +109,11 @@ const removeCustomImaging = (state: IState, action: IAction<{ index: number, pre
 }
 
 const enableCustomImaging = (state: IState, action: IAction<{ enabled: boolean }>) => {
-  return setAttributes(state, action, (s) => s.customImaging)
-}
+const changeCurrentView = (state: IState, action: IAction<CurrentViewType>) => {
+  const s = { ...state }
+  s.currentView = action.payload
+  return s
+} 
 
 
 
@@ -190,6 +133,7 @@ const reducerMap = {
   [ContextActions.CUSTOM_IMAGE_UPDATE]: updateCustomImaging,
   [ContextActions.CUSTOM_IMAGE_REMOVE]: removeCustomImaging,
   [ContextActions.CUSTOM_IMAGE_ENABLE]: enableCustomImaging,
+  [ContextActions.CURRENT_VIEW_CHANGE]: changeCurrentView,
 }
 
 

@@ -6,39 +6,17 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import Emitter from '@/lib/Emitter'
 import { FaArrowLeft } from "react-icons/fa";
 import DownloadTableButton from '@/components/appbar/DownloadTableButton'
+import { useXTableConfig } from './contexts/XTableConfigContext'
 
 
 export default function App() {
-  const [currPanel, setCurrPanel] = useState('config')
-
-  useEffect(() => {
-    Emitter.on('load_table', () => {
-      setCurrPanel('table')
-    })
-
-    Emitter.on('back', () => {
-      setCurrPanel('config')
-    })
-  })
-
-  const BackButton = useCallback(() => {
-    return (
-      <>
-        <Button onClick={() => setCurrPanel('config')} className="d-inline-flex align-items-center me-2">
-          <FaArrowLeft size={14} className="me-2" />
-          <span>Back</span>
-        </Button>
-        <DownloadTableButton />
-      </>
-    )
-  }, [])
-
+  const { tcState} = useXTableConfig()
   return (
     <>
       <div className="d-flex flex-column h-100">
-        <Appbar left={currPanel == 'table' ? <BackButton /> : ''} />
+        <Appbar />
         <div className="flex-grow-1">
-          {currPanel == 'config' ? <ConfigForm /> : <AIGrid />}
+          {tcState.currentView == 'settings' ? <ConfigForm /> : <AIGrid />}
         </div>
       </div>
     </>
