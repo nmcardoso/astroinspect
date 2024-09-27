@@ -9,8 +9,8 @@ const splusLines = ['iso', 'aper3', 'aper6', 'auto', 'petro', 'pstotal']
 
 export default function SdssSpectraTab() {
   const { tcState, tcDispatch } = useXTableConfig()
-  const sdss = tcState.sdssSpectra
-  const selectedLines = tcState.splusPhotoSpectra.selectedLines
+  const sdss = tcState.cols.sdssSpectra
+  const selectedLines = tcState.cols.splusPhotoSpectra.selectedLines
 
   const handleLineToggle = (line: string, selectedLines: string[]) => {
     const checked = selectedLines.includes(line)
@@ -60,10 +60,10 @@ export default function SdssSpectraTab() {
           <Form.Check
             type="switch"
             label="Show S-PLUS photo-spectra column"
-            checked={tcState.splusPhotoSpectra.enabled}
+            checked={tcState.cols.splusPhotoSpectra.enabled}
             onChange={() => tcDispatch({
               type: ContextActions.SPLUS_PHOTO_SPECTRA,
-              payload: { enabled: !tcState.splusPhotoSpectra.enabled }
+              payload: { enabled: !tcState.cols.splusPhotoSpectra.enabled }
             })}
           />
         </Col>

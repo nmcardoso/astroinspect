@@ -24,7 +24,7 @@ const SdssModal = ({ show, onHide }: { show: boolean, onHide: any }) => {
   const [activeColumn, setActiveColumn] = useState('')
   const [columns, setColumns] = useState<SdssColumnDesc[] | undefined>([])
   const [loading, setLoading] = useState(true)
-  const selectedColumns = tcState.sdssCatalog.selectedColumns
+  const selectedColumns = tcState.cols.sdssCatalog.selectedColumns
 
   useEffect(() => {
     service.getColumns(activeTable).then(r => {
@@ -179,7 +179,7 @@ const SdssModal = ({ show, onHide }: { show: boolean, onHide: any }) => {
 export default function SdssCatalogTab() {
   const { tcState, tcDispatch } = useXTableConfig()
   const [showModal, setShowModal] = useState(false)
-  const selectedColumns = tcState.sdssCatalog.selectedColumns
+  const selectedColumns = tcState.cols.sdssCatalog.selectedColumns
 
   const selectedTables = useMemo(() => {
     return uniq(selectedColumns.map(col => col.table))

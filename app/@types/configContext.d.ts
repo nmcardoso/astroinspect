@@ -95,11 +95,20 @@ interface IState {
   table: ITableConfig,
   grid: IGrid,
   currentView: CurrentViewType,
+  cols: {
+    classification: IClassification,
+    sdssCatalog: ISdssCatalog,
+    splusImaging: ISplusImaging,
+    legacyImaging: ILegacyImaging,
+    sdssSpectra: ISdssSpectra,
+    splusPhotoSpectra: ISplusPhotoSpectra,
+    customImaging: ICustomImaging,
+  }
 }
 
 
 interface IAction<P> {
-  type: ContextActions,
+  type: number,
   payload: P
 }
 

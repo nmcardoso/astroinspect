@@ -123,7 +123,7 @@ class TableHelper {
     const initVal: any = {}
 
     // Classification
-    if (tcState.classification.enabled) {
+    if (tcState.cols.classification.enabled) {
       defs.push(classificationColDef)
       initVal['ai:class'] = undefined
     }
@@ -137,40 +137,40 @@ class TableHelper {
     }
 
     // SDSS Catalog
-    if (!!tcState.sdssCatalog.selectedColumns) {
-      for (const col of tcState.sdssCatalog.selectedColumns) {
+    if (!!tcState.cols.sdssCatalog.selectedColumns) {
+      for (const col of tcState.cols.sdssCatalog.selectedColumns) {
         defs.push(sdssCatalogColDefFactory(col.table, col.column))
         initVal[`sdss:${col.table}_${col.column}`] = queuedState
       }
     }
 
     // SDSS Spectra
-    if (tcState.sdssSpectra.enabled) {
+    if (tcState.cols.sdssSpectra.enabled) {
       defs.push(sdssSpectraColDef)
       initVal['img:sdss_spec'] = queuedState
     }
 
     // S-PLUS Photo Spectra
-    if (tcState.splusPhotoSpectra.enabled) {
+    if (tcState.cols.splusPhotoSpectra.enabled) {
       defs.push(splusPhotoSpectraColDef)
       initVal['img:splus_photospec'] = queuedState
     }
 
     // Legacy Stamp
-    if (tcState.legacyImaging.enabled) {
+    if (tcState.cols.legacyImaging.enabled) {
       defs.push(legacyImagingColDef)
       initVal['img:legacy'] = queuedState
     }
 
     // S-PLUS Stamp
-    if (tcState.splusImaging.enabled) {
+    if (tcState.cols.splusImaging.enabled) {
       defs.push(splusImagingColDef)
       initVal['img:splus'] = queuedState
     }
 
     // Custom Imaging
-    if (tcState.customImaging.enabled) {
-      tcState.customImaging.columns.forEach((col, idx, _) => {
+    if (tcState.cols.customImaging.enabled) {
+      tcState.cols.customImaging.columns.forEach((col, idx, _) => {
         defs.push(customImagingColDefFactory(idx))
         initVal[`img:custom_${idx}`] = queuedState
       })

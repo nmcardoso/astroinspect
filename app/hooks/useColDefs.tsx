@@ -86,7 +86,7 @@ export function useColDefs() {
     const defs: ColDef[] = [idColDef]
     
     // Classification
-    if (tcState.classification.enabled) {
+    if (tcState.cols.classification.enabled) {
       defs.push(classificationColDef)
     }
 
@@ -99,35 +99,35 @@ export function useColDefs() {
     }
 
     // SDSS Catalog
-    if (!!tcState.sdssCatalog.selectedColumns) {
-      for (const col of tcState.sdssCatalog.selectedColumns) {
+    if (!!tcState.cols.sdssCatalog.selectedColumns) {
+      for (const col of tcState.cols.sdssCatalog.selectedColumns) {
         defs.push(sdssCatalogColDefFactory(col.table, col.column))
       }
     }
 
     // SDSS Spectra
-    if (tcState.sdssSpectra.enabled) {
+    if (tcState.cols.sdssSpectra.enabled) {
       defs.push(sdssSpectraColDef)
     }
 
     // S-PLUS Photo Spectra
-    if (tcState.splusPhotoSpectra.enabled) {
+    if (tcState.cols.splusPhotoSpectra.enabled) {
       defs.push(splusPhotoSpectraColDef)
     }
 
     // Legacy Stamp
-    if (tcState.legacyImaging.enabled) {
+    if (tcState.cols.legacyImaging.enabled) {
       defs.push(legacyImagingColDef)
     }
 
     // S-PLUS Stamp
-    if (tcState.splusImaging.enabled) {
+    if (tcState.cols.splusImaging.enabled) {
       defs.push(splusImagingColDef)
     }
 
     // Custom Imaging
-    if (tcState.customImaging.enabled) {
-      for (const col of tcState.customImaging.columns) {
+    if (tcState.cols.customImaging.enabled) {
+      for (const col of tcState.cols.customImaging.columns) {
         defs.push(customImagingColDefFactory(col.columnIndex))
       }
     }

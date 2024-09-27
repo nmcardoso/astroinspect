@@ -12,7 +12,7 @@ import { ContextActions } from '@/interfaces/contextActions'
 
 const CustomImagingColumnGroup = ({ index }: { index: number }) => {
   const { tcState, tcDispatch } = useXTableConfig()
-  const custom = tcState.customImaging.columns[index]
+  const custom = tcState.cols.customImaging.columns[index]
 
   return (
     <>
@@ -69,7 +69,7 @@ const CustomImagingColumnGroup = ({ index }: { index: number }) => {
             <InputGroup className="" size="sm">
               <InputGroup.Text>RI column</InputGroup.Text>
               <Form.Select
-                defaultValue={tcState.customImaging.columns?.[index]?.columnIndex || -1}
+                defaultValue={tcState.cols.customImaging.columns?.[index]?.columnIndex || -1}
                 onChange={e => tcDispatch({
                   type: ContextActions.CUSTOM_IMAGE_UPDATE,
                   payload: { index, columnIndex: (parseInt(e.target.value)) }
@@ -100,7 +100,7 @@ const CustomImagingColumnGroup = ({ index }: { index: number }) => {
             size="sm"
             onClick={() => tcDispatch({
               type: ContextActions.CUSTOM_IMAGE_REMOVE,
-              payload: { index, prevColumns: tcState.customImaging.columns }
+              payload: { index, prevColumns: tcState.cols.customImaging.columns }
             })}
           >
             <HiMinusSm /> Remove column
@@ -113,7 +113,7 @@ const CustomImagingColumnGroup = ({ index }: { index: number }) => {
 
 export default function CustomImagingTab() {
   const { tcState, tcDispatch } = useXTableConfig()
-  const custom = tcState.customImaging
+  const custom = tcState.cols.customImaging
 
   return (
     <>
@@ -147,7 +147,7 @@ export default function CustomImagingTab() {
             size="sm"
             onClick={() => tcDispatch({
               type: ContextActions.CUSTOM_IMAGE_NEW,
-              payload: { prevColumns: tcState.customImaging.columns }
+              payload: { prevColumns: tcState.cols.customImaging.columns }
             })}
           >
             <BiPlus size={16} /> Add custom image column

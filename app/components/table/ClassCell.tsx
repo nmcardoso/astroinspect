@@ -14,7 +14,7 @@ export default function ClassCell(params: CustomCellRendererProps) {
         // console.log(params.api.getRowNode(params.data._id).data)
       }}>
       <option value="">-</option>
-      {tcState.classification.classNames.map(cls => (
+      {tcState.cols.classification.classNames.map(cls => (
         <option key={cls} value={cls}>{cls}</option>
       ))}
     </Form.Select>

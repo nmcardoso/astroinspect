@@ -188,10 +188,28 @@ export default function FileInputTab() {
   const handleLocalFile = (e: any) => {
     if (e.target.files.length > 0) {
       const file = e.target.files[0]
+      
       setTableState(TableState.loading)
+      
       TableHelper.getTableSummary(file).then(summary => {
         if (summary?.positionFound) {
-          setTableState(TableState.success)
+          if (
+            file.name != tcState.table.file?.name || 
+            file.size != tcState.table.file?.size ||
+            file.lastModified != tcState.table.file?.lastModified
+          ) {
+            tcDispatch({
+              type: ContextActions.GRID_UPDATE,
+              payload: {
+                type: {
+                  data: undefined,
+                  api: undefined,
+                  isLoaded: false,
+                  shouldLoad: true,
+                }
+              }
+            })
+          }
 
           tcDispatch({
             type: ContextActions.USER_FILE_INPUT,
@@ -204,6 +222,8 @@ export default function FileInputTab() {
               file,
             }
           })
+
+          setTableState(TableState.success)
         } else {
           setTableState(TableState.positionNotFound)
         }

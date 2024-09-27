@@ -227,7 +227,7 @@ export default function AIGrid() {
     // row-wise map
     pageData.forEach(e => {
       // Legacy stamps
-      if (tcState.legacyImaging.enabled) {
+      if (tcState.cols.legacyImaging.enabled) {
         semaphore.enqueue(
           'legacyImaging',
           downloadImage,
@@ -241,7 +241,7 @@ export default function AIGrid() {
       }
 
       // S-PLUS stamps
-      if (tcState.splusImaging.enabled) {
+      if (tcState.cols.splusImaging.enabled) {
         semaphore.enqueue(
           'splusImaging',
           downloadSplusImage,
@@ -250,13 +250,13 @@ export default function AIGrid() {
             dec: e[`tab:${decCol}`],
             id: e['ai:id'],
             grid: gridRef.current,
-            splusConfig: tcState.splusImaging
+            splusConfig: tcState.cols.splusImaging
           }
         )
       }
 
       // S-PLUS photo spectra
-      if (tcState.splusPhotoSpectra.enabled) {
+      if (tcState.cols.splusPhotoSpectra.enabled) {
         semaphore.enqueue(
           'photospectra',
           downloadPhotoSpec,
@@ -265,13 +265,13 @@ export default function AIGrid() {
             dec: e[`tab:${decCol}`],
             id: e['ai:id'],
             grid: gridRef.current,
-            appertures: tcState.splusPhotoSpectra.selectedLines
+            appertures: tcState.cols.splusPhotoSpectra.selectedLines
           }
         )
       }
 
       // SDSS spectra
-      if (tcState.sdssSpectra.enabled) {
+      if (tcState.cols.sdssSpectra.enabled) {
         semaphore.enqueue(
           'spectra',
           downloadSpec,
@@ -285,8 +285,8 @@ export default function AIGrid() {
       }
 
       // Custom Imaging
-      if (tcState.customImaging.enabled) {
-        tcState.customImaging.columns.forEach((col, idx, _) => {
+      if (tcState.cols.customImaging.enabled) {
+        tcState.cols.customImaging.columns.forEach((col, idx, _) => {
           const riCol = `tab:${tcState.table.columns[col.columnIndex]}`
           const url = `${col.url}${String(e[riCol])}${col.fileExtension}`
           const colId = `img:custom_${idx}`
@@ -305,7 +305,7 @@ export default function AIGrid() {
       }
 
       // SDSS Catalog
-      tcState.sdssCatalog.selectedColumns.forEach((c) => {
+      tcState.cols.sdssCatalog.selectedColumns.forEach((c) => {
         semaphore.enqueue(
           'sdss_cat',
           downloadSdssCat,

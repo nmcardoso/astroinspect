@@ -16,6 +16,7 @@ import SdssCatalogTab from './SdssCatalogTab'
 import CustomImagingTab from './CustomImagingTab'
 import { VscServerProcess } from "react-icons/vsc"
 import { TbTableOptions } from "react-icons/tb"
+import { ContextActions } from '@/interfaces/contextActions'
 
 
 export default function ConfigForm() {
@@ -31,11 +32,11 @@ export default function ConfigForm() {
   return (
     <Container className="mt-3 h-100">
       <div style={{marginTop: '12%'}}>
-      <h3 className="text-center mb-2 d-flex align-items-center justify-content-center">
-        <TbTableOptions className="me-2" size={28} />
-        <span>Table Settings</span>
-      </h3>
       <div className="border rounded rounded-3 p-4" style={{backgroundColor: '#fafafa'}}>
+        <h6 className="text-center mb-4 d-flex align-items-center justify-content-center">
+          <TbTableOptions className="me-2" size={20} />
+          <span>Table Settings</span>
+        </h6>
         <Tab.Container id="list-group-tabs-example" defaultActiveKey="#select-table">
           <Row>
             <Col sm={3}>

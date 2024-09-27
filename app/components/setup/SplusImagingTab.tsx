@@ -36,7 +36,7 @@ function SplusFilterChip({ band, channel, variant }:
   { band: string, channel: string, variant: string }) {
   const { tcState, tcDispatch } = useXTableConfig()
 
-  const trilogyConfig = tcState.splusImaging.trilogyConfig
+  const trilogyConfig = tcState.cols.splusImaging.trilogyConfig
   const { R, G, B } = trilogyConfig
   const colorClass = trilogyConfig[channel].includes(band) ?
     `btn-${variant}` : `btn-outline-${variant}`
@@ -56,7 +56,7 @@ function SplusFilterChip({ band, channel, variant }:
 
 function TrilogyParams() {
   const { tcState, tcDispatch } = useXTableConfig()
-  const trilogyConfig = tcState.splusImaging.trilogyConfig
+  const trilogyConfig = tcState.cols.splusImaging.trilogyConfig
 
   return (
     <>
@@ -172,7 +172,7 @@ function TrilogyParams() {
                 <Form.Control
                   aria-label="Pixel scale"
                   aria-describedby="pixelScale"
-                  value={tcState.splusImaging.pixelScale}
+                  value={tcState.cols.splusImaging.pixelScale}
                   onChange={(e) => tcDispatch({
                     type: ContextActions.SPLUS_IMAGING,
                     payload: { pixelScale: e.target.value }
@@ -190,7 +190,7 @@ function TrilogyParams() {
 
 function LuptonParams() {
   const { tcState, tcDispatch } = useXTableConfig()
-  const luptonConfig = tcState.splusImaging.luptonConfig
+  const luptonConfig = tcState.cols.splusImaging.luptonConfig
 
   return (
     <>
@@ -301,7 +301,7 @@ function LuptonParams() {
                 <Form.Control
                   aria-label="Pixel Scale"
                   aria-describedby="pixelScale"
-                  value={tcState.splusImaging.pixelScale}
+                  value={tcState.cols.splusImaging.pixelScale}
                   onChange={(e) => tcDispatch({
                     type: ContextActions.SPLUS_IMAGING,
                     payload: { pixelScale: e.target.value }
@@ -319,7 +319,7 @@ function LuptonParams() {
 
 export default function SplusImagingTab() {
   const { tcState, tcDispatch } = useXTableConfig()
-  const splusImaging = tcState.splusImaging
+  const splusImaging = tcState.cols.splusImaging
 
   return (
     <>

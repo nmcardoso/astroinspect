@@ -8,7 +8,7 @@ import { ContextActions } from '@/interfaces/contextActions'
 
 export default function LegacyImagingTab() {
   const { tcState, tcDispatch } = useXTableConfig()
-  const legacy = tcState.legacyImaging
+  const legacy = tcState.cols.legacyImaging
 
   return (
     <>

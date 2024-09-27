@@ -11,6 +11,7 @@ import Chip from '@/components/common/Chip'
 import { FaRegKeyboard } from 'react-icons/fa'
 import Modal from 'react-bootstrap/Modal'
 import { ContextActions } from '@/interfaces/contextActions'
+import { BiPlus } from 'react-icons/bi'
 
 type handlerType = (value: string, classes: string[], dispatcher: any) => void
 
@@ -35,7 +36,7 @@ const handleDelClass: handlerType = (value, classes, dispatcher) => {
 
 function CategoricalControl() {
   const { tcState, tcDispatch } = useXTableConfig()
-  const cls = tcState.classification
+  const cls = tcState.cols.classification
   const [classInput, setClassInput] = useState('')
   const [showHotkeyModal, setHotkeyModal] = useState(false)
 
@@ -58,8 +59,12 @@ function CategoricalControl() {
                 placeholder="Class name"
                 value={classInput}
                 onChange={e => setClassInput(e.target.value)} />
-              <Button variant="success" type="submit">
-                Add
+              <Button 
+                variant="primary" 
+                type="submit" 
+                className="d-inline-flex align-items-center">
+                <BiPlus size={20} className="me-1" />
+                <span>Add</span>
               </Button>
             </InputGroup>
             <Help title="Class Name" className="ms-1">
@@ -69,7 +74,7 @@ function CategoricalControl() {
               style={{ whiteSpace: 'nowrap' }}
               className="ms-4"
               variant="outline-primary"
-              disabled={tcState.classification.classNames.length == 0}
+              disabled={tcState.cols.classification.classNames.length == 0}
               onClick={() => setHotkeyModal(true)}>
               <FaRegKeyboard size={20} className="me-1" /> Hotkeys
             </Button>
@@ -88,10 +93,10 @@ function CategoricalControl() {
             className="mb-1 me-1"
             onClose={() => handleDelClass(className, cls.classNames, tcDispatch)}>
             {className}
-            {className in tcState.classification.keyMap && (
+            {className in tcState.cols.classification.keyMap && (
               <span>
                 {' ('}
-                <b>{tcState.classification.keyMap[className].toUpperCase()}</b>
+                <b>{tcState.cols.classification.keyMap[className].toUpperCase()}</b>
                 {')'}
               </span>
             )}
@@ -104,7 +109,7 @@ function CategoricalControl() {
 
 function HotkeyModal({ show, onHide }: any) {
   const { tcState, tcDispatch } = useXTableConfig()
-  const cls = tcState.classification
+  const cls = tcState.cols.classification
   const [selectedClass, setSelectedClass] = useState<any>(-1)
 
   const handleKeyDown = useCallback((event: any) => {
@@ -114,7 +119,7 @@ function HotkeyModal({ show, onHide }: any) {
         type: ContextActions.CLASSIFICATION_CONFIG,
         payload: {
           keyMap: {
-            ...tcState.classification.keyMap,
+            ...tcState.cols.classification.keyMap,
             [selectedClass]: event.key
           }
         }
@@ -190,7 +195,7 @@ function HotkeyModal({ show, onHide }: any) {
                 className="ps-0"
                 variant="link"
                 onClick={() => {
-                  const keyMap = tcState.classification.keyMap
+                  const keyMap = tcState.cols.classification.keyMap
                   if (selectedClass in keyMap) {
                     delete keyMap[selectedClass]
                     tcDispatch({
@@ -214,7 +219,7 @@ function HotkeyModal({ show, onHide }: any) {
 export default function ClassTab() {
   const { tcState, tcDispatch } = useXTableConfig()
   // const { tdState } = useXTableData()
-  const cls = tcState.classification
+  const cls = tcState.cols.classification
 
   // const handleDownload = (e: any) => {
   //   e.preventDefault()
@@ -315,7 +320,7 @@ export default function ClassTab() {
               <Form.Check
                 type="switch"
                 label="Filter unclassified rows"
-                checked={tcState.classification.filterUnclassified}
+                checked={tcState.cols.classification.filterUnclassified}
                 onChange={e => tcDispatch({
                   type: ContextActions.CLASSIFICATION_CONFIG,
                   payload: { filterUnclassified: e.target.checked }
