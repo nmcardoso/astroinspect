@@ -1,7 +1,7 @@
 import { Button, Container } from 'react-bootstrap'
 import AppNavbar from '@/components/common/AppNavbar'
 import ConfigForm from '@/components/setup/ConfigForm'
-import XTableBody from '@/components/table/_XTableBody'
+import AIGrid from '@/components/table/AIGrid'
 import { XTableDataProvider } from '@/contexts/XTableDataContext'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Emitter from '@/lib/Emitter'
@@ -40,7 +40,7 @@ export default function App() {
         <AppNavbar left={currPanel == 'table' ? <BackButton /> : ''} />
         <div className="flex-grow-1">
           <XTableDataProvider>
-            {currPanel == 'config' ? <ConfigForm /> : <XTableBody />}
+            {currPanel == 'config' ? <ConfigForm /> : <AIGrid />}
           </XTableDataProvider>
         </div>
       </div>
