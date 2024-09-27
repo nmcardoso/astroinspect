@@ -2,7 +2,6 @@ import { Button, Container } from 'react-bootstrap'
 import Appbar from '@/components/appbar/Appbar'
 import ConfigForm from '@/components/setup/ConfigForm'
 import AIGrid from '@/components/table/AIGrid'
-import { XTableDataProvider } from '@/contexts/XTableDataContext'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Emitter from '@/lib/Emitter'
 import { FaArrowLeft } from "react-icons/fa";
@@ -39,9 +38,7 @@ export default function App() {
       <div className="d-flex flex-column h-100">
         <Appbar left={currPanel == 'table' ? <BackButton /> : ''} />
         <div className="flex-grow-1">
-          <XTableDataProvider>
-            {currPanel == 'config' ? <ConfigForm /> : <AIGrid />}
-          </XTableDataProvider>
+          {currPanel == 'config' ? <ConfigForm /> : <AIGrid />}
         </div>
       </div>
     </>
