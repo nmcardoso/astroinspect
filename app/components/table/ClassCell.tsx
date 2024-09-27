@@ -8,7 +8,6 @@ export default function ClassCell(params: CustomCellRendererProps) {
 
   return (
     <Form.Select
-      defaultValue=""
       value={params.value}
       onChange={e => {
         params.api.getRowNode(params.data._id)?.setDataValue('class', e.target.value)
