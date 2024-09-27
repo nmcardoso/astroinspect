@@ -5,11 +5,9 @@ import InputGroup from 'react-bootstrap/InputGroup'
 import Button from 'react-bootstrap/Button'
 import Help from '@/components/common/Help'
 import { AiOutlineCloudDownload } from 'react-icons/ai'
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import Chip from '@/components/common/Chip'
-import Papa from 'papaparse'
-import { useXTableData } from '@/contexts/XTableDataContext'
 import { FaRegKeyboard } from 'react-icons/fa'
 import Modal from 'react-bootstrap/Modal'
 import { ContextActions } from '@/interfaces/contextActions'
@@ -215,48 +213,48 @@ function HotkeyModal({ show, onHide }: any) {
 
 export default function ClassTab() {
   const { tcState, tcDispatch } = useXTableConfig()
-  const { tdState } = useXTableData()
+  // const { tdState } = useXTableData()
   const cls = tcState.classification
 
-  const handleDownload = (e: any) => {
-    e.preventDefault()
-    const data = tdState.data
-    let fname = e.target.classDownload.value
+  // const handleDownload = (e: any) => {
+  //   e.preventDefault()
+  //   const data = tdState.data
+  //   let fname = e.target.classDownload.value
 
-    if (!fname || !fname?.trim() || !data?.length) return
-    fname = fname.endsWith('.csv') ? fname : fname + '.csv'
+  //   if (!fname || !fname?.trim() || !data?.length) return
+  //   fname = fname.endsWith('.csv') ? fname : fname + '.csv'
 
-    const colMap: any = Object.keys(data[0]).map(col => {
-      if (col == 'classification') {
-        return { from: col, to: 'XTableClass' }
-      } else if (col.startsWith('sourceTable:')) {
-        return { from: col, to: col.split(':')[1] }
-      } else if (col.startsWith('sdss:')) {
-        return { from: col, to: col.split('.')[1] }
-      }
-      return null
-    }).filter(col => col != null)
+  //   const colMap: any = Object.keys(data[0]).map(col => {
+  //     if (col == 'classification') {
+  //       return { from: col, to: 'XTableClass' }
+  //     } else if (col.startsWith('sourceTable:')) {
+  //       return { from: col, to: col.split(':')[1] }
+  //     } else if (col.startsWith('sdss:')) {
+  //       return { from: col, to: col.split('.')[1] }
+  //     }
+  //     return null
+  //   }).filter(col => col != null)
 
-    const _data = cls.enabled && cls.filterUnclassified ?
-      data.filter((row: any) => !!row.classification) : data
+  //   const _data = cls.enabled && cls.filterUnclassified ?
+  //     data.filter((row: any) => !!row.classification) : data
 
-    const transformedData = _data.map((row: any) => {
-      const transformedRow: any = {}
-      for (const c of colMap) {
-        transformedRow[c.to] = row[c.from]
-      }
-      return transformedRow
-    })
+  //   const transformedData = _data.map((row: any) => {
+  //     const transformedRow: any = {}
+  //     for (const c of colMap) {
+  //       transformedRow[c.to] = row[c.from]
+  //     }
+  //     return transformedRow
+  //   })
 
-    const csvStr = Papa.unparse(transformedData, { header: true })
-    const fileStr = 'data:text/csv;charset=utf-8,' + csvStr
-    const linkEl = document.createElement('a')
-    linkEl.setAttribute('href', encodeURI(fileStr))
-    linkEl.setAttribute('download', fname)
-    document.body.appendChild(linkEl)
-    linkEl.click()
-    linkEl.remove()
-  }
+  //   const csvStr = Papa.unparse(transformedData, { header: true })
+  //   const fileStr = 'data:text/csv;charset=utf-8,' + csvStr
+  //   const linkEl = document.createElement('a')
+  //   linkEl.setAttribute('href', encodeURI(fileStr))
+  //   linkEl.setAttribute('download', fname)
+  //   document.body.appendChild(linkEl)
+  //   linkEl.click()
+  //   linkEl.remove()
+  // }
 
   return (
     <>
