@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import localforage from 'localforage'
 import { SCHEMA_VERSION, useXTableConfig } from '@/contexts/XTableConfigContext'
+import { ContextActions } from '@/interfaces/contextActions'
 
 
 export default function LoadInitialState() {

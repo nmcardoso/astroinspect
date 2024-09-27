@@ -12,6 +12,7 @@ import Papa from 'papaparse'
 import { useXTableData } from '@/contexts/XTableDataContext'
 import { FaRegKeyboard } from 'react-icons/fa'
 import Modal from 'react-bootstrap/Modal'
+import { ContextActions } from '@/interfaces/contextActions'
 
 type handlerType = (value: string, classes: string[], dispatcher: any) => void
 

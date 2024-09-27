@@ -6,6 +6,7 @@ import InputGroup from 'react-bootstrap/InputGroup'
 import { useState, useContext } from 'react'
 import Help from '@/components/common/Help'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
+import { ContextActions } from '@/interfaces/contextActions'
 
 
 const splusBands = [

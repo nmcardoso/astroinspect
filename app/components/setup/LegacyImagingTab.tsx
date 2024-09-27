@@ -4,6 +4,7 @@ import Row from 'react-bootstrap/Row'
 import InputGroup from 'react-bootstrap/InputGroup'
 import { useContext } from 'react'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
+import { ContextActions } from '@/interfaces/contextActions'
 
 export default function LegacyImagingTab() {
   const { tcState, tcDispatch } = useXTableConfig()

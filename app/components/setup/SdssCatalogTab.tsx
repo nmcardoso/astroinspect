@@ -12,6 +12,7 @@ import { BiPlus } from 'react-icons/bi'
 import { HiMinusSm } from 'react-icons/hi'
 import Chip from '@/components/common/Chip'
 import uniq from 'lodash/uniq'
+import { ContextActions } from '@/interfaces/contextActions'
 
 const service = new SdssService()
 const tables = service.getTables()

@@ -9,6 +9,7 @@ import { MouseEventHandler, useEffect, useRef, useState } from 'react'
 import { HiCheck, HiX } from 'react-icons/hi'
 import Chip from '@/components/common/Chip'
 import TableHelper from '@/lib/TableHelper'
+import { ContextActions } from '@/interfaces/contextActions'
 
 enum TableState {
   unloaded = 'unloaded',

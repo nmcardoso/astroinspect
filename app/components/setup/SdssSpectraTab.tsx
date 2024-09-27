@@ -2,6 +2,7 @@ import Form from 'react-bootstrap/Form'
 import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
+import { ContextActions } from '@/interfaces/contextActions'
 
 
 const splusLines = ['iso', 'aper3', 'aper6', 'auto', 'petro', 'pstotal']
