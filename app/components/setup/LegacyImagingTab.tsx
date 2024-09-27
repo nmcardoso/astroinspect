@@ -21,7 +21,7 @@ export default function LegacyImagingTab() {
             label="Show Legacy Survey RGB images column"
             checked={legacy.enabled}
             onChange={e => tcDispatch({
-              type: 'setLegacyImaging',
+              type: ContextActions.LEGACY_IMAGING,
               payload: { enabled: e.target.checked }
             })}
           />
@@ -39,7 +39,7 @@ export default function LegacyImagingTab() {
               aria-describedby="legacyImagingPixScale"
               value={legacy.pixelScale}
               onChange={e => tcDispatch({
-                type: 'setLegacyImaging',
+                type: ContextActions.LEGACY_IMAGING,
                 payload: { pixelScale: e.target.value }
               })}
             />
@@ -54,7 +54,7 @@ export default function LegacyImagingTab() {
             <Form.Select
               value={legacy.dataRelease}
               onChange={e => tcDispatch({
-                type: 'setLegacyImaging',
+                type: ContextActions.LEGACY_IMAGING,
                 payload: { dataRelease: e.target.value }
               })}>
               <option value="10">10</option>

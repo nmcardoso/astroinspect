@@ -15,14 +15,14 @@ export default function SdssSpectraTab() {
     const checked = selectedLines.includes(line)
     if (checked) {
       tcDispatch({
-        type: 'setSplusPhotoSpectra',
+        type: ContextActions.SPLUS_PHOTO_SPECTRA,
         payload: {
           selectedLines: selectedLines.filter(e => e != line)
         }
       })
     } else {
       tcDispatch({
-        type: 'setSplusPhotoSpectra',
+        type: ContextActions.SPLUS_PHOTO_SPECTRA,
         payload: {
           selectedLines: [...selectedLines, line]
         }
@@ -42,26 +42,7 @@ export default function SdssSpectraTab() {
             label="Show SDSS spectra column"
             checked={sdss.enabled}
             onChange={e => tcDispatch({
-              type: 'setSdssImaging',
-              payload: { enabled: e.target.checked }
-            })}
-          />
-        </Col>
-      </Form.Group>
-
-      <hr className="my-4" />
-
-      <Form.Group as={Row} className="mb-2" controlId="nearby-redshift-check">
-        <Form.Label column sm={3}>
-          Nearby Redshift
-        </Form.Label>
-        <Col sm={9} className="d-flex align-items-center">
-          <Form.Check
-            type="switch"
-            label="Show SDSS Redshifts of Nearby Objects"
-            checked={tcState.nearbyRedshifts.enabled}
-            onChange={e => tcDispatch({
-              type: 'setNearbyRedshifts',
+              type: ContextActions.SDSS_IMAGING,
               payload: { enabled: e.target.checked }
             })}
           />
@@ -80,7 +61,7 @@ export default function SdssSpectraTab() {
             label="Show S-PLUS photo-spectra column"
             checked={tcState.splusPhotoSpectra.enabled}
             onChange={() => tcDispatch({
-              type: 'setSplusPhotoSpectra',
+              type: ContextActions.SPLUS_PHOTO_SPECTRA,
               payload: { enabled: !tcState.splusPhotoSpectra.enabled }
             })}
           />

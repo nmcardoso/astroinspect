@@ -20,7 +20,7 @@ const handleAddClass: handlerType = (value, classes, dispatcher) => {
   if (sanitizedValue && !classes.includes(sanitizedValue)) {
     classes.push(sanitizedValue)
     dispatcher({
-      type: 'setClassification',
+      type: ContextActions.CLASSIFICATION_CONFIG,
       payload: { classNames: classes }
     })
   }
@@ -29,7 +29,7 @@ const handleAddClass: handlerType = (value, classes, dispatcher) => {
 const handleDelClass: handlerType = (value, classes, dispatcher) => {
   const newClasses = classes.filter(v => v != value)
   dispatcher({
-    type: 'setClassification',
+    type: ContextActions.CLASSIFICATION_CONFIG,
     payload: { classNames: newClasses }
   })
 }
@@ -112,7 +112,7 @@ function HotkeyModal({ show, onHide }: any) {
     event.stopPropagation()
     if (/^[\w\d]$/i.test(event.key) && selectedClass != -1) {
       tcDispatch({
-        type: 'setClassification',
+        type: ContextActions.CLASSIFICATION_CONFIG,
         payload: {
           keyMap: {
             ...tcState.classification.keyMap,
@@ -195,7 +195,7 @@ function HotkeyModal({ show, onHide }: any) {
                   if (selectedClass in keyMap) {
                     delete keyMap[selectedClass]
                     tcDispatch({
-                      type: 'setClassification',
+                      type: ContextActions.CLASSIFICATION_CONFIG,
                       payload: { keyMap }
                     })
                   }
@@ -270,7 +270,7 @@ export default function ClassTab() {
               label="Show classification column"
               checked={cls.enabled}
               onChange={(e) => tcDispatch({
-                type: 'setClassification',
+                type: ContextActions.CLASSIFICATION_CONFIG,
                 payload: { enabled: e.target.checked }
               })} />
             <Help title="Enable Classifications" className="ms-1">
@@ -318,7 +318,7 @@ export default function ClassTab() {
                 label="Filter unclassified rows"
                 checked={tcState.classification.filterUnclassified}
                 onChange={e => tcDispatch({
-                  type: 'setClassification',
+                  type: ContextActions.CLASSIFICATION_CONFIG,
                   payload: { filterUnclassified: e.target.checked }
                 })}
               />

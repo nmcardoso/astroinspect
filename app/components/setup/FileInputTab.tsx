@@ -5,7 +5,7 @@ import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form'
 import Help from '@/components/common/Help'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
-import { MouseEventHandler, useState } from 'react'
+import { MouseEventHandler, useEffect, useRef, useState } from 'react'
 import { HiCheck, HiX } from 'react-icons/hi'
 import Chip from '@/components/common/Chip'
 import TableHelper from '@/lib/TableHelper'
@@ -20,6 +20,18 @@ enum TableState {
 
 
 function LocalStorageControl({ onChange }: { onChange: (e: any) => void }) {
+  const { tcState } = useXTableConfig()
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (!!tcState.table.file && !!inputRef.current) {
+      const dataTransfer = new DataTransfer()
+      dataTransfer.items.add(tcState.table.file)
+      const fileList = dataTransfer.files
+      inputRef.current.files = fileList
+    }
+  }, [])
+
   return (
     <>
       <p>Select a table from computer to open</p>
@@ -31,7 +43,8 @@ function LocalStorageControl({ onChange }: { onChange: (e: any) => void }) {
           <div className="d-flex align-items-center">
             <Form.Control
               type="file"
-              onChange={onChange} />
+              onChange={onChange}
+              ref={inputRef} />
             <Help title="Local Upload" className="ms-1">
               Loads a CSV table available in local computer. The only required
               columns are <code>RA</code> and <code>DEC</code> in degrees.
@@ -115,7 +128,7 @@ const SelectColumnModal = ({
   const handleSubmit: MouseEventHandler<HTMLButtonElement> = () => {
     if (selectedId >= 0 && !tcState.table.selectedColumnsId.includes(selectedId)) {
       tcDispatch({
-        type: 'setFileInput',
+        type: ContextActions.USER_FILE_INPUT,
         payload: {
           selectedColumnsId: [...tcState.table.selectedColumnsId, selectedId]
         }
@@ -178,7 +191,7 @@ export default function FileInputTab() {
           setTableState(TableState.success)
 
           tcDispatch({
-            type: 'setFileInput',
+            type: ContextActions.USER_FILE_INPUT,
             payload: {
               type: 'local',
               columns: summary.columns,
@@ -199,7 +212,7 @@ export default function FileInputTab() {
 
   const handleDelColumn = (_: any, value: number) => {
     tcDispatch({
-      type: 'setFileInput',
+      type: ContextActions.USER_FILE_INPUT,
       payload: { selectedColumnsId: tcState.table.selectedColumnsId.filter(v => v != value) }
     })
   }
@@ -215,7 +228,7 @@ export default function FileInputTab() {
             <Form.Select
               value={table.type}
               onChange={(e) => tcDispatch({
-                type: 'setFileInput',
+                type: ContextActions.USER_FILE_INPUT,
                 payload: { type: e.target.value }
               })}>
               <option value="local">Local</option>

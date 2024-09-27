@@ -25,7 +25,7 @@ const CustomImagingColumnGroup = ({ index }: { index: number }) => {
               <Form.Control
                 value={custom.url}
                 onChange={e => tcDispatch({
-                  type: 'updateCustomImaging',
+                  type: ContextActions.CUSTOM_IMAGE_UPDATE,
                   payload: { index, url: e.target.value }
                 })}
               />
@@ -47,7 +47,7 @@ const CustomImagingColumnGroup = ({ index }: { index: number }) => {
               <Form.Control
                 value={custom.fileExtension}
                 onChange={e => tcDispatch({
-                  type: 'updateCustomImaging',
+                  type: ContextActions.CUSTOM_IMAGE_UPDATE,
                   payload: { index, fileExtension: e.target.value }
                 })}
               />
@@ -70,7 +70,7 @@ const CustomImagingColumnGroup = ({ index }: { index: number }) => {
               <Form.Select
                 defaultValue={tcState.customImaging.columns?.[index]?.columnIndex || -1}
                 onChange={e => tcDispatch({
-                  type: 'updateCustomImaging',
+                  type: ContextActions.CUSTOM_IMAGE_UPDATE,
                   payload: { index, columnIndex: (parseInt(e.target.value)) }
                 })}>
                 <option value={-1}>Select a column</option>
@@ -98,7 +98,7 @@ const CustomImagingColumnGroup = ({ index }: { index: number }) => {
             variant="outline-danger"
             size="sm"
             onClick={() => tcDispatch({
-              type: 'removeCustomImaging',
+              type: ContextActions.CUSTOM_IMAGE_REMOVE,
               payload: { index, prevColumns: tcState.customImaging.columns }
             })}
           >
@@ -126,7 +126,7 @@ export default function CustomImagingTab() {
             label="Show custom images columns"
             checked={custom.enabled}
             onChange={e => tcDispatch({
-              type: 'enableCustomImaging',
+              type: ContextActions.CUSTOM_IMAGE_ENABLE,
               payload: { enabled: e.target.checked }
             })}
           />
@@ -145,7 +145,7 @@ export default function CustomImagingTab() {
           <Button
             size="sm"
             onClick={() => tcDispatch({
-              type: 'addCustomImaging',
+              type: ContextActions.CUSTOM_IMAGE_NEW,
               payload: { prevColumns: tcState.customImaging.columns }
             })}
           >

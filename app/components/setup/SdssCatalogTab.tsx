@@ -49,7 +49,7 @@ const SdssModal = ({ show, onHide }: { show: boolean, onHide: any }) => {
       e.column == column && e.table == table
     ))
     tcDispatch({
-      type: 'setSdssCatalog',
+      type: ContextActions.SDSS_CATALOG,
       payload: {
         selectedColumns: selectedColumns.filter((_, i) => i != idx)
       }
@@ -62,7 +62,7 @@ const SdssModal = ({ show, onHide }: { show: boolean, onHide: any }) => {
       column: column
     }
     tcDispatch({
-      type: 'setSdssCatalog',
+      type: ContextActions.SDSS_CATALOG,
       payload: {
         selectedColumns: [...selectedColumns, newEntry]
       }
@@ -189,7 +189,7 @@ export default function SdssCatalogTab() {
       e.column == column && e.table == table
     ))
     tcDispatch({
-      type: 'setSdssCatalog',
+      type: ContextActions.SDSS_CATALOG,
       payload: {
         selectedColumns: selectedColumns.filter((_, i) => i != idx)
       }

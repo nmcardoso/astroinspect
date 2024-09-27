@@ -14,7 +14,7 @@ export default function LoadInitialState() {
         // de experiência de usuário. No futuro, esta implementação deve
         // comparar e mesclar os estados caso a versão seja diferente
         if (loadedState.schemaVersion === SCHEMA_VERSION) {
-          tcDispatch({ type: 'loadSavedState', payload: loadedState })
+          tcDispatch({ type: ContextActions.LOAD_SAVED_STATE, payload: loadedState })
         }
       }
     })

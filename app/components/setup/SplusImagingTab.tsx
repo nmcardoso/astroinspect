@@ -44,7 +44,7 @@ function SplusFilterChip({ band, channel, variant }:
     <ButtonChip
       className={`${colorClass} me-1`}
       onClick={() => tcDispatch({
-        type: 'setSplusTrilogyConfig',
+        type: ContextActions.SPLUS_TRILOGY_CONFIG,
         payload: toggleUnique({ R, G, B }, channel, band)
       })}>
       {band}
@@ -141,7 +141,7 @@ function TrilogyParams() {
                   aria-describedby="trilogy-param-noise"
                   value={trilogyConfig.noise}
                   onChange={(e) => tcDispatch({
-                    type: 'setSplusTrilogyConfig',
+                    type: ContextActions.SPLUS_TRILOGY_CONFIG,
                     payload: { noise: e.target.value }
                   })}
                 />
@@ -157,7 +157,7 @@ function TrilogyParams() {
                   aria-describedby="trilogy-param-q"
                   value={trilogyConfig.Q}
                   onChange={(e) => tcDispatch({
-                    type: 'setSplusTrilogyConfig',
+                    type: ContextActions.SPLUS_TRILOGY_CONFIG,
                     payload: { Q: e.target.value }
                   })}
                 />
@@ -173,7 +173,7 @@ function TrilogyParams() {
                   aria-describedby="pixelScale"
                   value={tcState.splusImaging.pixelScale}
                   onChange={(e) => tcDispatch({
-                    type: 'setSplusImaging',
+                    type: ContextActions.SPLUS_IMAGING,
                     payload: { pixelScale: e.target.value }
                   })}
                 />
@@ -205,7 +205,7 @@ function LuptonParams() {
                 <Form.Select
                   value={luptonConfig.R}
                   onChange={e => tcDispatch({
-                    type: 'setSplusLuptonConfig',
+                    type: ContextActions.SPLUS_LUPTON_CONFIG,
                     payload: { R: e.target.value }
                   })}>
                   {splusBands.map(band => (
@@ -222,7 +222,7 @@ function LuptonParams() {
                 <Form.Select
                   value={luptonConfig.G}
                   onChange={e => tcDispatch({
-                    type: 'setSplusLuptonConfig',
+                    type: ContextActions.SPLUS_LUPTON_CONFIG,
                     payload: { G: e.target.value }
                   })}>
                   {splusBands.map(band => (
@@ -239,7 +239,7 @@ function LuptonParams() {
                 <Form.Select
                   value={luptonConfig.B}
                   onChange={e => tcDispatch({
-                    type: 'setSplusLuptonConfig',
+                    type: ContextActions.SPLUS_LUPTON_CONFIG,
                     payload: { B: e.target.value }
                   })}>
                   {splusBands.map(band => (
@@ -270,7 +270,7 @@ function LuptonParams() {
                   aria-describedby="lupton-param-noise"
                   value={luptonConfig.stretch}
                   onChange={(e) => tcDispatch({
-                    type: 'setSplusLuptonConfig',
+                    type: ContextActions.SPLUS_LUPTON_CONFIG,
                     payload: { stretch: e.target.value }
                   })}
                 />
@@ -286,7 +286,7 @@ function LuptonParams() {
                   aria-describedby="lupton-param-q"
                   value={luptonConfig.Q}
                   onChange={(e) => tcDispatch({
-                    type: 'setSplusLuptonConfig',
+                    type: ContextActions.SPLUS_LUPTON_CONFIG,
                     payload: { Q: e.target.value }
                   })}
                 />
@@ -302,7 +302,7 @@ function LuptonParams() {
                   aria-describedby="pixelScale"
                   value={tcState.splusImaging.pixelScale}
                   onChange={(e) => tcDispatch({
-                    type: 'setSplusImaging',
+                    type: ContextActions.SPLUS_IMAGING,
                     payload: { pixelScale: e.target.value }
                   })}
                 />
@@ -332,7 +332,7 @@ export default function SplusImagingTab() {
             label="Show S-PLUS RGB images column"
             checked={splusImaging.enabled}
             onChange={(e) => tcDispatch({
-              type: 'setSplusImaging',
+              type: ContextActions.SPLUS_IMAGING,
               payload: { enabled: e.target.checked }
             })}
           />
@@ -348,7 +348,7 @@ export default function SplusImagingTab() {
             <Form.Select
               defaultValue={splusImaging.type}
               onChange={(e) => tcDispatch({
-                type: 'setSplusImaging',
+                type: ContextActions.SPLUS_IMAGING,
                 payload: { type: e.target.value }
               })}>
               <option value="trilogy">Trilogy</option>

@@ -1,112 +1,6 @@
-import { createContext, Dispatch, ReactElement, useContext, useReducer } from 'react'
+import { createContext, useContext, useReducer } from 'react'
 import localforage from 'localforage'
 
-export interface IterableInterface {
-  [key: string]: any | undefined
-}
-
-export interface ITableConfig extends IterableInterface {
-  type: string,
-  file: File | null,
-  url: string | null,
-  selectedColumnsId: number[]
-  columns: string[],
-  raIndex: number | null,
-  decIndex: number | null,
-  processing: boolean,
-}
-
-export interface ITrilogyConfig extends IterableInterface {
-  R?: string[],
-  G?: string[],
-  B?: string[],
-  noise?: number,
-  Q?: number
-}
-
-export interface ILuptonConfig extends IterableInterface {
-  R?: string,
-  G?: string,
-  B?: string,
-  stretch?: number,
-  Q?: number
-}
-
-export interface ISplusImaging extends IterableInterface {
-  enabled?: boolean,
-  type?: string,
-  pixelScale: number,
-  trilogyConfig: ITrilogyConfig,
-  luptonConfig: ILuptonConfig
-}
-
-export interface IClassification extends IterableInterface {
-  enabled: boolean,
-  type: string,
-  classNames: string[],
-  positiveClass: string | null,
-  negativeClass: string | null,
-  filterUnclassified: boolean,
-  keyMap: { [key: string]: any }
-}
-
-export interface ILegacyImaging extends IterableInterface {
-  enabled: boolean,
-  pixelScale: number,
-  dataRelease: string,
-}
-
-export interface ISdssSpectra extends IterableInterface {
-  enabled: boolean
-}
-
-export interface ISdssCatalog extends IterableInterface {
-  selectedColumns: {
-    table: string,
-    column: string
-  }[]
-}
-
-export interface ISplusPhotoSpectra extends IterableInterface {
-  enabled: boolean,
-  selectedLines: string[]
-}
-
-export interface INearbyRedshifts extends IterableInterface {
-  enabled: boolean,
-}
-
-export interface IStampModal extends IterableInterface {
-  showRedshift: boolean,
-  showAutoFluxRadius: boolean,
-  showPetroFluxRadius: boolean,
-}
-
-export interface ICustomImagingColumn extends IterableInterface {
-  url: string,
-  fileExtension: string,
-  columnIndex: number,
-}
-
-export interface ICustomImaging extends IterableInterface {
-  enabled: boolean,
-  columns: ICustomImagingColumn[],
-}
-
-export interface IState {
-  schemaVersion: number,
-  table: ITableConfig,
-  classification: IClassification,
-  splusCatalog: {},
-  sdssCatalog: ISdssCatalog,
-  splusImaging: ISplusImaging,
-  legacyImaging: ILegacyImaging,
-  sdssSpectra: ISdssSpectra,
-  splusPhotoSpectra: ISplusPhotoSpectra,
-  nearbyRedshifts: INearbyRedshifts,
-  stampModal: IStampModal,
-  customImaging: ICustomImaging,
-}
 
 export const SCHEMA_VERSION: number = 11
 
@@ -168,9 +62,6 @@ const getInitialState = (): IState => ({
     enabled: true,
     selectedLines: ['iso', 'aper6']
   },
-  nearbyRedshifts: {
-    enabled: false
-  },
   stampModal: {
     showAutoFluxRadius: false,
     showPetroFluxRadius: false,
@@ -189,10 +80,7 @@ const getInitialState = (): IState => ({
 })
 const initialState = getInitialState()
 
-interface IAction<P> {
-  type: string,
-  payload: P
-}
+
 
 const persistStateAsync = (state: IState) => {
   const s = { ...state, table: getInitialState().table }
@@ -201,107 +89,57 @@ const persistStateAsync = (state: IState) => {
   })
 }
 
-const loadSavedStateAction = (state: IState, action: IAction<IState>) => {
+const loadSavedState = (state: IState, action: IAction<IState>) => {
   return action.payload
 }
 
-const setSplusTrilogyConfigAction = (state: IState, action: IAction<ITrilogyConfig>) => {
+function setAttributes<T>(state: IState, action: IAction<T>, accessor: (s: IState) => any) {
   const s = { ...state }
   for (const k in action.payload) {
-    s.splusImaging.trilogyConfig[k] = action.payload[k]
+    accessor(s)[k] = action.payload[k]
   }
   persistStateAsync(s)
   return s
 }
 
-const setSplusImagingAction = (state: IState, action: IAction<ISplusImaging>) => {
-  const s = { ...state }
-  for (const k in action.payload) {
-    s.splusImaging[k] = action.payload[k]
-  }
-  persistStateAsync(s)
-  return s
+const setSplusTrilogyConfig = (state: IState, action: IAction<ITrilogyConfig>) => {
+  return setAttributes(state, action, (s) => s.splusImaging.trilogyConfig)
 }
 
-const setSplusLuptonConfigAction = (state: IState, action: IAction<ILuptonConfig>) => {
-  const s = { ...state }
-  for (const k in action.payload) {
-    s.splusImaging.luptonConfig[k] = action.payload[k]
-  }
-  persistStateAsync(s)
-  return s
+const setSplusImaging = (state: IState, action: IAction<ISplusImaging>) => {
+  return setAttributes(state, action, (s) => s.splusImaging)
 }
 
-const setFileInputAction = (state: IState, action: IAction<ITableConfig>) => {
-  const s = { ...state }
-  for (const k in action.payload) {
-    s.table[k] = action.payload[k]
-  }
-  persistStateAsync(s)
-  return s
+const setSplusLuptonConfig = (state: IState, action: IAction<ILuptonConfig>) => {
+  return setAttributes(state, action, (s) => s.splusImaging.luptonConfig)
 }
 
-const setClassificationAction = (state: IState, action: IAction<IClassification>) => {
-  const s = { ...state }
-  for (const k in action.payload) {
-    s.classification[k] = action.payload[k]
-  }
-  persistStateAsync(s)
-  return s
+const setFileInput = (state: IState, action: IAction<ITableConfig>) => {
+  return setAttributes(state, action, (s) => s.table)
 }
 
-const setLegacyImagingAction = (state: IState, action: IAction<ILegacyImaging>) => {
-  const s = { ...state }
-  for (const k in action.payload) {
-    s.legacyImaging[k] = action.payload[k]
-  }
-  persistStateAsync(s)
-  return s
+const setClassification = (state: IState, action: IAction<IClassification>) => {
+  return setAttributes(state, action, (s) => s.classification)
 }
 
-const setSdssSpectraAction = (state: IState, action: IAction<ISdssSpectra>) => {
-  const s = { ...state }
-  for (const k in action.payload) {
-    s.sdssSpectra[k] = action.payload[k]
-  }
-  persistStateAsync(s)
-  return s
+const setLegacyImaging = (state: IState, action: IAction<ILegacyImaging>) => {
+  return setAttributes(state, action, (s) => s.legacyImaging)
 }
 
-const setSdssCatalogAction = (state: IState, action: IAction<ISdssCatalog>) => {
-  const s = { ...state }
-  for (const k in action.payload) {
-    s.sdssCatalog[k] = action.payload[k]
-  }
-  persistStateAsync(s)
-  return s
+const setSdssSpectra = (state: IState, action: IAction<ISdssSpectra>) => {
+  return setAttributes(state, action, (s) => s.sdssSpectra)
+}
+
+const setSdssCatalog = (state: IState, action: IAction<ISdssCatalog>) => {
+  return setAttributes(state, action, (s) => s.sdssCatalog)
 }
 
 const setSplusPhotoSpectra = (state: IState, action: IAction<ISplusPhotoSpectra>) => {
-  const s = { ...state }
-  for (const k in action.payload) {
-    s.splusPhotoSpectra[k] = action.payload[k]
-  }
-  persistStateAsync(s)
-  return s
-}
-
-const setNearbyRedshifts = (state: IState, action: IAction<ISplusPhotoSpectra>) => {
-  const s = { ...state }
-  for (const k in action.payload) {
-    s.nearbyRedshifts[k] = action.payload[k]
-  }
-  persistStateAsync(s)
-  return s
+  return setAttributes(state, action, (s) => s.splusPhotoSpectra)
 }
 
 const setStampModal = (state: IState, action: IAction<IStampModal>) => {
-  const s = { ...state }
-  for (const k in action.payload) {
-    s.stampModal[k] = action.payload[k]
-  }
-  persistStateAsync(s)
-  return s
+  return setAttributes(state, action, (s) => s.stampModal)
 }
 
 const addCustomImaging = (state: IState, action: IAction<{ prevColumns: ICustomImagingColumn[] }>) => {
@@ -319,12 +157,7 @@ const addCustomImaging = (state: IState, action: IAction<{ prevColumns: ICustomI
 }
 
 const updateCustomImaging = (state: IState, action: IAction<ICustomImagingColumn & { index: number }>) => {
-  const s = { ...state }
-  for (const k in action.payload) {
-    s.customImaging.columns[action.payload.index][k] = action.payload[k]
-  }
-  persistStateAsync(s)
-  return s
+  return setAttributes(state, action, (s) => s.customImaging.columns[action.payload.index])
 }
 
 const removeCustomImaging = (state: IState, action: IAction<{ index: number, prevColumns: ICustomImagingColumn[] }>) => {
@@ -335,64 +168,41 @@ const removeCustomImaging = (state: IState, action: IAction<{ index: number, pre
 }
 
 const enableCustomImaging = (state: IState, action: IAction<{ enabled: boolean }>) => {
-  const s = { ...state }
-  s.customImaging.enabled = action.payload.enabled
-  persistStateAsync(s)
-  return s
+  return setAttributes(state, action, (s) => s.customImaging)
 }
 
-type PayloadType = IState | ITrilogyConfig | ISplusImaging | ILuptonConfig
-  | ITableConfig | IClassification | ILegacyImaging | ISdssSpectra
-  | ISdssCatalog | ISplusPhotoSpectra
+
+
+const reducerMap = {
+  [ContextActions.LOAD_SAVED_STATE]: loadSavedState,
+  [ContextActions.USER_FILE_INPUT]: setFileInput,
+  [ContextActions.CLASSIFICATION_CONFIG]: setClassification,
+  [ContextActions.SPLUS_TRILOGY_CONFIG]: setSplusTrilogyConfig,
+  [ContextActions.SPLUS_IMAGING]: setSplusImaging,
+  [ContextActions.SPLUS_LUPTON_CONFIG]: setSplusLuptonConfig,
+  [ContextActions.SPLUS_PHOTO_SPECTRA]: setSplusPhotoSpectra,
+  [ContextActions.LEGACY_IMAGING]: setLegacyImaging,
+  [ContextActions.SDSS_IMAGING]: setSdssSpectra,
+  [ContextActions.SDSS_CATALOG]: setSdssCatalog,
+  [ContextActions.STAMP_MODAL]: setStampModal,
+  [ContextActions.CUSTOM_IMAGE_NEW]: addCustomImaging,
+  [ContextActions.CUSTOM_IMAGE_UPDATE]: updateCustomImaging,
+  [ContextActions.CUSTOM_IMAGE_REMOVE]: removeCustomImaging,
+  [ContextActions.CUSTOM_IMAGE_ENABLE]: enableCustomImaging,
+}
+
 
 const reducer = (state: IState, action: IAction<any>) => {
-  switch (action.type) {
-    case 'loadSavedState':
-      return loadSavedStateAction(state, action)
-    case 'setSplusTrilogyConfig':
-      return setSplusTrilogyConfigAction(state, action)
-    case 'setSplusImaging':
-      return setSplusImagingAction(state, action)
-    case 'setSplusLuptonConfig':
-      return setSplusLuptonConfigAction(state, action)
-    case 'setFileInput':
-      return setFileInputAction(state, action)
-    case 'setClassification':
-      return setClassificationAction(state, action)
-    case 'setLegacyImaging':
-      return setLegacyImagingAction(state, action)
-    case 'setSdssImaging':
-      return setSdssSpectraAction(state, action)
-    case 'setSdssCatalog':
-      return setSdssCatalogAction(state, action)
-    case 'setSplusPhotoSpectra':
-      return setSplusPhotoSpectra(state, action)
-    case 'setNearbyRedshifts':
-      return setNearbyRedshifts(state, action)
-    case 'setStampModal':
-      return setStampModal(state, action)
-    case 'addCustomImaging':
-      return addCustomImaging(state, action)
-    case 'updateCustomImaging':
-      return updateCustomImaging(state, action)
-    case 'removeCustomImaging':
-      return removeCustomImaging(state, action)
-    case 'enableCustomImaging':
-      return enableCustomImaging(state, action)
-    default:
-      console.log(`Action ${action.type} not found`)
-      return { ...state }
-  }
+  return reducerMap[action.type](state, action)
 }
 
-export interface IContext {
-  tcState: IState,
-  tcDispatch: Dispatch<IAction<PayloadType>>
-}
+
 export const TableConfigContext = createContext<IContext>({
   tcState: initialState,
   tcDispatch: () => { }
 })
+
+
 export const XTableConfigProvider = ({ children }: { children?: any }) => {
   const [tcState, tcDispatch] = useReducer(reducer, initialState)
   return (
