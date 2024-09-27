@@ -70,7 +70,7 @@ const customImagingColDefFactory = (id: number): ColDef => {
 
 const sdssCatalogColDefFactory = (table: string, col: string): ColDef => {
   return {
-    field: `sdss:${table}.${col}`,
+    field: `sdss:${table}_${col}`,
     flex: 1,
     headerName: col.toLowerCase(),
     filter: true,
@@ -118,10 +118,10 @@ class TableHelper {
     }
   }
 
-  getColDefs(tcState: IState): {colDef: ColDef[], initVal: any} {
+  getColDefs(tcState: IState): { colDef: ColDef[], initVal: any } {
     const defs: ColDef[] = [idColDef]
     const initVal: any = {}
-    
+
     // Classification
     if (tcState.classification.enabled) {
       defs.push(classificationColDef)
@@ -140,7 +140,7 @@ class TableHelper {
     if (!!tcState.sdssCatalog.selectedColumns) {
       for (const col of tcState.sdssCatalog.selectedColumns) {
         defs.push(sdssCatalogColDefFactory(col.table, col.column))
-        initVal[`sdss:${col.table}.${col.column}`] = queuedState
+        initVal[`sdss:${col.table}_${col.column}`] = queuedState
       }
     }
 
@@ -170,13 +170,13 @@ class TableHelper {
 
     // Custom Imaging
     if (tcState.customImaging.enabled) {
-      for (const col of tcState.customImaging.columns) {
-        defs.push(customImagingColDefFactory(col.columnIndex))
-        initVal[`img:custom_${col.columnIndex}`] = queuedState
-      }
+      tcState.customImaging.columns.forEach((col, idx, _) => {
+        defs.push(customImagingColDefFactory(idx))
+        initVal[`img:custom_${idx}`] = queuedState
+      })
     }
 
-    return {colDef: defs, initVal: initVal}
+    return { colDef: defs, initVal: initVal }
   }
 }
 
