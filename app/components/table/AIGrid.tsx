@@ -20,11 +20,11 @@ import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { Container } from 'react-bootstrap'
 
 
-semaphore.create('legacyImaging', 1)
-semaphore.create('splusImaging', 2)
-semaphore.create('photospectra', 2)
-semaphore.create('spectra', 2)
-semaphore.create('sdss_cat', 2)
+semaphore.create('legacyImaging', 4)
+semaphore.create('splusImaging', 4)
+semaphore.create('photospectra', 4)
+semaphore.create('spectra', 4)
+semaphore.create('sdss_cat', 4)
 
 
 const splusService = new SplusService()
