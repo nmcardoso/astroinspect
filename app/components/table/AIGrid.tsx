@@ -338,7 +338,7 @@ export default function AIGrid() {
 
 
   const paginationPageSizeSelector = useMemo<number[] | boolean>(() => {
-    return [20, 50, 100];
+    return [25, 50, 75, 100, 150, 200]
   }, [])
 
 
