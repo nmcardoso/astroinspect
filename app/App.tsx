@@ -1,12 +1,12 @@
 import { Button, Container } from 'react-bootstrap'
-import AppNavbar from '@/components/common/AppNavbar'
+import Appbar from '@/components/appbar/Appbar'
 import ConfigForm from '@/components/setup/ConfigForm'
 import AIGrid from '@/components/table/AIGrid'
 import { XTableDataProvider } from '@/contexts/XTableDataContext'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Emitter from '@/lib/Emitter'
 import { FaArrowLeft } from "react-icons/fa";
-import DownloadTableButton from '@/components/common/DownloadTableButton'
+import DownloadTableButton from '@/components/appbar/DownloadTableButton'
 
 
 export default function App() {
@@ -37,7 +37,7 @@ export default function App() {
   return (
     <>
       <div className="d-flex flex-column h-100">
-        <AppNavbar left={currPanel == 'table' ? <BackButton /> : ''} />
+        <Appbar left={currPanel == 'table' ? <BackButton /> : ''} />
         <div className="flex-grow-1">
           <XTableDataProvider>
             {currPanel == 'config' ? <ConfigForm /> : <AIGrid />}
