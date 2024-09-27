@@ -1,5 +1,6 @@
 import { createContext, useContext, useReducer } from 'react'
 import localforage from 'localforage'
+import { ContextActions } from '@/interfaces/contextActions'
 
 
 export const SCHEMA_VERSION: number = 11
