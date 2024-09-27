@@ -140,7 +140,6 @@ const reducerMap = {
   [ContextActions.LEGACY_IMAGING]: setLegacyImaging,
   [ContextActions.SDSS_IMAGING]: setSdssSpectra,
   [ContextActions.SDSS_CATALOG]: setSdssCatalog,
-  [ContextActions.STAMP_MODAL]: setStampModal,
   [ContextActions.CUSTOM_IMAGE_NEW]: addCustomImaging,
   [ContextActions.CUSTOM_IMAGE_UPDATE]: updateCustomImaging,
   [ContextActions.CUSTOM_IMAGE_REMOVE]: removeCustomImaging,

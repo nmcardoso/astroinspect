@@ -77,12 +77,6 @@ interface ISplusPhotoSpectra extends IterableInterface {
   selectedLines: string[]
 }
 
-interface IStampModal extends IterableInterface {
-  showRedshift: boolean,
-  showAutoFluxRadius: boolean,
-  showPetroFluxRadius: boolean,
-}
-
 interface ICustomImagingColumn extends IterableInterface {
   url: string,
   fileExtension: string,
