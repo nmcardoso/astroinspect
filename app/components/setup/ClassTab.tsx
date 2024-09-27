@@ -285,8 +285,8 @@ export default function ClassTab() {
       <hr className='my-4' />
 
       <Form
-        className="mt-3"
-        onSubmit={handleDownload}>
+        // onSubmit={handleDownload}
+        className="mt-3">
         <Form.Group as={Row} className="mb-2" controlId="classDownload">
           <Form.Label column sm="1">
             Save
