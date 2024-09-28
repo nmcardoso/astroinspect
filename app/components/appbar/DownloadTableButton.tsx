@@ -64,7 +64,7 @@ const DownloadModal = ({ show, onHide }: any) => {
       }
       return column.getColDef().headerName
     }
-    console.log(filename)
+    console.log('colKeys:', getColKeys(), 'class', getClassFilter())
     tcState.grid.api.exportDataAsCsv({
       suppressQuotes: true,
       columnKeys: getColKeys(),
@@ -120,16 +120,17 @@ const DownloadModal = ({ show, onHide }: any) => {
               <div className="d-flex align-items-center mt-2">
                 <Form.Check
                   inline
-                  defaultChecked
+                  checked={classFilter === 'all'}
                   label="all"
                   name="filterClass"
                   type="radio"
                   value="all"
                   id="filterClass-1"
-                  onChange={(e) => setColFilter('all')}
+                  onChange={(e) => setClassFilter('all')}
                 />
                 <Form.Check
                   inline
+                  checked={classFilter === 'classified'}
                   label="classified only"
                   name="filterClass"
                   type="radio"
@@ -139,6 +140,7 @@ const DownloadModal = ({ show, onHide }: any) => {
                 />
                 <Form.Check
                   inline
+                  checked={classFilter === 'unclassified'}
                   label="unclassified only"
                   name="filterClass"
                   type="radio"
@@ -178,6 +180,7 @@ const DownloadModal = ({ show, onHide }: any) => {
               <div className="d-flex align-items-center mt-2">
                 <Form.Check
                   inline
+                  checked={filterAndSort}
                   label="filter & sort"
                   name="filterRow"
                   type="checkbox"
@@ -209,7 +212,7 @@ const DownloadModal = ({ show, onHide }: any) => {
 
 
 
-          <Form.Group as={Row} className="mb-2" controlId="rowFilter">
+          {/* <Form.Group as={Row} className="mb-2" controlId="rowFilter">
             <Form.Label column sm="2" className="text-end">
               Columns
             </Form.Label>
@@ -251,7 +254,7 @@ const DownloadModal = ({ show, onHide }: any) => {
                 </Help>
               </div>
             </Col>
-          </Form.Group>
+          </Form.Group> */}
 
 
           <Form.Group as={Row} className="my-3" controlId="classDownloadBtn">
