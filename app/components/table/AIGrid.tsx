@@ -352,6 +352,12 @@ export default function AIGrid() {
   }, [])
 
 
+  const style = { 
+    '--ag-cell-horizontal-padding': '8px',
+    '--ag-borders': 'solid 1px',
+    '--ag-wrapper-border-radius': '0px',
+  } as React.CSSProperties
+
   let gridOptions: GridOptions = {}
   if (
     tcState.cols.legacyImaging.enabled ||
