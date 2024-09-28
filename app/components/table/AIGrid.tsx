@@ -333,22 +333,8 @@ export default function AIGrid() {
   }, [])
 
 
-
-  const gridRef = useRef<AgGridReact>(null)
-  useEffect(() => {
-    if (!!gridRef.current) {
-      tcDispatch({
-        type: ContextActions.GRID_UPDATE,
-        payload: {
-          api: gridRef.current.api
-        }
-      })
-    }
-  }, [tcDispatch, gridRef])
-
-
   const paginationPageSizeSelector = useMemo<number[] | boolean>(() => {
-    return [25, 50, 75, 100, 150, 200]
+    return [25, 50, 75, 100, 150, 200, 400]
   }, [])
 
 
