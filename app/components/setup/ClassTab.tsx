@@ -286,53 +286,6 @@ export default function ClassTab() {
       </Form.Group>
 
       <CategoricalControl />
-
-      <hr className='my-4' />
-
-      <Form
-        // onSubmit={handleDownload}
-        className="mt-3">
-        <Form.Group as={Row} className="mb-2" controlId="classDownload">
-          <Form.Label column sm="1">
-            Save
-          </Form.Label>
-          <Col sm={8}>
-            <div className="d-flex align-items-center">
-              <InputGroup>
-                <Form.Control placeholder="File name" />
-                <Button variant="primary" type="submit">
-                  <AiOutlineCloudDownload size={18} className="me-1" />
-                  {' '}Download classifications
-                </Button>
-              </InputGroup>
-              <Help title="Save Classifications" className="ms-1">
-                Choose a name and save your classifications in local computer
-              </Help>
-            </div>
-          </Col>
-        </Form.Group>
-
-        <Form.Group as={Row} className="mb-2" controlId="classFilter">
-          <Form.Label column sm="1">
-          </Form.Label>
-          <Col sm={8}>
-            <div className="d-flex align-items-center">
-              <Form.Check
-                type="switch"
-                label="Filter unclassified rows"
-                checked={tcState.cols.classification.filterUnclassified}
-                onChange={e => tcDispatch({
-                  type: ContextActions.CLASSIFICATION_CONFIG,
-                  payload: { filterUnclassified: e.target.checked }
-                })}
-              />
-              <Help title="Filter unclassified" className="ms-1">
-                Download file without the unclassified rows
-              </Help>
-            </div>
-          </Col>
-        </Form.Group>
-      </Form>
     </>
   )
 }
