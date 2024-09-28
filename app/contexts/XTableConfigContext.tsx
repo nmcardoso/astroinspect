@@ -3,7 +3,7 @@ import localforage from 'localforage'
 import { ContextActions } from '@/interfaces/contextActions'
 
 
-export const SCHEMA_VERSION: number = 13 // 11
+export const SCHEMA_VERSION: number = 14 // 11
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
@@ -16,13 +16,15 @@ const getInitialState = (): IState => ({
     raIndex: null,
     decIndex: null,
     processing: false,
+    isSameFile: false,
   },
   grid: {
     data: undefined,
     colDef: undefined,
     api: undefined,
     isLoaded: false,
-    shouldLoad: true,
+    currColConfigs: undefined,
+    currTale: undefined,
   },
   currentView: 'settings',
   cols: {
