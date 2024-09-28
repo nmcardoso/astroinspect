@@ -1,18 +1,11 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
 import { loadErrorState, loadingState, queuedState } from '@/lib/states'
-import LegacyService from '@/services/LegacyService'
-import SplusService from '@/services/SplusService'
 import { CustomCellRendererProps } from '@ag-grid-community/react'
 import { useMemo, useState } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { IoMdTime } from "react-icons/io"
 import { MdDownload, MdErrorOutline } from "react-icons/md"
-
-
-const notFoundSrc = 'https://dummyimage.com/90x90/e8e8e8/474747.jpg&text=Not+Found'
-const legacyService = new LegacyService()
-const splusService = new SplusService()
 
 
 
