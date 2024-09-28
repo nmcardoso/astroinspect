@@ -35,10 +35,6 @@ class Semaphore {
         fnToCall,
         args,
       })
-      Emitter.on('cancel', () => {
-        console.log('cancelling')
-        reject('cancelled')
-      })
       this.tryNext()
     })
   }
