@@ -24,7 +24,6 @@ jobs:
     - name: Build app
       run: |
         npm run build
-        npm run export
         touch out/.no-jekyll
         echo "astroinspect.natanael.net" > out/CNAME
       env:

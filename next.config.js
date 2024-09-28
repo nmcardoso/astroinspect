@@ -2,6 +2,7 @@
 const basePath = process.env.NODE_ENV === 'production' ? '/astroinspect' : ''
 
 const nextConfig = {
+  output: 'export',
   reactStrictMode: true,
   swcMinify: true,
   typescript: {
