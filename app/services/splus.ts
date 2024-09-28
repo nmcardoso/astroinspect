@@ -1,6 +1,5 @@
 import axios, { AxiosInstance } from 'axios'
 import { XMLParser } from 'fast-xml-parser'
-import { ILuptonConfig, ITrilogyConfig } from '../contexts/XTableConfigContext'
 import { obj2qs } from '../lib/utils'
 import { QueryClient } from '@tanstack/react-query'
 import { timeConvert } from '../lib/utils'
@@ -30,7 +29,7 @@ const FLUX_RADIUS_URL = 'https://checker-melted-forsythia.glitch.me/fluxRadius'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: timeConvert(2, 'hour', 'ms'),
+      staleTime: timeConvert(12, 'hour', 'ms'),
     },
   },
 })
@@ -126,6 +125,104 @@ export default class SplusService {
         }
       )
       return data
+    })
+  }
+}
+
+
+
+export class SplusStamp implements IResourceFetch {
+  private ra
+  private dec
+  private pixscale
+  private type
+  private config
+  private stampSize
+  
+  constructor(
+    ra: number, 
+    dec: number, 
+    pixscale: number, 
+    type: 'trilogy' | 'lupton',
+    config: ILuptonConfig | ITrilogyConfig,
+  ) {
+    this.ra = ra
+    this.dec = dec
+    this.pixscale = pixscale
+    this.type = type
+    this.config = config
+    this.stampSize = Math.min(Math.round((this.pixscale * 300) / 0.55), 1000)
+  }
+
+  getParams() {
+    if (this.type === 'trilogy') {
+      return {
+        ra: this.ra,
+        dec: this.dec,
+        size: this.stampSize,
+        r: this.config?.R?.join(','),
+        g: this.config?.G?.join(','),
+        b: this.config?.B?.join(','),
+        noise: this.config?.noise,
+        q: this.config?.Q
+      }
+    }
+    return {
+      ra: this.ra,
+      dec: this.dec,
+      size: this.stampSize,
+      r: this.config?.R,
+      g: this.config?.G,
+      b: this.config?.B,
+      stretch: this.config?.stretch,
+      q: this.config?.Q
+    }
+  }
+
+  getUrl() {
+    if (this.type === 'trilogy') {
+      return TRILOGY_URL
+    }
+    return LUPTON_URL
+  }
+
+  async fetch() {
+    return await queryClient.fetchQuery({
+      queryKey: [this.ra, this.dec, this.stampSize, this.type, this.config],
+      queryFn: () => axios.get(this.getUrl(), { 
+        responseType: 'blob', 
+        signal: semaphore.getSignal(),
+        params: this.getParams()
+      })
+    })
+  }
+}
+
+
+
+export class SplusPhotoSpectra implements IResourceFetch {
+  private ra
+  private dec
+  private lines 
+
+  constructor(ra: number, dec: number, lines: string[]) {
+    this.ra = ra
+    this.dec = dec
+    this.lines = lines
+  }
+
+  async fetch() {
+    return await queryClient.fetchQuery({
+      queryKey: [this.ra, this.dec, this.lines],
+      queryFn: () => axios.get(PHOTOSPEC_URL, { 
+        responseType: 'blob', 
+        signal: semaphore.getSignal(),
+        params: {
+          ra: this.ra,
+          dec: this.dec,
+          ...this.lines.map(e => ({[e]: ''})),
+        }
+      })
     })
   }
 }
