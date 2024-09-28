@@ -193,24 +193,20 @@ export default function FileInputTab() {
       
       TableHelper.getTableSummary(file).then(summary => {
         if (summary?.positionFound) {
-          if (
-            file.name != tcState.table.file?.name || 
-            file.size != tcState.table.file?.size ||
-            file.lastModified != tcState.table.file?.lastModified
-          ) {
+          const isSameFile = (
+            file.name === tcState.table.file?.name || 
+            file.size === tcState.table.file?.size ||
+            file.lastModified === tcState.table.file?.lastModified
+          )
+          if (!isSameFile) {
             tcDispatch({
               type: ContextActions.GRID_UPDATE,
               payload: {
-                type: {
-                  data: undefined,
-                  api: undefined,
-                  isLoaded: false,
-                  shouldLoad: true,
-                }
+                data: [],
+                colDefs: [],
               }
             })
           }
-
           tcDispatch({
             type: ContextActions.USER_FILE_INPUT,
             payload: {
@@ -220,9 +216,9 @@ export default function FileInputTab() {
               raIndex: summary.raIndex,
               decIndex: summary.decIndex,
               file,
+              isSameFile,
             }
           })
-
           setTableState(TableState.success)
         } else {
           setTableState(TableState.positionNotFound)
