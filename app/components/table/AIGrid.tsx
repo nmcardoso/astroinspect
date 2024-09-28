@@ -352,7 +352,15 @@ export default function AIGrid() {
   }, [])
 
 
-  const style = { '--ag-cell-horizontal-padding': '8px' } as React.CSSProperties
+  let gridOptions: GridOptions = {}
+  if (
+    tcState.cols.legacyImaging.enabled ||
+    tcState.cols.sdssSpectra.enabled ||
+    tcState.cols.splusPhotoSpectra.enabled ||
+    (tcState.cols.customImaging.enabled && tcState.cols.customImaging.columns.length > 0)
+  ) {
+    gridOptions = { rowHeight: 120 }
+  }
 
   return (
     <Container fluid className="px-0" style={{ height: '100%' }}>
