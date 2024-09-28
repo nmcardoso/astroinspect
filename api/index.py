@@ -52,7 +52,7 @@ def get_token():
 
 @app.get('/')
 def hello():
-  return 'Hello, world'
+  return 'AstroInspect API'
 
 
 
