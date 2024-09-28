@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const basePath = process.env.NODE_ENV === 'production' ? '/astrotools' : ''
+const basePath = process.env.NODE_ENV === 'production' ? '/astroinspect' : ''
 
 const nextConfig = {
   reactStrictMode: true,
