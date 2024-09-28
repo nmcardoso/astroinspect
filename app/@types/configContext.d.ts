@@ -11,14 +11,16 @@ interface ITableConfig extends IterableInterface {
   raIndex: number | null,
   decIndex: number | null,
   processing: boolean,
+  isSameFile: boolean,
 }
 
 interface IGrid extends IterableInterface {
   data?: any,
   colDef?: any,
-  api?: any,
+  api?: GridApi,
   isLoaded: boolean,
-  shouldLoad: boolean,
+  currColConfigs?: ICols,
+  currTale?: ITableConfig,
 }
 
 interface ITrilogyConfig extends IterableInterface {
@@ -39,7 +41,7 @@ interface ILuptonConfig extends IterableInterface {
 
 interface ISplusImaging extends IterableInterface {
   enabled?: boolean,
-  type?: string,
+  type: 'trilogy' | 'lupton',
   pixelScale: number,
   trilogyConfig: ITrilogyConfig,
   luptonConfig: ILuptonConfig
@@ -88,6 +90,16 @@ interface ICustomImaging extends IterableInterface {
   columns: ICustomImagingColumn[],
 }
 
+interface ICols extends IterableInterface {
+  classification: IClassification,
+  sdssCatalog: ISdssCatalog,
+  splusImaging: ISplusImaging,
+  legacyImaging: ILegacyImaging,
+  sdssSpectra: ISdssSpectra,
+  splusPhotoSpectra: ISplusPhotoSpectra,
+  customImaging: ICustomImaging,
+}
+
 type CurrentViewType = 'settings' | 'grid'
 
 interface IState {
@@ -95,15 +107,7 @@ interface IState {
   table: ITableConfig,
   grid: IGrid,
   currentView: CurrentViewType,
-  cols: {
-    classification: IClassification,
-    sdssCatalog: ISdssCatalog,
-    splusImaging: ISplusImaging,
-    legacyImaging: ILegacyImaging,
-    sdssSpectra: ISdssSpectra,
-    splusPhotoSpectra: ISplusPhotoSpectra,
-    customImaging: ICustomImaging,
-  }
+  cols: ICols,
 }
 
 
