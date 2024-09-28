@@ -14,7 +14,7 @@ export default function Appbar() {
   const { tcState } = useXTableConfig()
 
   return (
-    <Navbar bg="light" expand="lg" className="border-bottom">
+    <Navbar bg="light" expand="lg">
       <Container>
         <div>
           {tcState.currentView == 'grid' && <BackButton />}
