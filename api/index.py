@@ -57,7 +57,7 @@ def hello():
 
 
 @app.get('/spec')
-@cross_origin
+@cross_origin()
 def spec():
   specobjid = request.args.get('id')
   res = requests.get(f'https://skyserver.sdss.org/dr18/en/get/SpecById.ashx?id={specobjid}', stream=True)
