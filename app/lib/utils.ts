@@ -47,7 +47,7 @@ export function timeConvert(
 }
 
 export function getBaseURL() {
-  return process.env.NODE_ENV === 'development' ? '/' : '/astrotools/'
+  return process.env.NODE_ENV === 'development' ? '/' : '/'
 }
 
 
