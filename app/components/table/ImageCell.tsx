@@ -80,6 +80,7 @@ function ImageCell({
           src={src}
           alt=""
           height={120}
+          style={{cursor: 'zoom-in'}}
           onClick={() => setShowModal(true)}/>
       )
       return Figure
