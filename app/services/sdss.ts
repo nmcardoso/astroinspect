@@ -15,7 +15,7 @@ const CONE_SPEC_URL = 'https://skyserver.sdss.org/dr18/SkyServerWS/SpectroQuery/
 const SQL_URL = 'https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch'
 const CROSSID_SEARCH = 'https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/CrossIdSearch'
 // const SPEC_PLOT_URL = 'https://skyserver.sdss.org/dr18/en/get/SpecById.ashx?id='
-const SPEC_PLOT_URL = 'https://astrotools.vercel.app/plot'
+const SPEC_PLOT_URL = 'https://astrotools.vercel.app/spec'
 
 
 const queryClient = new QueryClient({
@@ -145,7 +145,7 @@ export default class SdssService {
           }
         })
       })
-      return resp
+      return resp.data
     } catch (e) {
       console.log(typeof (e))
       console.log(e)
@@ -202,6 +202,7 @@ export class SdssSpectra extends SdssService implements IResourceFetch {
 
   async fetch() {
     const specObjId = await this.getObjSpecId(this.ra, this.dec)
+    console.log(specObjId)
     if (!specObjId) return undefined
 
     return await queryClient.fetchQuery({
