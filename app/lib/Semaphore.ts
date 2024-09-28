@@ -63,7 +63,6 @@ class Semaphore {
 
   clear() {
     this.currentRequests = []
-    this.runningRequests = 0
   }
 }
 
