@@ -5,11 +5,12 @@ import { semaphore } from '@/lib/Semaphore'
 import { loadErrorState, loadingState, queuedState } from '@/lib/states'
 import TableHelper from '@/lib/TableHelper'
 import { timeConvert } from '@/lib/utils'
-import LegacyService from '@/services/LegacyService'
-import SdssService from '@/services/SdssService'
-import SplusService from '@/services/SplusService'
+import { CustomImage } from '@/services/custom'
+import { LegacyStamp } from '@/services/legacy'
+import SdssService, { SdssCatalog, SdssSpectra } from '@/services/sdss'
+import SplusService, { SplusPhotoSpectra, SplusStamp } from '@/services/splus'
 import {
-  ColDef, GetRowIdParams, GridReadyEvent,
+  ColDef, GetRowIdParams, GridOptions, GridReadyEvent,
   IRowNode
 } from "@ag-grid-community/core"
 import { QueryClient } from '@tanstack/react-query'
@@ -17,163 +18,47 @@ import "ag-grid-community/styles/ag-grid.css"
 import "ag-grid-community/styles/ag-theme-quartz.css"
 import { AgGridReact } from 'ag-grid-react'
 import axios from 'axios'
+import { clone, cloneDeep, isEqual } from 'lodash'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Container } from 'react-bootstrap'
 
 
-semaphore.create('legacyImaging', 4)
-semaphore.create('splusImaging', 4)
-semaphore.create('photospectra', 4)
-semaphore.create('spectra', 4)
+semaphore.create('img:legacy', 4)
+semaphore.create('img:splus', 4)
+semaphore.create('img:splus_photospec', 4)
+semaphore.create('img:sdss_spec', 4)
 semaphore.create('sdss_cat', 4)
 
 
-const splusService = new SplusService()
-const legacyService = new LegacyService()
-const sdssService = new SdssService()
-
-
-const CLIENT_STALE_TIME = timeConvert(1, 'day', 'ms')
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: CLIENT_STALE_TIME,
-    },
-  },
-})
-
-
-
-
-const downloadSplusImage = async ({ ra, dec, id, grid, splusConfig }: { ra: string | number, dec: string | number, id: string, grid: AgGridReact, splusConfig: ISplusImaging }) => {
-  const size = Math.min(Math.round((splusConfig.pixelScale * 300) / 0.55), 1000)
-  const url = splusService.getTrilogyUrl(ra, dec, size, splusConfig.trilogyConfig)
-  const rowNode = grid!.api.getRowNode(id)
-  if (rowNode?.data['img:splus'] === queuedState || rowNode?.data['img:splus'] === undefined) {
-    try {
-      rowNode?.setDataValue('img:splus', loadingState)
-      const resp = await queryClient.fetchQuery({
-        queryKey: ['splus-image', id],
-        queryFn: () => axios.get(url, { responseType: 'blob', signal: semaphore.getSignal() })
-      })
-      const blob = URL.createObjectURL(resp.data)
-      rowNode?.setDataValue('img:splus', blob)
-    } catch {
-      rowNode?.setDataValue('img:splus', loadErrorState)
-    }
-  }
-}
-
-
-const downloadImage = async ({ ra, dec, id, grid }: { ra: string | number, dec: string | number, id: string, grid: AgGridReact }) => {
-  const url = `https://www.legacysurvey.org/viewer/cutout.jpg?ra=${ra}&dec=${dec}&size=300&pixscale=0.4&layer=ls-dr10`
-  const rowNode = grid!.api.getRowNode(id)
-  // console.log(`${rowNode?.data['tab:ra']}|${rowNode?.data['tab:dec']} : ${rowNode?.data['img:legacy'].toString()}`)
-  if (rowNode?.data['img:legacy'] === queuedState || rowNode?.data['img:legacy'] == undefined) {
-    try {
-      rowNode?.setDataValue('img:legacy', loadingState)
-      const resp = await queryClient.fetchQuery({
-        queryKey: ['legacy-image', id],
-        queryFn: () => axios.get(url, { responseType: 'blob', signal: semaphore.getSignal() })
-      })
-      const blob = URL.createObjectURL(resp.data)
-      rowNode?.setDataValue('img:legacy', blob)
-    } catch {
-      rowNode?.setDataValue('img:legacy', loadErrorState)
-    }
-  }
-}
-
-
-const downloadPhotoSpec = async ({ ra, dec, appertures, id, grid }: { ra: string | number, dec: string | number, appertures: string[], id: string, grid: AgGridReact }) => {
-  const url = splusService.getPhotoSpecUrl(ra, dec, appertures)
-  const rowNode = grid!.api.getRowNode(id)
-  if (rowNode?.data['img:splus_photospec'] === queuedState || rowNode?.data['img:splus_photospec'] == undefined) {
-    try {
-      rowNode?.setDataValue('img:splus_photospec', loadingState)
-      const resp = await queryClient.fetchQuery({
-        queryKey: ['photospec-image', id],
-        queryFn: () => axios.get(url, { responseType: 'blob', signal: semaphore.getSignal() })
-      })
-      const blob = URL.createObjectURL(resp.data)
-      rowNode?.setDataValue('img:splus_photospec', blob)
-    } catch {
-      rowNode?.setDataValue('img:splus_photospec', loadErrorState)
-    }
-  }
-}
-
-const downloadSpec = async ({ ra, dec, id, grid }: { ra: string | number, dec: string | number, id: string, grid: AgGridReact }) => {
-  const specObjId = await sdssService.getObjSpecId(ra, dec)
-  if (!specObjId) return
-  const url = sdssService.getSpecPlotUrlById(specObjId)
-
-  const rowNode = grid!.api.getRowNode(id)
-  if (rowNode?.data['img:sdss_spec'] === queuedState || rowNode?.data['img:sdss_spec'] == undefined) {
-    try {
-      rowNode?.setDataValue('img:sdss_spec', loadingState)
-      const resp = await queryClient.fetchQuery({
-        queryKey: ['spectra', id],
-        queryFn: () => axios.get(url, { responseType: 'blob', signal: semaphore.getSignal() })
-      })
-      const blob = URL.createObjectURL(resp.data)
-      rowNode?.setDataValue('img:sdss_spec', blob)
-    } catch {
-      rowNode?.setDataValue('img:sdss_spec', loadErrorState)
-    }
-  }
-}
-
-const downloadResource = async ({ url, colId, rowId, grid }: { url: string, colId: string, rowId: string, grid: AgGridReact }) => {
+const downloadResource = async ({ 
+  resourceFetch, 
+  colId, 
+  rowId, 
+  grid,
+  isImage = true,
+}: { 
+  resourceFetch: IResourceFetch, 
+  colId: string, 
+  rowId: string, 
+  grid: AgGridReact,
+  isImage: boolean, 
+}) => {
   const rowNode = grid!.api.getRowNode(rowId)
-  if (rowNode?.data[colId] === queuedState || rowNode?.data[colId] == undefined) {
+  if (
+    (rowNode?.data[colId] === queuedState || rowNode?.data[colId] === undefined) 
+    && rowNode?.data.hasOwnProperty(colId)
+  ) {
     try {
       rowNode?.setDataValue(colId, loadingState)
-      const resp = await queryClient.fetchQuery({
-        queryKey: [colId, rowId],
-        queryFn: () => axios.get(url, { responseType: 'blob', signal: semaphore.getSignal() })
-      })
-      const blob = URL.createObjectURL(resp.data)
-      rowNode?.setDataValue(colId, blob)
-    } catch {
-      rowNode?.setDataValue(colId, loadErrorState)
-    }
-  }
-}
+      const resp = await resourceFetch.fetch()
 
-const downloadSdssCat = async ({
-  ra,
-  dec,
-  id,
-  grid,
-  table,
-  column,
-  fname,
-  lastModified
-}: {
-  ra: string | number,
-  dec: string | number,
-  id: string,
-  grid: AgGridReact,
-  table: string,
-  column: string,
-  fname: string,
-  lastModified: number,
-}) => {
-  const rowNode = grid!.api.getRowNode(id)
-  if (rowNode?.data[`sdss:${table}_${column}`] === queuedState || rowNode?.data[`sdss:${table}_${column}`] === undefined) {
-    try {
-      rowNode?.setDataValue(`sdss:${table}_${column}`, loadingState)
-      const resp = await sdssService.query(ra, dec, id, table, [column], fname, lastModified)
-      if (resp !== undefined) {
-        console.log(resp[column])
-        rowNode?.setDataValue(`sdss:${table}_${column}`, resp[column])
+      if (isImage) {
+        rowNode?.setDataValue(colId, URL.createObjectURL(resp.data))
       } else {
-        rowNode?.setDataValue(`sdss:${table}_${column}`, loadErrorState)
+        rowNode?.setDataValue(colId, resp.data)
       }
     } catch {
-      rowNode?.setDataValue(`sdss:${table}_${column}`, loadErrorState)
+      rowNode?.setDataValue(colId, loadErrorState)
     }
   }
 }
@@ -181,28 +66,54 @@ const downloadSdssCat = async ({
 
 export default function AIGrid() {
   const { tcState, tcDispatch } = useXTableConfig()
+  const [isLoading, setLoading] = useState(true)
 
-  const onGridReady = useCallback((event: GridReadyEvent) => {
-    if (tcState.table.file) {
-      TableHelper.load(tcState.table.file).then((result) => {
-        console.log(tcState.grid)
-        if (!tcState.grid.isLoaded || tcState.grid.shouldLoad) {  
-          const { colDef, initVal } = TableHelper.getColDefs(tcState)
+  const gridRef = useRef<AgGridReact>(null)
 
-          const data = result?.map((e, i, _) => ({ ...e, ...initVal, 'ai:id': String(i + 1) }))
-          
-          tcDispatch({
-            type: ContextActions.GRID_UPDATE,
-            payload: {
-              data: data,
-              colDef: colDef,
-              isLoaded: true,
-              shouldLoad: false,
-            }
-          })
-        }
-      })
+  const onGridReady = useCallback(async (event: GridReadyEvent) => {
+    let prevClass = undefined
+    if (
+      tcState.table.isSameFile &&
+      tcState.grid.currColConfigs?.classification.enabled && 
+      tcState.cols.classification.enabled
+    ) {
+      prevClass = tcState.grid.data.map((e) => ({'ai:class': e['ai:class']}))
+      console.log('prev class', prevClass)
     }
+    console.log('isSameFile', tcState.table.isSameFile)
+
+    let data = await TableHelper.load(tcState.table.file)
+    
+    const { colDef, initVal } = TableHelper.getColDefs(tcState)
+
+    data = data?.map((e, i, _) => ({ ...e, ...initVal, 'ai:id': String(i + 1) }))
+    console.log('data', data)
+    
+    if (prevClass) {
+      data = data?.map((e, i, _) => ({...e, ...prevClass[i]}))
+      console.log('data with prev class', data)
+    }
+
+    setLoading(false)
+    
+    tcDispatch({
+      type: ContextActions.GRID_UPDATE,
+      payload: {
+        data: data,
+        colDef: colDef,
+        isLoaded: true,
+        currColConfigs: cloneDeep(tcState.cols),
+        currTable: {...tcState.table},
+        api: event.api,
+      }
+    })
+
+    tcDispatch({
+      type: ContextActions.USER_FILE_INPUT,
+      payload: {
+        isSameFile: true,
+      }
+    })
   }, [tcState])
 
 
@@ -226,15 +137,19 @@ export default function AIGrid() {
 
     // row-wise map
     pageData.forEach(e => {
+      const ra = e[`tab:${raCol}`]
+      const dec = e[`tab:${decCol}`]
+      const rowId = e['ai:id']
+
       // Legacy stamps
       if (tcState.cols.legacyImaging.enabled) {
         semaphore.enqueue(
-          'legacyImaging',
-          downloadImage,
+          'img:legacy',
+          downloadResource,
           {
-            ra: e[`tab:${raCol}`],
-            dec: e[`tab:${decCol}`],
-            id: e['ai:id'],
+            resourceFetch: new LegacyStamp(ra, dec, 300, tcState.cols.legacyImaging.pixelScale),
+            colId: 'img:legacy',
+            rowId: rowId,
             grid: gridRef.current
           }
         )
@@ -242,15 +157,17 @@ export default function AIGrid() {
 
       // S-PLUS stamps
       if (tcState.cols.splusImaging.enabled) {
+        const config = tcState.cols.splusImaging.type === 'trilogy' ? 
+          tcState.cols.splusImaging.trilogyConfig : 
+          tcState.cols.splusImaging.luptonConfig
         semaphore.enqueue(
-          'splusImaging',
-          downloadSplusImage,
+          'img:splus',
+          downloadResource,
           {
-            ra: e[`tab:${raCol}`],
-            dec: e[`tab:${decCol}`],
-            id: e['ai:id'],
+            resourceFetch: new SplusStamp(ra, dec, tcState.cols.splusImaging.pixelScale, tcState.cols.splusImaging.type, config),
+            colId: 'img:splus',
+            rowId: rowId,
             grid: gridRef.current,
-            splusConfig: tcState.cols.splusImaging
           }
         )
       }
@@ -258,14 +175,13 @@ export default function AIGrid() {
       // S-PLUS photo spectra
       if (tcState.cols.splusPhotoSpectra.enabled) {
         semaphore.enqueue(
-          'photospectra',
-          downloadPhotoSpec,
+          'img:splus_photospec',
+          downloadResource,
           {
-            ra: e[`tab:${raCol}`],
-            dec: e[`tab:${decCol}`],
-            id: e['ai:id'],
+            resourceFetch: new SplusPhotoSpectra(ra, dec, tcState.cols.splusPhotoSpectra.selectedLines),
+            colId: 'img:splus_photospec',
+            rowId: rowId,
             grid: gridRef.current,
-            appertures: tcState.cols.splusPhotoSpectra.selectedLines
           }
         )
       }
@@ -273,12 +189,12 @@ export default function AIGrid() {
       // SDSS spectra
       if (tcState.cols.sdssSpectra.enabled) {
         semaphore.enqueue(
-          'spectra',
-          downloadSpec,
+          'img:sdss_spec', 
+          downloadResource,
           {
-            ra: e[`tab:${raCol}`],
-            dec: e[`tab:${decCol}`],
-            id: e['ai:id'],
+            resourceFetch: new SdssSpectra(ra, dec),
+            colId: 'img:sdss_spec',
+            rowId: rowId,
             grid: gridRef.current,
           }
         )
@@ -295,7 +211,7 @@ export default function AIGrid() {
             colId,
             downloadResource,
             {
-              url: url,
+              resourceFetch: new CustomImage(url),
               colId: colId,
               rowId: e['ai:id'],
               grid: gridRef.current,
@@ -308,16 +224,13 @@ export default function AIGrid() {
       tcState.cols.sdssCatalog.selectedColumns.forEach((c) => {
         semaphore.enqueue(
           'sdss_cat',
-          downloadSdssCat,
+          downloadResource,
           {
-            ra: e[`tab:${raCol}`],
-            dec: e[`tab:${decCol}`],
-            id: e['ai:id'],
+            resourceFetch: new SdssCatalog(ra, dec, c.table, c.column),
+            colId: `sdss:${c.table}_${c.column}`,
+            rowId: rowId,
             grid: gridRef.current,
-            table: c.table,
-            column: c.column,
-            fname: tcState.table.file?.name,
-            lastModified: tcState.table.file?.lastModified,
+            isImage: false,
           }
         )
       })
@@ -365,6 +278,7 @@ export default function AIGrid() {
             rowData={tcState.grid.data || []}
             columnDefs={tcState.grid.colDef || []}
             getRowId={getRowId}
+            loading={isLoading}
             style={{ height: '100%' }}
             pagination={true}
             paginationPageSize={50}
