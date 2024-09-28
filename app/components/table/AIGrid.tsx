@@ -360,7 +360,7 @@ export default function AIGrid() {
         className="ag-theme-quartz"
         style={{ width: '100%', height: '100%', ...style }}>
           <AgGridReact
-            gridOptions={{ rowHeight: 120 }}
+            gridOptions={gridOptions}
             ref={gridRef}
             rowData={tcState.grid.data || []}
             columnDefs={tcState.grid.colDef || []}
