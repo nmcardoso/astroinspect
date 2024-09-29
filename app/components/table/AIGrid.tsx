@@ -299,6 +299,7 @@ export default function AIGrid() {
     '--ag-cell-horizontal-padding': '8px',
     '--ag-borders': 'solid 1px',
     '--ag-wrapper-border-radius': '0px',
+    '--ag-header-height': '38px',
   } as React.CSSProperties
 
   let gridOptions: GridOptions = {}

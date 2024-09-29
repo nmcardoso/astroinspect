@@ -19,7 +19,8 @@ export default function BackButton() {
   return (
     <Button
       className="d-inline-flex align-items-center me-2"
-      onClick={handleClick}>
+      onClick={handleClick}
+      size="sm">
       <FaArrowLeft size={14} className="me-2" />
       <span>Back</span>
     </Button>

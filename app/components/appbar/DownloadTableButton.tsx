@@ -289,7 +289,8 @@ export default function DownloadTableButton() {
       <Button
         variant="outline-primary"
         className="d-inline-flex align-items-center"
-        onClick={() => setShowModal(true)}>
+        onClick={() => setShowModal(true)}
+        size="sm">
         <AiOutlineCloudDownload size={19} className="me-1" />
         <span>Download</span>
       </Button>
