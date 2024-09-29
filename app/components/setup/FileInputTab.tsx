@@ -272,6 +272,7 @@ export default function FileInputTab() {
               selectedColumnsId: [summary.raIndex, summary.decIndex],
               raIndex: summary.raIndex,
               decIndex: summary.decIndex,
+              dataTypes: summary.dataTypes,
               status: 'success',
               file,
               isSameFile,
@@ -286,6 +287,7 @@ export default function FileInputTab() {
           })
         }
       }).catch(err => {
+        console.log(err)
         tcDispatch({
           type: ContextActions.USER_FILE_INPUT,
           payload: {
@@ -329,6 +331,7 @@ export default function FileInputTab() {
               selectedColumnsId: [summary.raIndex, summary.decIndex],
               raIndex: summary.raIndex,
               decIndex: summary.decIndex,
+              dataTypes: summary.dataTypes,
               status: 'success',
               url,
               isSameFile,

@@ -4,7 +4,7 @@ import { ContextActions } from '@/interfaces/contextActions'
 import TableHelper from '@/lib/TableHelper'
 
 
-export const SCHEMA_VERSION: number = 14 // 11
+export const SCHEMA_VERSION: number = 15
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
@@ -18,6 +18,7 @@ const getInitialState = (): IState => ({
     decIndex: null,
     state: 'unloaded',
     isSameFile: false,
+    dataTypes: undefined,
   },
   grid: {
     data: undefined,

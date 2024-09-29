@@ -12,6 +12,7 @@ interface ITableConfig extends IterableInterface {
   decIndex: number | null,
   state: 'unloaded' | 'loading' | 'success' | 'positionNotFound' | 'error',
   isSameFile: boolean,
+  dataTypes?: string[],
 }
 
 interface IGrid extends IterableInterface {

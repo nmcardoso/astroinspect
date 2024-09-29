@@ -147,7 +147,6 @@ export default class SdssService {
       })
       return resp.data
     } catch (e) {
-      console.log(typeof (e))
       console.log(e)
     }
   }
@@ -170,7 +169,6 @@ export default class SdssService {
       WHERE vc.viewname='${table}' 
       `.trim()
     }
-    console.log(sql)
     const url = `${SQL_URL}?cmd=${encodeURIComponent(sql)}&format=json`
     const resp = await queryClient.fetchQuery({
       queryKey: ['sdss-service-columns', table],
@@ -202,7 +200,6 @@ export class SdssSpectra extends SdssService implements IResourceFetch {
 
   async fetch() {
     const specObjId = await this.getObjSpecId(this.ra, this.dec)
-    console.log(specObjId)
     if (!specObjId) return undefined
 
     return await queryClient.fetchQuery({

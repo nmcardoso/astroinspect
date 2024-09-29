@@ -64,7 +64,6 @@ const DownloadModal = ({ show, onHide }: any) => {
       }
       return column.getColDef().headerName
     }
-    console.log('colKeys:', getColKeys(), 'class', getClassFilter())
     tcState.grid.api.exportDataAsCsv({
       suppressQuotes: true,
       columnKeys: getColKeys(),

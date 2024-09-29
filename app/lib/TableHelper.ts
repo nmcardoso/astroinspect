@@ -1,12 +1,10 @@
 import AsyncTextCell from '@/components/table/AsyncTextCell'
 import ClassCell from '@/components/table/ClassCell'
 import imageCellFactory from '@/components/table/ImageCell'
-import { IState } from '@/contexts/XTableConfigContext'
 import { ColDef } from '@ag-grid-community/core'
-import Papa, { ParseResult } from 'papaparse'
+import TableReader from './io'
 import { queuedState } from './states'
 import { findIndex } from './utils'
-import TableReader from './io'
 
 
 interface ITableSummary {
@@ -78,12 +76,15 @@ const sdssCatalogColDefFactory = (table: string, col: string): ColDef => {
   }
 }
 
-const userTableColDefFactory = (colName: string): ColDef => {
+const userTableColDefFactory = (colName: string, dtype?: string): ColDef => {
+  const cellDtype = dtype ? {cellDataType: dtype} : {}
+  console.log(colName, cellDtype)
   return {
     field: `tab:${colName}`,
     flex: 1,
     headerName: colName.toLowerCase(),
     filter: true,
+    ...cellDtype,
   }
 }
 
@@ -111,8 +112,10 @@ class TableHelper {
   async getTableSummary(file: File | string) {
     const reader = new TableReader(file)
     const cols = await reader.getColumns()
+    const dataTypes = await reader.getDataTypes()
+    console.log(dataTypes)
     if (!!cols) {
-      return this.getHeaderSummary(cols)
+      return {...this.getHeaderSummary(cols), dataTypes}
     } else {
       return undefined
     }
@@ -132,7 +135,8 @@ class TableHelper {
     if (!!tcState.table.selectedColumnsId) {
       for (const colId of tcState.table.selectedColumnsId) {
         const colName = tcState.table.columns[colId]
-        defs.push(userTableColDefFactory(colName))
+        const dtype = tcState.table.dataTypes?.[colId]
+        defs.push(userTableColDefFactory(colName, dtype))
       }
     }
 

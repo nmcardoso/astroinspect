@@ -77,9 +77,7 @@ export default function AIGrid() {
       tcState.cols.classification.enabled
     ) {
       prevClass = tcState.grid.data.map((e) => ({ 'ai:class': e['ai:class'] }))
-      console.log('prev class', prevClass)
     }
-    console.log('isSameFile', tcState.table.isSameFile)
 
     let data
     if (tcState.table.type === 'local') {
@@ -91,11 +89,9 @@ export default function AIGrid() {
     const { colDef, initVal } = TableHelper.getColDefs(tcState)
 
     data = data?.map((e, i, _) => ({ ...e, ...initVal, 'ai:id': String(i + 1) }))
-    console.log('data', data)
 
     if (prevClass) {
       data = data?.map((e, i, _) => ({ ...e, ...prevClass[i] }))
-      console.log('data with prev class', data)
     }
 
     setLoading(false)

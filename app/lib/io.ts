@@ -129,6 +129,7 @@ const readParquet = (file: string | File) => {
 
 const getParquetColumnsFromFile = async (file: File) => {
   const meta = parquetMetadata(await file.arrayBuffer())
+  console.log(meta)
   return meta.schema.filter((e) => e.name !== 'schema').map((e) => e.name)
 }
 
@@ -145,6 +146,55 @@ const getParquetColumns = (file: string | File) => {
   }
 }
 
+
+
+
+const getParquetDataTypesFromFile = async (file: File) => {
+  const meta = parquetMetadata(await file.arrayBuffer())
+  const dataTypeMap = {
+    BOOLEAN: 'boolean',
+    INT32: 'number',
+    INT64: 'number',
+    INT96: 'number',
+    FLOAT: 'number',
+    DOUBLE: 'number',
+    STRING: 'text',
+    BYTE_ARRAY: 'object',
+    FIXED_LEN_BYTE_ARRAY: 'object',
+    DEFAULT: undefined,
+  }
+  return meta.schema
+    .filter((e) => e.name !== 'schema')
+    .map((e) => dataTypeMap[(e.logical_type?.type?.toUpperCase() || e.type?.toUpperCase() || 'DEFAULT')])
+}
+
+const getParquetDataTypesFromUrl = async (url: string) => {
+  const meta = await parquetMetadataAsync(await asyncBufferFromUrl(url))
+  const dataTypeMap = {
+    BOOLEAN: 'boolean',
+    INT32: 'number',
+    INT64: 'number',
+    INT96: 'number',
+    FLOAT: 'number',
+    DOUBLE: 'number',
+    STRING: 'text',
+    BYTE_ARRAY: 'object',
+    FIXED_LEN_BYTE_ARRAY: 'object',
+    DEFAULT: undefined,
+  }
+  return meta.schema
+    .filter((e) => e.name !== 'schema')
+    .map((e) => dataTypeMap[(e.logical_type?.type?.toUpperCase() || e.type?.toUpperCase() || 'DEFAULT')])
+}
+
+
+const getParquetDataTypes = (file: string | File) => {
+  if (typeof file === 'string' || file instanceof String) {
+    return getParquetDataTypesFromUrl(file as string)
+  } else {
+    return getParquetDataTypesFromFile(file as File)
+  }
+}
 
 
 export default class TableReader {
@@ -172,14 +222,14 @@ export default class TableReader {
   }
 
   async read() {
-    if (this.getFileExt() === 'csv') {
+    if (['csv', 'tsv', 'dat', 'txt'].includes(this.getFileExt() || '')) {
       return await readCsv(this.file)
-    } else if (this.getFileExt() === 'parquet') {
+    } else if (['parquet', 'parq', 'par', 'pq'].includes(this.getFileExt() || '')) {
       const data = await readParquet(this.file)
       const cols = await this.getColumns()
       if (!!cols) {
         return data.map(e => Object.fromEntries(
-          Object.entries(e).map(([key, value]) => [`tab:${cols[key]}`, value])
+          Object.entries(e).map(([key, value]) => [`tab:${cols[key as unknown as number]}`, value])
         ))
       } else {
         return data
@@ -194,5 +244,15 @@ export default class TableReader {
       this.columns = await getParquetColumns(this.file)
     }
     return this.columns
+  }
+
+  async getDataTypes() {
+    let dataTypes
+    if (['csv', 'tsv', 'dat', 'txt'].includes(this.getFileExt() || '')) {
+      dataTypes = undefined
+    } else if (['parquet', 'parq', 'par', 'pq'].includes(this.getFileExt() || '')) {
+      dataTypes = await getParquetDataTypes(this.file)
+    }
+    return dataTypes
   }
 }
