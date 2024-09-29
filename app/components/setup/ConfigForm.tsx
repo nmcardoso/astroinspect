@@ -178,21 +178,21 @@ export default function ConfigForm() {
                 <LoadExemple
                   name="galaxyzoo-small-sample.csv"
                   url="https://astroinspect.natanael.net/examples/galaxyzoo-small-sample.csv" />
-                &nbsp;(250 rows)
+                &nbsp;(250 rows, 11.5kB)
               </li>
 
               <li>
                 <LoadExemple
-                  name="galaxyzoo-small-sample.csv"
+                  name="galaxyzoo-medium-sample.csv"
                   url="https://astroinspect.natanael.net/examples/galaxyzoo-medium-sample.csv" />
-                &nbsp;(2,500 rows)
+                &nbsp;(2,500 rows, 113.8kB)
               </li>
 
               <li>
                 <LoadExemple
-                  name="galaxyzoo-small-sample.csv"
+                  name="galaxyzoo-big-sample.parquet"
                   url="https://astroinspect.natanael.net/examples/galaxyzoo-big-sample.parquet" />
-                &nbsp;(250,000 rows)
+                &nbsp;(250,000 rows, 6.8MB)
               </li>
             </ul>
           </Alert>
