@@ -161,10 +161,12 @@ export default class TableReader {
   }
 
   getFileExt() {
-    if (!this.ext && !this.isUrl) {
-      this.ext = (this.file as File).name.split('.').pop()?.toLowerCase()
-    } else {
-      this.ext = (this.file as string).split('.').pop()?.toLowerCase()
+    if (!this.ext) {
+      if (!this.isUrl) {
+        this.ext = (this.file as File).name.split('.').pop()?.toLowerCase()
+      } else {
+        this.ext = (this.file as string).split('.').pop()?.toLowerCase()
+      }
     }
     return this.ext
   }
