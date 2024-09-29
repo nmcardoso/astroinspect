@@ -25,7 +25,7 @@ const LoadExemple = ({ name, url }: { name: string, url: string }) => {
   const handleSubmit = () => {
     tcDispatch({
       type: ContextActions.USER_FILE_INPUT,
-      payload: { type: 'remote' }
+      payload: { type: 'remote', url }
     })
 
     Emitter.emit('INSERT_URL', { url })
