@@ -112,64 +112,69 @@ const DownloadModal = ({ show, onHide }: any) => {
           </Form.Group>
 
 
-          <Form.Group as={Row} className="mb-2" controlId="colFilter">
-            <Form.Label column sm="2" className="text-end">
-              Classification
-            </Form.Label>
-            <Col sm={8}>
-              <div className="d-flex align-items-center mt-2">
-                <Form.Check
-                  inline
-                  checked={classFilter === 'all'}
-                  label="all"
-                  name="filterClass"
-                  type="radio"
-                  value="all"
-                  id="filterClass-1"
-                  onChange={(e) => setClassFilter('all')}
-                />
-                <Form.Check
-                  inline
-                  checked={classFilter === 'classified'}
-                  label="classified only"
-                  name="filterClass"
-                  type="radio"
-                  value="classified"
-                  id="filterClass-2"
-                  onChange={(e) => setClassFilter('classified')}
-                />
-                <Form.Check
-                  inline
-                  checked={classFilter === 'unclassified'}
-                  label="unclassified only"
-                  name="filterClass"
-                  type="radio"
-                  value="unclassified"
-                  id="filterClass-3"
-                  onChange={(e) => setClassFilter('unclassified')}
-                />
-                <Help title="Filter rows by class" className="ms-0">
-                  This setting will sample the rows based in the classification
-                  state:
-                  <ul>
-                    <li>
-                      <b>all: </b> in this case, no filtering is performed and
-                      the output table will contain all rows, including both
-                      classified and unclassified rows
-                    </li>
-                    <li>
-                      <b>classified only: </b> the output table will contain only classified
-                      rows
-                    </li>
-                    <li>
-                      <b>unclassified only: </b> the output table will contain only unclassified
-                      rows
-                    </li>
-                  </ul>
-                </Help>
-              </div>
-            </Col>
-          </Form.Group>
+          {tcState.cols.classification.enabled &&
+            <Form.Group as={Row} className="mb-2" controlId="colFilter">
+              <Form.Label column sm="2" className="text-end">
+                Classification
+              </Form.Label>
+              <Col sm={8}>
+                <div className="d-flex align-items-center mt-2">
+                  <Form.Check
+                    inline
+                    className="me-2"
+                    checked={classFilter === 'all'}
+                    label="all"
+                    name="filterClass"
+                    type="radio"
+                    value="all"
+                    id="filterClass-1"
+                    onChange={(e) => setClassFilter('all')}
+                  />
+                  <Form.Check
+                    inline
+                    className="me-2"
+                    checked={classFilter === 'classified'}
+                    label="classified only"
+                    name="filterClass"
+                    type="radio"
+                    value="classified"
+                    id="filterClass-2"
+                    onChange={(e) => setClassFilter('classified')}
+                  />
+                  <Form.Check
+                    inline
+                    className="me-2"
+                    checked={classFilter === 'unclassified'}
+                    label="unclassified only"
+                    name="filterClass"
+                    type="radio"
+                    value="unclassified"
+                    id="filterClass-3"
+                    onChange={(e) => setClassFilter('unclassified')}
+                  />
+                  <Help title="Filter rows by class" className="ms-0">
+                    This setting will sample the rows based in the classification
+                    state:
+                    <ul>
+                      <li>
+                        <b>all: </b> in this case, no filtering is performed and
+                        the output table will contain all rows, including both
+                        classified and unclassified rows
+                      </li>
+                      <li>
+                        <b>classified only: </b> the output table will contain only classified
+                        rows
+                      </li>
+                      <li>
+                        <b>unclassified only: </b> the output table will contain only unclassified
+                        rows
+                      </li>
+                    </ul>
+                  </Help>
+                </div>
+              </Col>
+            </Form.Group>
+          }
 
 
           <Form.Group as={Row} className="mb-2" controlId="classFilter">
