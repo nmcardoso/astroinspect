@@ -4,23 +4,22 @@ import { ContextActions } from '@/interfaces/contextActions'
 import { semaphore } from '@/lib/Semaphore'
 import { loadErrorState, loadingState, queuedState } from '@/lib/states'
 import TableHelper from '@/lib/TableHelper'
-import { timeConvert } from '@/lib/utils'
 import { CustomImage } from '@/services/custom'
 import { LegacyStamp } from '@/services/legacy'
-import SdssService, { SdssCatalog, SdssSpectra } from '@/services/sdss'
-import SplusService, { SplusPhotoSpectra, SplusStamp } from '@/services/splus'
+import { SdssCatalog, SdssSpectra } from '@/services/sdss'
+import { SplusPhotoSpectra, SplusStamp } from '@/services/splus'
 import {
-  ColDef, GetRowIdParams, GridOptions, GridReadyEvent,
+  CellKeyDownEvent, GetRowIdParams, GridOptions, GridReadyEvent,
   IRowNode
 } from "@ag-grid-community/core"
-import { QueryClient } from '@tanstack/react-query'
 import "ag-grid-community/styles/ag-grid.css"
 import "ag-grid-community/styles/ag-theme-quartz.css"
 import { AgGridReact } from 'ag-grid-react'
-import axios from 'axios'
-import { clone, cloneDeep, isEqual } from 'lodash'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { cloneDeep } from 'lodash'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { Container } from 'react-bootstrap'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 
 semaphore.create('img:legacy', 4)
@@ -245,6 +244,33 @@ export default function AIGrid() {
 
 
 
+  const onCellKeyDown = useCallback((event: CellKeyDownEvent) => {
+    const keyEvent = event.event as KeyboardEvent
+    if (!keyEvent) return
+
+    if (keyEvent.key.toLowerCase() === 'c' && keyEvent.ctrlKey) {
+      navigator.clipboard.writeText(event.value)
+      toast.success(`Copied: ${event.value}`, {
+        position: 'bottom-center',
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: false,
+        progress: undefined,
+        theme: 'dark',
+        delay: 100,
+      })
+    } else if (tcState.cols.classification.enabled && !keyEvent.altKey && !keyEvent.ctrlKey && !keyEvent.shiftKey) {
+      for (const [cls, hotkey] of Object.entries(tcState.cols.classification.keyMap)) {
+        if (hotkey.toLowerCase() == keyEvent.key.toLowerCase()) {
+          event.node.setDataValue('ai:class', cls)
+        }
+      }
+    }
+  }, [])
+
+
 
   const getRowId = useCallback((params: GetRowIdParams): string => {
     return params.data['ai:id']
@@ -292,8 +318,10 @@ export default function AIGrid() {
           onPaginationChanged={onChange}
           onSortChanged={onChange}
           onFilterChanged={onChange}
+          onCellKeyDown={onCellKeyDown}
         />
       </div>
+      <ToastContainer />
     </Container>
   )
 }
