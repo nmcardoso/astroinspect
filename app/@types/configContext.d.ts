@@ -22,6 +22,7 @@ interface IGrid extends IterableInterface {
   isLoaded: boolean,
   currColConfigs?: ICols,
   currTale?: ITableConfig,
+  editable: boolean,
 }
 
 interface ITrilogyConfig extends IterableInterface {

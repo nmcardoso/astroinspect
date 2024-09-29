@@ -7,6 +7,7 @@ import GithubButton from './GithubButton'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import BackButton from './BackButton'
 import DownloadTableButton from './DownloadTableButton'
+import ModeButton from './ModeButton'
 
 
 
@@ -19,6 +20,7 @@ export default function Appbar() {
         <div>
           {tcState.currentView == 'grid' && <BackButton />}
           {tcState.grid.isLoaded && <DownloadTableButton />}
+          {tcState.currentView == 'grid' && <ModeButton />}
         </div>
 
         <Logo />

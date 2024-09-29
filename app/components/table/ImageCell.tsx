@@ -107,7 +107,7 @@ export default function imageCellFactory({
   zoomWidth?: number | string,
   zoomHeight?: number | string,
   modalSize?: string,
-  lazy: boolean,
+  lazy?: boolean,
 }) {
   function ImageCellMemo(params: CustomCellRendererProps) {
     return (

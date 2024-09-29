@@ -76,7 +76,11 @@ const sdssCatalogColDefFactory = (table: string, col: string): ColDef => {
   }
 }
 
-const userTableColDefFactory = (colName: string, dtype?: string): ColDef => {
+const userTableColDefFactory = (
+  colName: string, 
+  editable: boolean = false, 
+  dtype?: string
+): ColDef => {
   const cellDtype = dtype ? {cellDataType: dtype} : {}
   console.log(colName, cellDtype)
   return {
@@ -84,6 +88,7 @@ const userTableColDefFactory = (colName: string, dtype?: string): ColDef => {
     flex: 1,
     headerName: colName.toLowerCase(),
     filter: true,
+    editable,
     ...cellDtype,
   }
 }
@@ -136,7 +141,8 @@ class TableHelper {
       for (const colId of tcState.table.selectedColumnsId) {
         const colName = tcState.table.columns[colId]
         const dtype = tcState.table.dataTypes?.[colId]
-        defs.push(userTableColDefFactory(colName, dtype))
+        const editable = tcState.grid.editable
+        defs.push(userTableColDefFactory(colName, editable, dtype))
       }
     }
 

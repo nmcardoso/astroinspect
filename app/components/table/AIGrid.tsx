@@ -333,6 +333,7 @@ export default function AIGrid() {
           onSortChanged={onChange}
           onFilterChanged={onChange}
           onCellKeyDown={onCellKeyDown}
+          singleClickEdit={true}
         />
       </div>
       <ToastContainer />

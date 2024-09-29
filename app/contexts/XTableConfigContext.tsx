@@ -27,6 +27,7 @@ const getInitialState = (): IState => ({
     isLoaded: false,
     currColConfigs: undefined,
     currTale: undefined,
+    editable: false,
   },
   currentView: 'settings',
   cols: {
