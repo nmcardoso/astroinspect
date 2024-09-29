@@ -61,7 +61,7 @@ function TrilogyParams() {
   return (
     <>
       <Form.Group as={Row} className="mb-2" controlId="splusTrilogyR">
-        <Form.Label column sm="1">
+        <Form.Label column sm="1" className="text-end">
           R
         </Form.Label>
         <Col sm="11" className="d-flex align-items-center">
@@ -83,7 +83,7 @@ function TrilogyParams() {
       </Form.Group>
 
       <Form.Group as={Row} className="mb-2" controlId="splusTrilogyG">
-        <Form.Label column sm="1">
+        <Form.Label column sm="1" className="text-end">
           G
         </Form.Label>
         <Col sm="11" className="d-flex align-items-center">
@@ -105,7 +105,7 @@ function TrilogyParams() {
       </Form.Group>
 
       <Form.Group as={Row} className="mb-2" controlId="splusTrilogyB">
-        <Form.Label column sm="1">
+        <Form.Label column sm="1" className="text-end">
           B
         </Form.Label>
         <Col sm="11" className="d-flex align-items-center">
@@ -127,7 +127,7 @@ function TrilogyParams() {
       </Form.Group>
 
       <Form.Group as={Row} className="mb-2" controlId="splusTrilogyParams">
-        <Form.Label column sm="1">
+        <Form.Label column sm="1" className="text-end">
           Params
         </Form.Label>
         <Col sm={9}>
@@ -324,7 +324,7 @@ export default function SplusImagingTab() {
   return (
     <>
       <Form.Group as={Row} className="mb-2" controlId="splusImagingCheck">
-        <Form.Label column sm="1">
+        <Form.Label column sm="1" className="text-end">
           Enable
         </Form.Label>
         <Col sm="11" className="d-flex align-items-center">
@@ -341,7 +341,7 @@ export default function SplusImagingTab() {
       </Form.Group>
 
       <Form.Group as={Row} className="mb-2" controlId="classCheck">
-        <Form.Label column sm="1">
+        <Form.Label column sm="1" className="text-end">
           Type
         </Form.Label>
         <Col sm={5}>

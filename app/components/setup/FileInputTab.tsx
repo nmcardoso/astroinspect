@@ -10,14 +10,7 @@ import { HiCheck, HiX } from 'react-icons/hi'
 import Chip from '@/components/common/Chip'
 import TableHelper from '@/lib/TableHelper'
 import { ContextActions } from '@/interfaces/contextActions'
-
-enum TableState {
-  unloaded = 'unloaded',
-  loading = 'loading',
-  success = 'sucess',
-  positionNotFound = 'positionNotFound',
-  error = 'error'
-}
+import Emitter from '@/lib/Emitter'
 
 
 function LocalStorageControl({ onChange }: { onChange: (e: any) => void }) {
@@ -35,12 +28,11 @@ function LocalStorageControl({ onChange }: { onChange: (e: any) => void }) {
 
   return (
     <>
-      <p>Select a table from computer to open</p>
       <Form.Group as={Row} className="mb-2" controlId="tableFile">
-        <Form.Label column sm="1">
+        <Form.Label column sm="1" className="text-end">
           Table
         </Form.Label>
-        <Col sm={6}>
+        <Col sm={8}>
           <div className="d-flex align-items-center">
             <Form.Control
               type="file"
@@ -49,8 +41,8 @@ function LocalStorageControl({ onChange }: { onChange: (e: any) => void }) {
             <Help title="Local Upload" className="ms-1">
               Load a table available in local computer. The only required
               columns are <code>RA</code> and <code>DEC</code> in degrees.<br />
-              <u>Available formars</u>: <code>CSV</code>, <code>TSV</code>, <code>DAT</code>, 
-              &nbsp;<code>PARQUET</code>
+              <u>Available formars</u>: <code>CSV</code>, <code>TSV</code>,
+              &nbsp;<code>DAT</code>, <code>PARQUET</code>.
             </Help>
           </div>
         </Col>
@@ -60,50 +52,52 @@ function LocalStorageControl({ onChange }: { onChange: (e: any) => void }) {
 }
 
 
-function RemoteStorageControl() {
+function RemoteStorageControl({ onChange }: { onChange: (e: any) => void }) {
+  const { tcState } = useXTableConfig()
+
   return (
     <Form.Group as={Row} className="mb-2" controlId="tableFile">
-      <Form.Label column sm="1">
+      <Form.Label column sm="1" className="text-end">
         URL
       </Form.Label>
-      <Col sm="5">
+      <Col sm={10}>
         <div className="d-flex align-items-center">
-          <Form.Control placeholder="File URL" />
+          <Form.Control
+            placeholder="File URL"
+            onChange={onChange}
+            value={tcState.table.url || ''} />
           <Help title="Remote Upload" className="ms-1">
-            Loads a table available remotely over the internet
+            Loads a table available remotely in the internet.<br />
+            <u>Available formars</u>: <code>CSV</code>, <code>TSV</code>,
+            &nbsp;<code>DAT</code>, <code>PARQUET</code>.
           </Help>
         </div>
-      </Col>
-      <Col sm="2" className="d-flex align-items-center">
-        <Button variant="link" className="px-1 py-1">
-          Load Example
-        </Button>
       </Col>
     </Form.Group>
   )
 }
 
 
-const StateMessage = ({ state }: { state: TableState }) => {
-  if (state == TableState.loading) {
+const StateMessage = ({ state }: { state: any }) => {
+  if (state == 'loading') {
     return <p className="text-secondary">
       Loading table...
     </p>
   }
 
-  if (state == TableState.success) {
+  if (state == 'success') {
     return <p className="text-success">
       <HiCheck /> RA and DEC columns successfully detected
     </p>
   }
 
-  if (state == TableState.positionNotFound) {
+  if (state == 'positionNotFound') {
     return <p className="text-danger">
       <HiX /> RA or DEC columns not detected
     </p>
   }
 
-  if (state == TableState.error) {
+  if (state == 'error') {
     return <p className="text-danger">
       <HiX /> Failed to load this table, check if it&apos;s a valid csv file
     </p>
@@ -179,24 +173,87 @@ const SelectColumnModal = ({
 }
 
 
+
+const SourceSelector = () => {
+  const { tcState, tcDispatch } = useXTableConfig()
+
+  const handleTypeChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+    tcDispatch({
+      type: ContextActions.USER_FILE_INPUT,
+      payload: { type: e.target.value }
+    })
+  }
+
+  return (
+    <Form.Group as={Row} className="mb-2" controlId="tableSourceSelector">
+      <Form.Label column sm="1" className="text-end">
+        Source
+      </Form.Label>
+      <Col sm="5">
+        <div className="d-flex align-items-center mt-2">
+          <Form.Check
+            inline
+            checked={tcState.table.type === 'local'}
+            label="local"
+            name="tableType"
+            type="radio"
+            value="local"
+            id="tableType-1"
+            onChange={handleTypeChange}
+          />
+          <Form.Check
+            inline
+            checked={tcState.table.type === 'remote'}
+            className="ms-2"
+            label="remote"
+            name="tableType"
+            type="radio"
+            value="remote"
+            id="tableType-2"
+            onChange={handleTypeChange}
+          />
+          <Help title="Upload Type">
+            Select upload type based on where the source table is stored.<br />
+            <ul>
+              <li>
+                <b>Local: </b> Table stored in local computer<br />
+              </li>
+              <li>
+                <b>Remote: </b> Table available in internet
+              </li>
+            </ul>
+          </Help>
+        </div>
+      </Col>
+    </Form.Group>
+  )
+}
+
+
+
 export default function FileInputTab() {
   const { tcState, tcDispatch } = useXTableConfig()
-  const table = tcState.table
-  const [tableState, setTableState] = useState(TableState.unloaded)
   const [showModal, setShowModal] = useState(false)
 
   const handleLocalFile = (e: any) => {
     if (e.target.files.length > 0) {
       const file = e.target.files[0]
-      
-      setTableState(TableState.loading)
-      
+
+      tcDispatch({
+        type: ContextActions.USER_FILE_INPUT,
+        payload: {
+          status: 'loading'
+        }
+      })
+
       TableHelper.getTableSummary(file).then(summary => {
         if (summary?.positionFound) {
           const isSameFile = (
-            file.name === tcState.table.file?.name || 
-            file.size === tcState.table.file?.size ||
-            file.lastModified === tcState.table.file?.lastModified
+            tcState.table.type === 'local' && (
+              file.name === tcState.table.file?.name ||
+              file.size === tcState.table.file?.size ||
+              file.lastModified === tcState.table.file?.lastModified
+            )
           )
           if (!isSameFile) {
             tcDispatch({
@@ -215,16 +272,89 @@ export default function FileInputTab() {
               selectedColumnsId: [summary.raIndex, summary.decIndex],
               raIndex: summary.raIndex,
               decIndex: summary.decIndex,
+              status: 'success',
               file,
               isSameFile,
             }
           })
-          setTableState(TableState.success)
         } else {
-          setTableState(TableState.positionNotFound)
+          tcDispatch({
+            type: ContextActions.USER_FILE_INPUT,
+            payload: {
+              status: 'positionNotFound'
+            }
+          })
         }
       }).catch(err => {
-        setTableState(TableState.error)
+        tcDispatch({
+          type: ContextActions.USER_FILE_INPUT,
+          payload: {
+            status: 'error'
+          }
+        })
+      })
+    }
+  }
+
+
+  const handleRemoteFile = (url: string, autoLoad: boolean = false) => {
+    if (url.length > 0) {
+      tcDispatch({
+        type: ContextActions.USER_FILE_INPUT,
+        payload: {
+          status: 'loading'
+        }
+      })
+
+      TableHelper.getTableSummary(url).then(summary => {
+        if (summary?.positionFound) {
+          const isSameFile = (
+            tcState.table.type === 'remote' &&
+            url == tcState.table.url
+          )
+          if (!isSameFile) {
+            tcDispatch({
+              type: ContextActions.GRID_UPDATE,
+              payload: {
+                data: [],
+                colDefs: [],
+              }
+            })
+          }
+          tcDispatch({
+            type: ContextActions.USER_FILE_INPUT,
+            payload: {
+              type: 'remote',
+              columns: summary.columns,
+              selectedColumnsId: [summary.raIndex, summary.decIndex],
+              raIndex: summary.raIndex,
+              decIndex: summary.decIndex,
+              status: 'success',
+              url,
+              isSameFile,
+            }
+          })
+          if (autoLoad) {
+            tcDispatch({
+              type: ContextActions.CURRENT_VIEW_CHANGE,
+              payload: 'grid'
+            })
+          }
+        } else {
+          tcDispatch({
+            type: ContextActions.USER_FILE_INPUT,
+            payload: {
+              status: 'positionNotFound'
+            }
+          })
+        }
+      }).catch(err => {
+        tcDispatch({
+          type: ContextActions.USER_FILE_INPUT,
+          payload: {
+            status: 'error'
+          }
+        })
       })
     }
   }
@@ -236,48 +366,30 @@ export default function FileInputTab() {
     })
   }
 
+  useEffect(() => {
+    Emitter.on('INSERT_URL', (e: any) => handleRemoteFile(e.url, true))
+  }, [])
+
   return (
     <>
-      {/* <Form.Group as={Row} className="mb-2" controlId="tableFile">
-        <Form.Label column sm="1">
-          Type
-        </Form.Label>
-        <Col sm="5">
-          <div className="d-flex align-items-center">
-            <Form.Select
-              value={table.type}
-              onChange={(e) => tcDispatch({
-                type: ContextActions.USER_FILE_INPUT,
-                payload: { type: e.target.value }
-              })}>
-              <option value="local">Local</option>
-              <option value="remote">Remote</option>
-            </Form.Select>
-            <Help title="Upload Type" className="ms-1">
-              Select upload type based on where the source table is stored<br />
-              <b>Local: </b> Table stored in local computer<br />
-              <b>Remote: </b> Table available in internet
-            </Help>
-          </div>
-        </Col>
-      </Form.Group> */}
+      <SourceSelector />
 
-      {table.type == 'local' ?
+      {tcState.table.type == 'local' ?
         <LocalStorageControl onChange={handleLocalFile} /> :
-        <RemoteStorageControl />}
+        <RemoteStorageControl onChange={(e) => handleRemoteFile(e.target.value)} />}
 
-      <StateMessage state={tableState} />
+      <StateMessage state={tcState.table.state} />
 
-      {table.selectedColumnsId.length > 0 && (
+      {tcState.table.selectedColumnsId.length > 0 && (
         <div>
-          <span className="fw-bold">Selected columns:</span> {table.selectedColumnsId.map(columnId => (
+          <span className="fw-bold">Selected columns:</span> {tcState.table.selectedColumnsId.map(columnId => (
             <Chip
               value={columnId}
               key={`sourceColIdx_${columnId}`}
               className="mb-1 me-1"
               onClose={handleDelColumn}
-              closeable={columnId != table.raIndex && columnId != table.decIndex}>
-              {table.columns[columnId]}
+              closeable={columnId != tcState.table.raIndex && columnId != tcState.table.decIndex}>
+              {tcState.table.columns[columnId]}
             </Chip>
           ))}
 

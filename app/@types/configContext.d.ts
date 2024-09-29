@@ -3,14 +3,14 @@ interface IterableInterface {
 }
 
 interface ITableConfig extends IterableInterface {
-  type: string,
+  type: 'local' | 'remote',
   file: File | null,
   url: string | null,
   selectedColumnsId: number[]
   columns: string[],
   raIndex: number | null,
   decIndex: number | null,
-  processing: boolean,
+  state: 'unloaded' | 'loading' | 'success' | 'positionNotFound' | 'error',
   isSameFile: boolean,
 }
 

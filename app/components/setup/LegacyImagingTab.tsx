@@ -30,10 +30,10 @@ export default function LegacyImagingTab() {
       </Form.Group>
 
       <Row>
-        <Col sm={5}>
+        <Col sm={7}>
           <InputGroup className="mb-3">
             <InputGroup.Text id="legacyImagingPixScale">
-              Pixel Scale
+              Pixel scale
             </InputGroup.Text>
             <Form.Control
               aria-label="Pixel Scale"
@@ -44,6 +44,9 @@ export default function LegacyImagingTab() {
                 payload: { pixelScale: e.target.value }
               })}
             />
+            <InputGroup.Text id="legacyImagingPixScale2">
+              arcsec/pixel
+            </InputGroup.Text>
           </InputGroup>
         </Col>
       </Row>

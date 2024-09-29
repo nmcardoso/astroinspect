@@ -34,7 +34,7 @@ export default function SdssSpectraTab() {
   return (
     <>
       <Form.Group as={Row} className="mb-2" controlId="sloanSpecCheck">
-        <Form.Label column sm={3}>
+        <Form.Label column sm={3} className="text-end">
           SDSS spectra
         </Form.Label>
         <Col sm={9} className="d-flex align-items-center">
@@ -53,7 +53,7 @@ export default function SdssSpectraTab() {
       <hr className="my-4" />
 
       <Form.Group as={Row} className="mb-2" controlId="splus-photospec-check">
-        <Form.Label column sm={3}>
+        <Form.Label column sm={3} className="text-end">
           S-PLUS photo-spectra
         </Form.Label>
         <Col sm={9} className="d-flex align-items-center">
@@ -70,7 +70,7 @@ export default function SdssSpectraTab() {
       </Form.Group>
 
       <Form.Group as={Row} className="mb-2" controlId="splus-photospec-check">
-        <Form.Label column sm={3}>
+        <Form.Label column sm={3} className="text-end">
           Selected lines
         </Form.Label>
         <Col sm={9} className="d-flex align-items-center">

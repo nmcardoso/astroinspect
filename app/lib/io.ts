@@ -1,13 +1,13 @@
 import Papa, { ParseResult } from 'papaparse'
-import { parquetRead, parquetMetadata } from 'hyparquet'
+import { parquetRead, parquetMetadata, asyncBufferFromUrl, parquetMetadataAsync } from 'hyparquet'
 import { compressors } from 'hyparquet-compressors'
 
 
-const readCsv = (file: File) => {
+const readCsvFromFile = (file: File) => {
   if (file) {
     return new Promise((resolve: any, reject: any) => {
       Papa.parse(file, {
-        complete: ({data}) => resolve(data),
+        complete: ({ data }) => resolve(data),
         error: (e) => reject(e),
         skipEmptyLines: true,
         header: true,
@@ -20,7 +20,35 @@ const readCsv = (file: File) => {
   }
 }
 
-const getCsvColumns = (file: File) => {
+const readCsvFromUrl = (file: string) => {
+  if (file) {
+    return new Promise((resolve: any, reject: any) => {
+      Papa.parse(file, {
+        complete: ({ data }) => resolve(data),
+        error: (e: any) => reject(e),
+        skipEmptyLines: true,
+        header: true,
+        dynamicTyping: true,
+        download: true,
+        transformHeader(header, index) {
+          return `tab:${header}`
+        },
+      })
+    })
+  }
+}
+
+const readCsv = (file: string | File) => {
+  if (typeof file === 'string' || file instanceof String) {
+    return readCsvFromUrl(file as string)
+  } else {
+    return readCsvFromFile(file as File)
+  }
+}
+
+
+
+const getCsvColumnsFromFile = (file: File) => {
   return new Promise<string[] | undefined>((resolve: any, reject: any) => {
     const handleParseComplete = (result: ParseResult<any>) => {
       if (result.errors.length > 0) {
@@ -31,12 +59,39 @@ const getCsvColumns = (file: File) => {
 
     Papa.parse(file, {
       complete: handleParseComplete,
-      preview: 1
+      preview: 1,
     })
   })
 }
 
-const readParquet = (file: File) => {
+const getCsvColumnsFromUrl = (file: string) => {
+  return new Promise<string[] | undefined>((resolve: any, reject: any) => {
+    const handleParseComplete = (result: ParseResult<any>) => {
+      if (result.errors.length > 0) {
+        return reject(result.errors)
+      }
+      resolve(result.data?.[0])
+    }
+
+    Papa.parse(file, {
+      complete: handleParseComplete,
+      preview: 1,
+      download: true,
+    })
+  })
+}
+
+const getCsvColumns = (file: File | string) => {
+  if (typeof file === 'string' || file instanceof String) {
+    return getCsvColumnsFromUrl(file as string)
+  } else {
+    return getCsvColumnsFromFile(file as File)
+  }
+}
+
+
+
+const readParquetFromFile = (file: File) => {
   return new Promise<{}[]>((resolve: any, reject: any) => {
     const wrapper = async () => {
       await parquetRead({
@@ -49,27 +104,67 @@ const readParquet = (file: File) => {
   })
 }
 
-const getParquetColumns = async (file: File) => {
+const readParquetFromUrl = (file: string) => {
+  return new Promise<{}[]>((resolve: any, reject: any) => {
+    const wrapper = async () => {
+      await parquetRead({
+        file: await asyncBufferFromUrl(file),
+        onComplete: (data: any) => resolve(data),
+        compressors: compressors,
+      })
+    }
+    wrapper().catch((error) => reject(error))
+  })
+}
+
+const readParquet = (file: string | File) => {
+  if (typeof file === 'string' || file instanceof String) {
+    return readParquetFromUrl(file as string)
+  } else {
+    return readParquetFromFile(file as File)
+  }
+}
+
+
+
+const getParquetColumnsFromFile = async (file: File) => {
   const meta = parquetMetadata(await file.arrayBuffer())
   return meta.schema.filter((e) => e.name !== 'schema').map((e) => e.name)
+}
+
+const getParquetColumnsFromUrl = async (url: string) => {
+  const meta = await parquetMetadataAsync(await asyncBufferFromUrl(url))
+  return meta.schema.filter((e) => e.name !== 'schema').map((e) => e.name)
+}
+
+const getParquetColumns = (file: string | File) => {
+  if (typeof file === 'string' || file instanceof String) {
+    return getParquetColumnsFromUrl(file as string)
+  } else {
+    return getParquetColumnsFromFile(file as File)
+  }
 }
 
 
 
 export default class TableReader {
-  file: File
+  file: File | string
   ext?: string
   columns?: string[]
+  isUrl: boolean
 
-  constructor(file: File) {
-    this.file = file
+  constructor(file: File | string) {
     this.ext = undefined
     this.columns = undefined
+    this.isUrl = typeof file === 'string' || file instanceof String
+    this.file = file
   }
 
   getFileExt() {
-    if (!this.ext) {
-      this.ext = this.file.name.split('.').pop()?.toLowerCase()
+    if (!this.ext && !this.isUrl) {
+      this.ext = (this.file as File).name.split('.').pop()?.toLowerCase()
+    } else {
+      this.ext = (this.file as string).split('.').pop()?.toLowerCase()
     }
     return this.ext
   }
@@ -91,9 +186,9 @@ export default class TableReader {
   }
 
   async getColumns() {
-    if (['csv', 'tsv', 'dat', 'txt'].includes(this.getFileExt())) {
+    if (['csv', 'tsv', 'dat', 'txt'].includes(this.getFileExt() || '')) {
       this.columns = await getCsvColumns(this.file)
-    } else if (['parquet', 'parq', 'par', 'pq'].includes(this.getFileExt())) {
+    } else if (['parquet', 'parq', 'par', 'pq'].includes(this.getFileExt() || '')) {
       this.columns = await getParquetColumns(this.file)
     }
     return this.columns

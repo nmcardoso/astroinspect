@@ -1,6 +1,7 @@
 import { createContext, useContext, useReducer } from 'react'
 import localforage from 'localforage'
 import { ContextActions } from '@/interfaces/contextActions'
+import TableHelper from '@/lib/TableHelper'
 
 
 export const SCHEMA_VERSION: number = 14 // 11
@@ -15,7 +16,7 @@ const getInitialState = (): IState => ({
     columns: [],
     raIndex: null,
     decIndex: null,
-    processing: false,
+    state: 'unloaded',
     isSameFile: false,
   },
   grid: {
@@ -88,9 +89,9 @@ const initialState = getInitialState()
 
 
 const persistStateAsync = (state: IState) => {
-  const s = { 
-    ...state, 
-    table: getInitialState().table, 
+  const s = {
+    ...state,
+    table: getInitialState().table,
     grid: getInitialState().grid,
     currentView: getInitialState().currentView,
   }
@@ -185,8 +186,7 @@ const changeCurrentView = (state: IState, action: IAction<CurrentViewType>) => {
   const s = { ...state }
   s.currentView = action.payload
   return s
-} 
-
+}
 
 
 const reducerMap = {

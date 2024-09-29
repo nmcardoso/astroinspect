@@ -91,7 +91,7 @@ const userTableColDefFactory = (colName: string): ColDef => {
 
 
 class TableHelper {
-  async load(file: any) {
+  async load(file: File | string) {
     const reader = new TableReader(file)
     return await reader.read()
   }
@@ -108,7 +108,7 @@ class TableHelper {
     return summary
   }
 
-  async getTableSummary(file: File) {
+  async getTableSummary(file: File | string) {
     const reader = new TableReader(file)
     const cols = await reader.getColumns()
     if (!!cols) {

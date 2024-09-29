@@ -30,22 +30,22 @@ semaphore.create('img:sdss_spec', 4)
 semaphore.create('sdss_cat', 4)
 
 
-const downloadResource = async ({ 
-  resourceFetch, 
-  colId, 
-  rowId, 
+const downloadResource = async ({
+  resourceFetch,
+  colId,
+  rowId,
   grid,
   isImage = true,
-}: { 
-  resourceFetch: IResourceFetch, 
-  colId: string, 
-  rowId: string, 
+}: {
+  resourceFetch: IResourceFetch,
+  colId: string,
+  rowId: string,
   grid: AgGridReact,
-  isImage: boolean, 
+  isImage: boolean,
 }) => {
   const rowNode = grid!.api.getRowNode(rowId)
   if (
-    (rowNode?.data[colId] === queuedState || rowNode?.data[colId] === undefined) 
+    (rowNode?.data[colId] === queuedState || rowNode?.data[colId] === undefined)
     && rowNode?.data.hasOwnProperty(colId)
   ) {
     try {
@@ -74,28 +74,33 @@ export default function AIGrid() {
     let prevClass = undefined
     if (
       tcState.table.isSameFile &&
-      tcState.grid.currColConfigs?.classification.enabled && 
+      tcState.grid.currColConfigs?.classification.enabled &&
       tcState.cols.classification.enabled
     ) {
-      prevClass = tcState.grid.data.map((e) => ({'ai:class': e['ai:class']}))
+      prevClass = tcState.grid.data.map((e) => ({ 'ai:class': e['ai:class'] }))
       console.log('prev class', prevClass)
     }
     console.log('isSameFile', tcState.table.isSameFile)
 
-    let data = await TableHelper.load(tcState.table.file)
-    
+    let data
+    if (tcState.table.type === 'local') {
+      data = await TableHelper.load(tcState.table.file as File)
+    } else {
+      data = await TableHelper.load(tcState.table.url as string)
+    }
+
     const { colDef, initVal } = TableHelper.getColDefs(tcState)
 
     data = data?.map((e, i, _) => ({ ...e, ...initVal, 'ai:id': String(i + 1) }))
     console.log('data', data)
-    
+
     if (prevClass) {
-      data = data?.map((e, i, _) => ({...e, ...prevClass[i]}))
+      data = data?.map((e, i, _) => ({ ...e, ...prevClass[i] }))
       console.log('data with prev class', data)
     }
 
     setLoading(false)
-    
+
     tcDispatch({
       type: ContextActions.GRID_UPDATE,
       payload: {
@@ -103,7 +108,7 @@ export default function AIGrid() {
         colDef: colDef,
         isLoaded: true,
         currColConfigs: cloneDeep(tcState.cols),
-        currTable: {...tcState.table},
+        currTable: { ...tcState.table },
         api: event.api,
       }
     })
@@ -157,8 +162,8 @@ export default function AIGrid() {
 
       // S-PLUS stamps
       if (tcState.cols.splusImaging.enabled) {
-        const config = tcState.cols.splusImaging.type === 'trilogy' ? 
-          tcState.cols.splusImaging.trilogyConfig : 
+        const config = tcState.cols.splusImaging.type === 'trilogy' ?
+          tcState.cols.splusImaging.trilogyConfig :
           tcState.cols.splusImaging.luptonConfig
         semaphore.enqueue(
           'img:splus',
@@ -189,7 +194,7 @@ export default function AIGrid() {
       // SDSS spectra
       if (tcState.cols.sdssSpectra.enabled) {
         semaphore.enqueue(
-          'img:sdss_spec', 
+          'img:sdss_spec',
           downloadResource,
           {
             resourceFetch: new SdssSpectra(ra, dec),
@@ -251,7 +256,7 @@ export default function AIGrid() {
   }, [])
 
 
-  const style = { 
+  const style = {
     '--ag-cell-horizontal-padding': '8px',
     '--ag-borders': 'solid 1px',
     '--ag-wrapper-border-radius': '0px',
@@ -272,22 +277,22 @@ export default function AIGrid() {
       <div
         className="ag-theme-quartz"
         style={{ width: '100%', height: '100%', ...style }}>
-          <AgGridReact
-            gridOptions={gridOptions}
-            ref={gridRef}
-            rowData={tcState.grid.data || []}
-            columnDefs={tcState.grid.colDef || []}
-            getRowId={getRowId}
-            loading={isLoading}
-            style={{ height: '100%' }}
-            pagination={true}
-            paginationPageSize={50}
-            paginationPageSizeSelector={paginationPageSizeSelector}
-            onGridReady={onGridReady}
-            onPaginationChanged={onChange}
-            onSortChanged={onChange}
-            onFilterChanged={onChange}
-          />
+        <AgGridReact
+          gridOptions={gridOptions}
+          ref={gridRef}
+          rowData={tcState.grid.data || []}
+          columnDefs={tcState.grid.colDef || []}
+          getRowId={getRowId}
+          loading={isLoading}
+          style={{ height: '100%' }}
+          pagination={true}
+          paginationPageSize={50}
+          paginationPageSizeSelector={paginationPageSizeSelector}
+          onGridReady={onGridReady}
+          onPaginationChanged={onChange}
+          onSortChanged={onChange}
+          onFilterChanged={onChange}
+        />
       </div>
     </Container>
   )
