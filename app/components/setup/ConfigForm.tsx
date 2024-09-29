@@ -151,7 +151,7 @@ export default function ConfigForm() {
                 Add support to <b>PARQUET</b> files
               </li>
               <li>
-                Handle <b>big tables</b> (hundreds of thousands of lines)
+                Handle <b>big tables</b> (hundreds of thousands of rows)
               </li>
               <li>
                 Column relocation and row <b>sorting and filtering</b>
@@ -172,11 +172,27 @@ export default function ConfigForm() {
         <Col sm={5}>
           <Alert variant="success">
             <Alert.Heading>💡 Examples</Alert.Heading>
+            Click on one of the links below to open an example table
             <ul>
               <li>
                 <LoadExemple
-                  name="example-1.csv"
-                  url="https://raw.githubusercontent.com/nmcardoso/clusters/refs/heads/main/tables/catalog_v6_hydra.csv" />
+                  name="galaxyzoo-small-sample.csv"
+                  url="https://astroinspect.natanael.net/examples/galaxyzoo-small-sample.csv" />
+                &nbsp;(250 rows)
+              </li>
+
+              <li>
+                <LoadExemple
+                  name="galaxyzoo-small-sample.csv"
+                  url="https://astroinspect.natanael.net/examples/galaxyzoo-medium-sample.csv" />
+                &nbsp;(2,500 rows)
+              </li>
+
+              <li>
+                <LoadExemple
+                  name="galaxyzoo-small-sample.csv"
+                  url="https://astroinspect.natanael.net/examples/galaxyzoo-big-sample.parquet" />
+                &nbsp;(250,000 rows)
               </li>
             </ul>
           </Alert>
