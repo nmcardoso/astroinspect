@@ -4,7 +4,7 @@ import { ContextActions } from '@/interfaces/contextActions'
 import TableHelper from '@/lib/TableHelper'
 
 
-export const SCHEMA_VERSION: number = 15
+export const SCHEMA_VERSION: number = 16
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
