@@ -52,11 +52,13 @@ function ImageCell({
   zoomWidth,
   zoomHeight,
   modalSize = "",
+  lazy = false,
 }: {
   src: string | symbol,
   zoomWidth?: number | string,
   zoomHeight?: number | string,
   modalSize?: string,
+  lazy?: boolean,
 }) {
   const [showModal, setShowModal] = useState(false)
 
@@ -72,6 +74,7 @@ function ImageCell({
         <img 
           src={src}
           alt=""
+          loading={lazy ? 'lazy': 'eager'}
           height={120}
           style={{cursor: 'zoom-in'}}
           onClick={() => setShowModal(true)}/>
@@ -99,40 +102,21 @@ export default function imageCellFactory({
   zoomWidth,
   zoomHeight,
   modalSize = "",
+  lazy = false,
 }: {
   zoomWidth?: number | string,
   zoomHeight?: number | string,
   modalSize?: string,
+  lazy: boolean,
 }) {
-  // const Wrapper = (params: any) => (
-  //   <ImageCell 
-  //   src={params.value} 
-  //   zoomWidth={zoomWidth}
-  //   zoomHeight={zoomHeight}
-  //   modalSize={modalSize} />
-  // )
-
-  // const ImageCellMemo = useMemo(() => {
-  //   return (
-  //     function Wrapper(params: CustomCellRendererProps) {
-  //       return (
-  //         <ImageCell 
-  //           src={params.value} 
-  //           zoomWidth={zoomWidth}
-  //           zoomHeight={zoomHeight}
-  //           modalSize={modalSize} />
-  //       )
-  //     }
-  //   )
-  // }, [zoomWidth, zoomHeight, modalSize])
-
   function ImageCellMemo(params: CustomCellRendererProps) {
     return (
       <ImageCell 
         src={params.value} 
         zoomWidth={zoomWidth}
         zoomHeight={zoomHeight}
-        modalSize={modalSize} />
+        modalSize={modalSize}
+        lazy={lazy} />
     )
   }
 

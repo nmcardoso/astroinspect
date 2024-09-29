@@ -63,6 +63,33 @@ const downloadResource = async ({
 }
 
 
+const customImageResource = ({
+  url,
+  colId,
+  rowId,
+  grid,
+}: {
+  url: string,
+  colId: string,
+  rowId: string,
+  grid: AgGridReact,
+}) => {
+  const rowNode = grid!.api.getRowNode(rowId)
+  if (
+    (rowNode?.data[colId] === queuedState || rowNode?.data[colId] === undefined)
+    && rowNode?.data.hasOwnProperty(colId)
+  ) {
+    try {
+      // const riCol = `tab:${tcState.table.columns[col.columnIndex]}`
+      // const url = `${col.url}${String(e[riCol])}${col.fileExtension}`
+      rowNode?.setDataValue(colId, url)
+    } catch {
+      rowNode?.setDataValue(colId, loadErrorState)
+    }
+  }
+}
+
+
 export default function AIGrid() {
   const { tcState, tcDispatch } = useXTableConfig()
   const [isLoading, setLoading] = useState(true)
@@ -206,17 +233,7 @@ export default function AIGrid() {
           const riCol = `tab:${tcState.table.columns[col.columnIndex]}`
           const url = `${col.url}${String(e[riCol])}${col.fileExtension}`
           const colId = `img:custom_${idx}`
-          semaphore.create(colId, 4)
-          semaphore.enqueue(
-            colId,
-            downloadResource,
-            {
-              resourceFetch: new CustomImage(url),
-              colId: colId,
-              rowId: e['ai:id'],
-              grid: gridRef.current,
-            }
-          )
+          customImageResource({url, colId, rowId, grid: gridRef.current})
         })
       }
 
