@@ -172,7 +172,7 @@ export default function ConfigForm() {
         <Col sm={5}>
           <Alert variant="success">
             <Alert.Heading>💡 Examples</Alert.Heading>
-            Click on one of the links below to open an example table
+            <h6>Click on one of the links below to open an example table:</h6>
             <ul>
               <li>
                 <LoadExemple
