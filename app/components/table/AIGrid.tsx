@@ -141,7 +141,7 @@ export default function AIGrid() {
         isSameFile: true,
       }
     })
-  }, [tcState])
+  }, [tcState, tcDispatch])
 
 
 
