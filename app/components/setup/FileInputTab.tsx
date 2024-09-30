@@ -5,12 +5,14 @@ import Modal from 'react-bootstrap/Modal'
 import Form from 'react-bootstrap/Form'
 import Help from '@/components/common/Help'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
-import { MouseEventHandler, useEffect, useRef, useState } from 'react'
+import { MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import { HiCheck, HiX } from 'react-icons/hi'
 import Chip from '@/components/common/Chip'
 import TableHelper from '@/lib/TableHelper'
 import { ContextActions } from '@/interfaces/contextActions'
 import Emitter from '@/lib/Emitter'
+import { event } from 'nextjs-google-analytics'
+import { GA_MEASUREMENT_ID } from '@/lib/gtag'
 
 
 function LocalStorageControl({ onChange }: { onChange: (e: any) => void }) {
@@ -235,7 +237,7 @@ export default function FileInputTab() {
   const { tcState, tcDispatch } = useXTableConfig()
   const [showModal, setShowModal] = useState(false)
 
-  const handleLocalFile = (e: any) => {
+  const handleLocalFile = useCallback((e: any) => {
     if (e.target.files.length > 0) {
       const file = e.target.files[0]
 
@@ -278,6 +280,12 @@ export default function FileInputTab() {
               isSameFile,
             }
           })
+          event(
+            'load_file_local', {
+            category: 'load',
+            label: 'local',
+            userId: GA_MEASUREMENT_ID
+          })
         } else {
           tcDispatch({
             type: ContextActions.USER_FILE_INPUT,
@@ -296,10 +304,10 @@ export default function FileInputTab() {
         })
       })
     }
-  }
+  }, [tcState, tcDispatch])
 
 
-  const handleRemoteFile = (url: string, autoLoad: boolean = false) => {
+  const handleRemoteFile = useCallback((url: string, autoLoad: boolean = false) => {
     if (url.length > 0) {
       tcDispatch({
         type: ContextActions.USER_FILE_INPUT,
@@ -343,6 +351,12 @@ export default function FileInputTab() {
               payload: 'grid'
             })
           }
+          event(
+            'load_file_remote', {
+            category: 'load',
+            label: 'remote',
+            userId: GA_MEASUREMENT_ID
+          })
         } else {
           tcDispatch({
             type: ContextActions.USER_FILE_INPUT,
@@ -360,7 +374,7 @@ export default function FileInputTab() {
         })
       })
     }
-  }
+  }, [tcDispatch, tcState])
 
   const handleDelColumn = (_: any, value: number) => {
     tcDispatch({
@@ -371,7 +385,13 @@ export default function FileInputTab() {
 
   useEffect(() => {
     Emitter.on('INSERT_URL', (e: any) => handleRemoteFile(e.url, true))
-  }, [])
+    event(
+      'load_file_example', {
+      category: 'load',
+      label: 'example',
+      userId: GA_MEASUREMENT_ID
+    })
+  }, [handleRemoteFile])
 
   return (
     <>
