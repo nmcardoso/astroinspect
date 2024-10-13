@@ -220,7 +220,7 @@ export class SplusPhotoSpectra implements IResourceFetch {
         params: {
           ra: this.ra,
           dec: this.dec,
-          ...this.lines.map(e => ({[e]: ''})),
+          ...this.lines.reduce((acc: any, line) => {acc[line] = ''; return acc}, {}),
         }
       })
     })
