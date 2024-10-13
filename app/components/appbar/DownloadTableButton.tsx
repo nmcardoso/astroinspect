@@ -176,7 +176,7 @@ const DownloadModal = ({ show, onHide }: any) => {
           }
 
 
-          <Form.Group as={Row} className="mb-2" controlId="classFilter">
+          <Form.Group as={Row} className="mb-2" controlId="filterRow-2">
             <Form.Label column sm="2" className="text-end">
               Rows
             </Form.Label>
@@ -190,7 +190,7 @@ const DownloadModal = ({ show, onHide }: any) => {
                   type="checkbox"
                   value="filteredAndSorted"
                   id="filterRow-2"
-                  onChange={(e) => setFilterAndSort(true)}
+                  onChange={(e) => setFilterAndSort(!filterAndSort)}
                 />
                 <Help title="Filter rows by filter" className="ms-0">
                   This setting will sample the rows based in the following
