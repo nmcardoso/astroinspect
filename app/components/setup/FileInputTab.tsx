@@ -26,7 +26,7 @@ function LocalStorageControl({ onChange }: { onChange: (e: any) => void }) {
       const fileList = dataTransfer.files
       inputRef.current.files = fileList
     }
-  }, [])
+  }, [tcState.table.file])
 
   return (
     <>
@@ -397,9 +397,11 @@ export default function FileInputTab() {
     <>
       <SourceSelector />
 
-      {tcState.table.type == 'local' ?
+      {
+        tcState.table.type == 'local' ?
         <LocalStorageControl onChange={handleLocalFile} /> :
-        <RemoteStorageControl onChange={(e) => handleRemoteFile(e.target.value)} />}
+        <RemoteStorageControl onChange={(e) => handleRemoteFile(e.target.value)} />
+      }
 
       <StateMessage state={tcState.table.state} />
 

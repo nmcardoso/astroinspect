@@ -281,7 +281,7 @@ export default function AIGrid() {
         }
       }
     }
-  }, [])
+  }, [tcState.cols.classification.enabled, tcState.cols.classification.keyMap])
 
 
 
