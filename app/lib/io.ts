@@ -154,8 +154,8 @@ const getParquetDataTypesFromFile = async (file: File) => {
   const dataTypeMap = {
     BOOLEAN: 'boolean',
     INT32: 'number',
-    INT64: 'number',
-    INT96: 'number',
+    INT64: undefined,
+    INT96: undefined,
     FLOAT: 'number',
     DOUBLE: 'number',
     STRING: 'text',
@@ -173,8 +173,8 @@ const getParquetDataTypesFromUrl = async (url: string) => {
   const dataTypeMap = {
     BOOLEAN: 'boolean',
     INT32: 'number',
-    INT64: 'number',
-    INT96: 'number',
+    INT64: undefined,
+    INT96: undefined,
     FLOAT: 'number',
     DOUBLE: 'number',
     STRING: 'text',
