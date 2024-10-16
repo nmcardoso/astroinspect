@@ -14,8 +14,8 @@ semaphore.create('sdss_query', 2)
 const CONE_SPEC_URL = 'https://skyserver.sdss.org/dr18/SkyServerWS/SpectroQuery/ConeSpectro'
 const SQL_URL = 'https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch'
 const CROSSID_SEARCH = 'https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/CrossIdSearch'
-// const SPEC_PLOT_URL = 'https://skyserver.sdss.org/dr18/en/get/SpecById.ashx?id='
-const SPEC_PLOT_URL = 'https://astrotools.vercel.app/spec'
+const SPEC_PLOT_URL = 'https://skyserver.sdss.org/dr18/en/get/SpecById.ashx'
+// const SPEC_PLOT_URL = 'https://astrotools.vercel.app/spec'
 
 
 const queryClient = new QueryClient({
@@ -201,17 +201,17 @@ export class SdssSpectra extends SdssService implements IResourceFetch {
   async fetch() {
     const specObjId = await this.getObjSpecId(this.ra, this.dec)
     if (!specObjId) return undefined
-
-    return await queryClient.fetchQuery({
-      queryKey: [specObjId],
-      queryFn: () => axios.get(SPEC_PLOT_URL, {
-        responseType: 'blob',
-        signal: semaphore.getSignal(),
-        params: {
-          id: specObjId
-        }
-      })
-    })
+    return {data: `${SPEC_PLOT_URL}?id=${specObjId}`}
+    // return await queryClient.fetchQuery({
+    //   queryKey: [specObjId],
+    //   queryFn: () => axios.get(SPEC_PLOT_URL, {
+    //     responseType: 'blob',
+    //     signal: semaphore.getSignal(),
+    //     params: {
+    //       id: specObjId
+    //     }
+    //   })
+    // })
   }
 }
 

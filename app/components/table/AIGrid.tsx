@@ -223,6 +223,7 @@ export default function AIGrid() {
             colId: 'img:sdss_spec',
             rowId: rowId,
             grid: gridRef.current,
+            isImage: false,
           }
         )
       }
