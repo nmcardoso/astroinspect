@@ -13,6 +13,7 @@ import { ContextActions } from '@/interfaces/contextActions'
 import Emitter from '@/lib/Emitter'
 import { event } from 'nextjs-google-analytics'
 import { GA_MEASUREMENT_ID } from '@/lib/gtag'
+import ButtonChip from '@/components/common/ButtonChip'
 
 
 function LocalStorageControl({ onChange }: { onChange: (e: any) => void }) {
@@ -233,6 +234,38 @@ const SourceSelector = () => {
 
 
 
+function ColumnButton({colName, colId}: {colName: string, colId: number}) {
+  const { tcState, tcDispatch } = useXTableConfig()
+  const cls = tcState.table.selectedColumnsId.includes(colId) ? 'btn-primary' : 'btn-outline-primary'
+  
+  const handleToggle: MouseEventHandler<HTMLDivElement> = () => {
+    let newColumns = []
+    if (tcState.table.selectedColumnsId.includes(colId)) {
+      const itemId = tcState.table.selectedColumnsId.indexOf(colId)
+      newColumns = [...tcState.table.selectedColumnsId]
+      newColumns.splice(itemId, 1)
+    } else {
+      newColumns = [...tcState.table.selectedColumnsId, colId]
+    }
+    // newColumns.sort((a, b) => a - b)
+
+    tcDispatch({
+      type: ContextActions.USER_FILE_INPUT,
+      payload: {
+        selectedColumnsId: newColumns
+      }
+    })
+  }
+  return (
+    <ButtonChip
+      className={`${cls} me-2 mt-1`}
+      onClick={handleToggle}>
+      {colName}
+    </ButtonChip>
+  )
+}
+
+
 export default function FileInputTab() {
   const { tcState, tcDispatch } = useXTableConfig()
   const [showModal, setShowModal] = useState(false)
@@ -405,27 +438,25 @@ export default function FileInputTab() {
 
       <StateMessage state={tcState.table.state} />
 
-      {tcState.table.selectedColumnsId.length > 0 && (
-        <div>
-          <span className="fw-bold">Selected columns:</span> {tcState.table.selectedColumnsId.map(columnId => (
-            <Chip
-              value={columnId}
-              key={`sourceColIdx_${columnId}`}
-              className="mb-1 me-1"
-              onClose={handleDelColumn}
-              closeable={columnId != tcState.table.raIndex && columnId != tcState.table.decIndex}>
-              {tcState.table.columns[columnId]}
-            </Chip>
-          ))}
 
-          <Button
-            variant="link"
-            className="py-0"
-            onClick={() => setShowModal(true)}>
-            Add more
-          </Button>
+      <Form.Group as={Row} className="mb-2" controlId="tableSourceSelector">
+      <Form.Label column sm="1" className="text-end">
+        Columns
+      </Form.Label>
+      <Col sm="11">
+        <div style={{maxHeight: 250, overflow: 'auto'}}>
+        {
+          tcState.table.columns.map(((col, i) => (
+            <ColumnButton key={i} colId={i} colName={col} />
+          )))
+        }
+        <Help title="Add Columns">
+            Select columns from input table to include.
+          </Help>
         </div>
-      )}
+        
+      </Col>
+    </Form.Group>
 
       <SelectColumnModal
         show={showModal}
