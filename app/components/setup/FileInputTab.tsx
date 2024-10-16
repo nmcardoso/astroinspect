@@ -1,19 +1,18 @@
-import Col from 'react-bootstrap/Col'
-import Row from 'react-bootstrap/Row'
-import Button from 'react-bootstrap/Button'
-import Modal from 'react-bootstrap/Modal'
-import Form from 'react-bootstrap/Form'
+import ButtonChip from '@/components/common/ButtonChip'
 import Help from '@/components/common/Help'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
-import { MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react'
-import { HiCheck, HiX } from 'react-icons/hi'
-import Chip from '@/components/common/Chip'
-import TableHelper from '@/lib/TableHelper'
 import { ContextActions } from '@/interfaces/contextActions'
 import Emitter from '@/lib/Emitter'
-import { event } from 'nextjs-google-analytics'
 import { GA_MEASUREMENT_ID } from '@/lib/gtag'
-import ButtonChip from '@/components/common/ButtonChip'
+import TableHelper from '@/lib/TableHelper'
+import { event } from 'nextjs-google-analytics'
+import { MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react'
+import Button from 'react-bootstrap/Button'
+import Col from 'react-bootstrap/Col'
+import Form from 'react-bootstrap/Form'
+import Modal from 'react-bootstrap/Modal'
+import Row from 'react-bootstrap/Row'
+import { HiCheck, HiX } from 'react-icons/hi'
 
 
 function LocalStorageControl({ onChange }: { onChange: (e: any) => void }) {
@@ -234,10 +233,10 @@ const SourceSelector = () => {
 
 
 
-function ColumnButton({colName, colId}: {colName: string, colId: number}) {
+function ColumnButton({ colName, colId }: { colName: string, colId: number }) {
   const { tcState, tcDispatch } = useXTableConfig()
   const cls = tcState.table.selectedColumnsId.includes(colId) ? 'btn-primary' : 'btn-outline-primary'
-  
+
   const handleToggle: MouseEventHandler<HTMLDivElement> = () => {
     let newColumns = []
     if (tcState.table.selectedColumnsId.includes(colId)) {
@@ -432,31 +431,35 @@ export default function FileInputTab() {
 
       {
         tcState.table.type == 'local' ?
-        <LocalStorageControl onChange={handleLocalFile} /> :
-        <RemoteStorageControl onChange={(e) => handleRemoteFile(e.target.value)} />
+          <LocalStorageControl onChange={handleLocalFile} /> :
+          <RemoteStorageControl onChange={(e) => handleRemoteFile(e.target.value)} />
       }
 
       <StateMessage state={tcState.table.state} />
 
 
-      <Form.Group as={Row} className="mb-2" controlId="tableSourceSelector">
-      <Form.Label column sm="1" className="text-end">
-        Columns
-      </Form.Label>
-      <Col sm="11">
-        <div style={{maxHeight: 250, overflow: 'auto'}}>
-        {
-          tcState.table.columns.map(((col, i) => (
-            <ColumnButton key={i} colId={i} colName={col} />
-          )))
-        }
-        <Help title="Add Columns">
-            Select columns from input table to include.
-          </Help>
-        </div>
-        
-      </Col>
-    </Form.Group>
+      {
+        tcState.table.columns && tcState.table.columns.length > 0 && (
+          <Form.Group as={Row} className="mb-2" controlId="tableSourceSelector">
+            <Form.Label column sm="1" className="text-end">
+              Columns
+            </Form.Label>
+            <Col sm="11">
+              <div style={{ maxHeight: 250, overflow: 'auto' }}>
+                {
+                  tcState.table.columns.map(((col, i) => (
+                    <ColumnButton key={i} colId={i} colName={col} />
+                  )))
+                }
+                <Help title="Add Columns">
+                  Select columns from input table to include.
+                </Help>
+              </div>
+
+            </Col>
+          </Form.Group>
+        )
+      }
 
       <SelectColumnModal
         show={showModal}
