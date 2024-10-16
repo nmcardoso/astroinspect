@@ -72,7 +72,7 @@ function ImageCell({
     } else {
       const Figure = () => (
         <img 
-          src={src}
+          src={src as string}
           alt=""
           loading={lazy ? 'lazy': 'eager'}
           height={120}
@@ -81,7 +81,7 @@ function ImageCell({
       )
       return Figure
     }
-  }, [src])
+  }, [src, lazy])
 
   return (
     <>
