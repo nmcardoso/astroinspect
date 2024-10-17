@@ -28,7 +28,7 @@ semaphore.create('img:splus_photospec', 4)
 semaphore.create('img:sdss_spec', 4)
 semaphore.create('sdss_cat', 4)
 
-const FETCH_BUFFER = process.env.NODE_ENV === 'development' ? 0 : 200
+const FETCH_BUFFER = process.env.NODE_ENV === 'development' ? 0 : 100
 
 
 const downloadResource = async ({
