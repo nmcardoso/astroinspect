@@ -54,7 +54,8 @@ export class LegacyStamp implements IResourceFetch {
       if (Number.isFinite(mag_r) && Number.isFinite(shape_r)) {
         const correctionFactor = interp1(MAG_R, CF_CIRC_LINEAR, [mag_r], 'linear')
         const fov = 2 * shape_r * correctionFactor[0]
-        return Math.max(Math.min(fov / this.size, 10), 0.15)
+        const pixscale = fov / this.size
+        return Math.max(Math.min(pixscale, 10), 0.12)
       }
       return undefined
     } catch(e) {
