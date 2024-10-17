@@ -305,7 +305,10 @@ export default function AIGrid() {
     '--ag-header-height': '38px',
   } as React.CSSProperties
 
-  let gridOptions: GridOptions = {}
+  let gridOptions: GridOptions = {
+    suppressHorizontalScroll: false,
+    multiSortKey: 'ctrl',
+  }
   if (
     tcState.cols.splusImaging.enabled ||
     tcState.cols.legacyImaging.enabled ||
@@ -313,7 +316,7 @@ export default function AIGrid() {
     tcState.cols.splusPhotoSpectra.enabled ||
     (tcState.cols.customImaging.enabled && tcState.cols.customImaging.columns.length > 0)
   ) {
-    gridOptions = { rowHeight: 120 }
+    gridOptions.rowHeight = 120
   }
 
   return (
