@@ -234,7 +234,7 @@ export default function AIGrid() {
       if (tcState.cols.customImaging.enabled) {
         tcState.cols.customImaging.columns.forEach((col, idx, _) => {
           const riCol = `tab:${tcState.table.columns[col.columnIndex]}`
-          const url = `${col.url}${String(e[riCol])}${col.fileExtension}`
+          const url = `${col.url}${e[riCol] || ''}${col.fileExtension || ''}`
           const colId = `img:custom_${idx}`
           customImageResource({url, colId, rowId, grid: gridRef.current})
         })
