@@ -153,7 +153,7 @@ export default function AIGrid() {
       filteredData.push(row.data)
     })
     const startIndex = currentPage * pageSize
-    const endIndex = startIndex + pageSize
+    const endIndex = startIndex + pageSize + 200
 
     const pageData = filteredData.slice(startIndex, endIndex)
 
