@@ -28,6 +28,8 @@ semaphore.create('img:splus_photospec', 4)
 semaphore.create('img:sdss_spec', 4)
 semaphore.create('sdss_cat', 4)
 
+const FETCH_BUFFER = process.env.NODE_ENV === 'development' ? 0 : 200
+
 
 const downloadResource = async ({
   resourceFetch,
@@ -153,12 +155,12 @@ export default function AIGrid() {
       filteredData.push(row.data)
     })
     const startIndex = currentPage * pageSize
-    const endIndex = startIndex + pageSize + 200
+    const endIndex = startIndex + pageSize + FETCH_BUFFER
 
     const pageData = filteredData.slice(startIndex, endIndex)
 
-    const raCol = tcState.table.columns[tcState.table.raIndex]
-    const decCol = tcState.table.columns[tcState.table.decIndex]
+    const raCol = tcState.table.columns[tcState.table.raIndex as number]
+    const decCol = tcState.table.columns[tcState.table.decIndex as number]
 
     semaphore.clear()
 
@@ -174,7 +176,7 @@ export default function AIGrid() {
           'img:legacy',
           downloadResource,
           {
-            resourceFetch: new LegacyStamp(ra, dec, 300, tcState.cols.legacyImaging.pixelScale),
+            resourceFetch: new LegacyStamp(ra, dec, 300, tcState.cols.legacyImaging.pixelScale, tcState.cols.legacyImaging.autoPixelScale),
             colId: 'img:legacy',
             rowId: rowId,
             grid: gridRef.current
@@ -305,6 +307,7 @@ export default function AIGrid() {
 
   let gridOptions: GridOptions = {}
   if (
+    tcState.cols.splusImaging.enabled ||
     tcState.cols.legacyImaging.enabled ||
     tcState.cols.sdssSpectra.enabled ||
     tcState.cols.splusPhotoSpectra.enabled ||

@@ -5,6 +5,7 @@ import InputGroup from 'react-bootstrap/InputGroup'
 import { useContext } from 'react'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import { ContextActions } from '@/interfaces/contextActions'
+import Help from '@/components/common/Help'
 
 export default function LegacyImagingTab() {
   const { tcState, tcDispatch } = useXTableConfig()
@@ -29,9 +30,9 @@ export default function LegacyImagingTab() {
         </Col>
       </Form.Group>
 
-      <Row>
-        <Col sm={7}>
-          <InputGroup className="mb-3">
+      <Row className="mb-3">
+        <Col sm={5}>
+          <InputGroup>
             <InputGroup.Text id="legacyImagingPixScale">
               Pixel scale
             </InputGroup.Text>
@@ -49,12 +50,43 @@ export default function LegacyImagingTab() {
             </InputGroup.Text>
           </InputGroup>
         </Col>
+
+        <Col sm={4} className="align-content-center">
+          <div className="d-flex">
+            <Form.Check
+              type="switch"
+              id="auto-pix-scale"
+              label="Auto pixscale"
+              className="me-2"
+              checked={legacy.autoPixelScale}
+              onChange={e => tcDispatch({
+                type: ContextActions.LEGACY_IMAGING,
+                payload: { autoPixelScale: e.target.checked }
+              })}
+            />
+            <Help title="Add Columns">
+              <ul>
+                <li>
+                  When <i>auto pixscale</i> is <b>enabled</b>, AstroInspect will 
+                  compute the pixscale for each object based on the 
+                  <code>mag_r</code> and <code>shape_r</code> values from the 
+                  Legacy Survey catalogue. The specified value of pixscale will 
+                  be used in cases where catalog values are not available.
+                </li>
+                <li>
+                  When <i>auto pixscale</i> is <b>disbled</b>, AstroInspect will
+                  only use the specified value of the pixscale.
+                </li>
+              </ul>
+            </Help>
+          </div>
+        </Col>
       </Row>
 
       <Row>
         <Col sm={5}>
           <InputGroup>
-            <InputGroup.Text>DR</InputGroup.Text>
+            <InputGroup.Text>Data Release</InputGroup.Text>
             <Form.Select
               value={legacy.dataRelease}
               onChange={e => tcDispatch({

@@ -4,7 +4,7 @@ import { ContextActions } from '@/interfaces/contextActions'
 import TableHelper from '@/lib/TableHelper'
 
 
-export const SCHEMA_VERSION: number = 16
+export const SCHEMA_VERSION: number = 17
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
@@ -65,6 +65,7 @@ const getInitialState = (): IState => ({
     legacyImaging: {
       enabled: true,
       pixelScale: 0.4,
+      autoPixelScale: true,
       dataRelease: '10'
     },
     sdssSpectra: {

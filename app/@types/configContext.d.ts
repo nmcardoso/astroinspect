@@ -62,6 +62,7 @@ interface IClassification extends IterableInterface {
 interface ILegacyImaging extends IterableInterface {
   enabled: boolean,
   pixelScale: number,
+  autoPixelScale: boolean,
   dataRelease: string,
 }
 
