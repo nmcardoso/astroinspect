@@ -43,7 +43,7 @@ export class SimpleConeSearchClient {
             
             for (let i = 0; i < fields.length; i++) {
               const key = fields[i]?.getAttribute('name')
-              const dataType = fields[i].getAttribute('datatype')
+              const dataType = fields[i]?.getAttribute('datatype')
               let value: any = rowData?.[i]?.textContent
               
               if (dataType === 'float' || dataType === 'double') {
@@ -52,12 +52,13 @@ export class SimpleConeSearchClient {
                 value = parseInt(value as string)
               }
               
-              if (!!key) {
-                result[key] = value
-              }
+              if (!!key) result[key] = value
             }
+
             return result
           }
+
+          return undefined
         }
       }),
     })
