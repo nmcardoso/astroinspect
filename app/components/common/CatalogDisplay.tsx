@@ -117,7 +117,7 @@ export default function CatalogDisplay({
             items={colNames}
             active={activeColumn}
             className="mt-2"
-            height={340}
+            height={290}
             onClick={({ title }) => setActiveColumn(title)} />
         </Col>
         {loading ? (
