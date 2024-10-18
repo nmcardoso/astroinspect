@@ -1,0 +1,7 @@
+server {
+  listen 80;
+  server_name 35.211.4.44;
+  location / {
+    proxy_pass http://10.142.0.2:5000;
+  }
+}

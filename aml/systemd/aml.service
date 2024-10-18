@@ -1,0 +1,11 @@
+[Unit]
+Description=AstroMorphLib Service
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/home/astroinspect/astroinspect
+ExecStart=gunicorn --bind 0.0.0.0:5000 wsgi:app
+
+[Install]
+WantedBy=multi-user.target
