@@ -151,7 +151,7 @@ export default class SdssService {
     }
   }
 
-  getTables() {
+  async getTables() {
     return Object.keys(SDSS_TABLES)
   }
 
