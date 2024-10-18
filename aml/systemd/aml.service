@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 User=root
-WorkingDirectory=/home/nauxmac/astroinspect
+WorkingDirectory=/home/nauxmac/astroinspect/aml
 ExecStart=gunicorn --bind 0.0.0.0:5000 wsgi:app
 
 [Install]
