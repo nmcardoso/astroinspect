@@ -41,11 +41,11 @@ const DownloadModal = ({ show, onHide }: any) => {
     }
 
     const skipClassified = ({ node }: ShouldRowBeSkippedParams) => (
-      node.data?.['ai:class'] === undefined
+      node.data?.['ai:class'] === undefined || node.data?.['ai:class'] === '' 
     )
 
     const skipUnclassified = ({ node }: ShouldRowBeSkippedParams) => (
-      node.data?.['ai:class'] !== undefined
+      node.data?.['ai:class'] !== undefined || node.data?.['ai:class'] !== ''
     )
 
     const getClassFilter = () => {
@@ -120,7 +120,7 @@ const DownloadModal = ({ show, onHide }: any) => {
                 <div className="d-flex align-items-center mt-2">
                   <Form.Check
                     inline
-                    className="me-2"
+                    className="me-4"
                     checked={classFilter === 'all'}
                     label="all"
                     name="filterClass"
@@ -131,7 +131,7 @@ const DownloadModal = ({ show, onHide }: any) => {
                   />
                   <Form.Check
                     inline
-                    className="me-2"
+                    className="me-4"
                     checked={classFilter === 'classified'}
                     label="classified only"
                     name="filterClass"
