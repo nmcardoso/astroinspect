@@ -198,7 +198,20 @@ export default function ColorPlot() {
               })} />
 
             <Button
-              disabled={tcState.plots.filterIndex.length == 0 || tcState.plots.filterView != 'color'}>
+              disabled={tcState.plots.filterIndex.length == 0 || tcState.plots.filterView != 'color'}
+              onClick={() => {
+                tcDispatch({
+                  type: ContextActions.PLOT_SETUP,
+                  payload: {
+                    inspectSelected: true
+                  }
+                })
+
+                tcDispatch({
+                  type: ContextActions.CURRENT_VIEW_CHANGE,
+                  payload: 'grid'
+                })
+              }}>
               Inspect Selected
             </Button>
           </Stack>
@@ -213,11 +226,10 @@ export default function ColorPlot() {
         dispatchType={ContextActions.COLOR_PLOT_SETUP} /> */}
 
       <PlotlyComponent
-        style={{ width: '100%', height: '600px' }}
         data={data as Data[]}
         layout={layout as Layout}
-        className="w-100"
         config={{ responsive: true }}
+        className="w-100"
         onSelected={(e) => {
           const idx = e?.points?.map((x) => x.pointIndex)
           if (idx && idx.length > 0) {

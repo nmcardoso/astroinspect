@@ -4,6 +4,7 @@ import Nav from 'react-bootstrap/Nav'
 import ScatterPlot from './ScatterPlot'
 import ColorPlot from './ColorPlot'
 import { useEffect } from 'react'
+import Histogram from './Histogram'
 
 export default function Plots() {
   const { tcState, tcDispatch } = useXTableConfig()
@@ -48,6 +49,7 @@ export default function Plots() {
 
       {tcState.plots.currentView == 'scatter' && <ScatterPlot />}
       {tcState.plots.currentView == 'color' && <ColorPlot />}
+      {tcState.plots.currentView == 'histogram' && <Histogram />}
     </div>
   )
 }

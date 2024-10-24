@@ -10,6 +10,7 @@ import Stack from 'react-bootstrap/Stack'
 import ColumnDropdown from './ColumnDropdown'
 import { PlotlyComponent } from './PlotlyComponent'
 import Button from 'react-bootstrap/Button'
+import { filterOutliersBivariate } from '@/lib/statistics'
 
 
 
@@ -30,6 +31,9 @@ export default function ScatterPlot() {
     if (scatterConfig.colorColumn != '') {
       color = tcState.grid.data?.map((e: any) => e[`tab:${scatterConfig.colorColumn}`])
       colorbar = { orientation: 'v' }
+    }
+    if (tcState.plots.color.filterOutliers && x && y && x.length == y.length && x.length > 0) {
+      [x, y] = filterOutliersBivariate(x, y)
     }
 
     const trace1 = {
@@ -78,7 +82,8 @@ export default function ScatterPlot() {
     tcState.grid.data,
     scatterConfig.xColumn,
     scatterConfig.yColumn,
-    scatterConfig.colorColumn
+    scatterConfig.colorColumn,
+    tcState.plots.color.filterOutliers,
   ])
 
   const layout = {
@@ -114,7 +119,7 @@ export default function ScatterPlot() {
   }
 
   return (
-    <>
+    <div className="w-100">
       <Form.Group as={Row} className="mb-3" controlId="x-axis">
         <Col sm={3}>
           <Stack direction="horizontal" gap={2}>
@@ -188,7 +193,6 @@ export default function ScatterPlot() {
             </Button>
           </Stack>
         </Col>
-
       </Form.Group>
 
 
@@ -199,10 +203,10 @@ export default function ScatterPlot() {
         dispatchKey="sizeColumn"
         dispatchType={ContextActions.SCATTER_PLOT_SETUP} /> */}
       <PlotlyComponent
-        style={{ width: '100%', height: '100%' }}
         data={data as Data[]}
         layout={layout as Layout}
         config={{ responsive: true }}
+        className="w-100"
         onSelected={(e) => {
           const idx = e?.points?.map((x) => x.pointIndex)
           if (idx && idx.length > 0) {
@@ -216,6 +220,6 @@ export default function ScatterPlot() {
           }
         }}
       />
-    </>
+    </div>
   )
 }

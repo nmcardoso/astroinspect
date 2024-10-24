@@ -322,7 +322,6 @@ export default function AIGrid() {
 
   const plotFilter = useCallback((node: IRowNode<any>): boolean => {
     if (node.data) {
-      console.log(tcState.plots.filterIndex?.includes(node.sourceRowIndex), node.sourceRowIndex, tcState.plots.filterIndex)
       return tcState.plots.filterIndex?.includes(node.sourceRowIndex)
     }
     return true
