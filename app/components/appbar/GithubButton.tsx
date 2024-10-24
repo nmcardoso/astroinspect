@@ -4,7 +4,6 @@ import Button from 'react-bootstrap/Button'
 export default function GithubButton() {
   return (
     <Button
-      className="me-2"
       size="sm"
       variant="outline-primary"
       href="https://github.com/nmcardoso/astrotools"

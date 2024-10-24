@@ -7,7 +7,11 @@ import GithubButton from './GithubButton'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import BackButton from './BackButton'
 import DownloadTableButton from './DownloadTableButton'
-import ModeButton from './ModeButton'
+import ViewModeButton from './ViewModeButton'
+import NavButtons from './NavButtons'
+import  Stack  from 'react-bootstrap/Stack'
+import FilenameText from './FilenameText'
+
 
 
 
@@ -17,18 +21,22 @@ export default function Appbar() {
   return (
     <Navbar bg="light" expand="lg" className="p-1">
       <Container>
-        <div>
-          {tcState.currentView == 'grid' && <BackButton />}
-          {tcState.grid.isLoaded && <DownloadTableButton />}
-          {tcState.currentView == 'grid' && <ModeButton />}
-        </div>
+        {/* Left side */}
+        <NavButtons />
 
-        <Logo />
-
-        <div>
-          <GithubButton />
+        {/* Middle */}
+        <Stack direction="horizontal" className="mx-auto"> 
+          <Logo />
+          <FilenameText />
+        </Stack>
+        
+        {/* Right side */}
+        <Stack direction="horizontal" gap={2}>
+          <DownloadTableButton />
+          <ViewModeButton />
+          {/* <GithubButton /> */}
           <CitationButton />
-        </div>
+        </Stack>
       </Container>
     </Navbar>
   )

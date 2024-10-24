@@ -284,6 +284,8 @@ export default function DownloadTableButton() {
   const { tcState } = useXTableConfig()
   const [showModal, setShowModal] = useState(false)
 
+  if (!tcState.grid.isLoaded) return null
+
   return (
     <>
       <Button

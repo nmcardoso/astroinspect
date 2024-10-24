@@ -8,9 +8,10 @@ import { useState } from "react";
 
 
 
-export default function ModeButton() {
+export default function ViewModeButton() {
   const { tcState } = useXTableConfig()
   const [isEditable, setEditable] = useState(false)
+  
   const handleToggle = () => {
     const state = {...tcState}
     state.grid.editable = !isEditable
@@ -19,25 +20,27 @@ export default function ModeButton() {
     setEditable(!isEditable)
   }
 
+  if (tcState.currentView != 'grid') return null
+
   return (
     <>
       {isEditable ? (
         <Button
           size="sm"
           variant="success"
-          className="ms-2 d-inline-flex align-items-center"
+          className="d-inline-flex align-items-center"
           onClick={handleToggle}>
           <MdEdit size={18} className="me-1" />
-          <span>Edit Mode</span>
+          <span>Edit</span>
         </Button>
       ) : (
         <Button
           size="sm"
           variant="outline-primary"
-          className="ms-2 d-inline-flex align-items-center"
+          className="d-inline-flex align-items-center"
           onClick={handleToggle}>
           <ImEye size={18} className="me-1" />
-          <span>View Mode</span>
+          <span>View</span>
         </Button>
       )}
     </>

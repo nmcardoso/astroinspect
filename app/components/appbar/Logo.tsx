@@ -5,7 +5,7 @@ import Navbar from 'react-bootstrap/Navbar'
 
 export default function Logo() {
   return (
-    <Navbar.Brand as="div" className="mx-auto">
+    <Navbar.Brand as="div" className="">
       <Link href="/">
         <div className="d-flex align-items-center">
           <Image
