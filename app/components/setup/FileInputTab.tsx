@@ -109,72 +109,6 @@ const StateMessage = ({ state }: { state: any }) => {
 }
 
 
-const SelectColumnModal = ({
-  show,
-  onHide
-}: { show: boolean, onHide: () => void }) => {
-  const { tcState, tcDispatch } = useXTableConfig()
-  const [selectedId, setSelectedId] = useState(-1)
-
-  const filterColumns = () => {
-    return tcState.table.columns.map((col, i) => {
-      return { colName: col, originalIndex: i }
-    }).filter((e) => {
-      return !tcState.table.selectedColumnsId.includes(e.originalIndex)
-    })
-  }
-
-  const handleSubmit: MouseEventHandler<HTMLButtonElement> = () => {
-    if (selectedId >= 0 && !tcState.table.selectedColumnsId.includes(selectedId)) {
-      tcDispatch({
-        type: ContextActions.USER_FILE_INPUT,
-        payload: {
-          selectedColumnsId: [...tcState.table.selectedColumnsId, selectedId]
-        }
-      })
-    }
-  }
-
-  return (
-    <Modal
-      show={show}
-      onHide={onHide}
-      animation={false}
-      centered
-    >
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">
-          Select a column
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form>
-          <Row>
-            <Col xs={10}>
-              <Form.Select
-                defaultValue={-1}
-                onChange={e => setSelectedId(parseInt(e.target.value))}>
-                <option value={-1}>Select a column to add</option>
-                {filterColumns().map((col) => (
-                  <option
-                    value={col.originalIndex}
-                    key={col.originalIndex}>
-                    {col.colName}
-                  </option>
-                ))}
-              </Form.Select>
-            </Col>
-            <Col>
-              <Button variant="success" onClick={handleSubmit}>Add</Button>
-            </Col>
-          </Row>
-        </Form>
-      </Modal.Body>
-    </Modal>
-  )
-}
-
-
 
 const SourceSelector = () => {
   const { tcState, tcDispatch } = useXTableConfig()
@@ -267,7 +201,6 @@ function ColumnButton({ colName, colId }: { colName: string, colId: number }) {
 
 export default function FileInputTab() {
   const { tcState, tcDispatch } = useXTableConfig()
-  const [showModal, setShowModal] = useState(false)
 
   const handleLocalFile = useCallback((e: any) => {
     if (e.target.files.length > 0) {
@@ -281,6 +214,7 @@ export default function FileInputTab() {
       })
 
       TableHelper.getTableSummary(file).then(summary => {
+        console.log('positionFound', summary?.positionFound)
         if (summary?.positionFound) {
           const isSameFile = (
             tcState.table.type === 'local' && (
@@ -408,13 +342,6 @@ export default function FileInputTab() {
     }
   }, [tcDispatch, tcState])
 
-  const handleDelColumn = (_: any, value: number) => {
-    tcDispatch({
-      type: ContextActions.USER_FILE_INPUT,
-      payload: { selectedColumnsId: tcState.table.selectedColumnsId.filter(v => v != value) }
-    })
-  }
-
   useEffect(() => {
     Emitter.on('INSERT_URL', (e: any) => handleRemoteFile(e.url, true))
     event(
@@ -460,10 +387,6 @@ export default function FileInputTab() {
           </Form.Group>
         )
       }
-
-      <SelectColumnModal
-        show={showModal}
-        onHide={() => setShowModal(false)} />
     </>
   )
 }
