@@ -10,6 +10,7 @@ import Stack from 'react-bootstrap/Stack'
 import ColumnDropdown from './ColumnDropdown'
 import { PlotlyComponent } from './PlotlyComponent'
 import { filterOutliersBivariate } from '@/lib/statistics'
+import Button from 'react-bootstrap/Button'
 
 
 export default function ColorPlot() {
@@ -40,12 +41,12 @@ export default function ColorPlot() {
   const data = useMemo(() => {
     let color, colorbar = undefined
     let [x, y] = colors
-    
+
     if (colorPlotConfig.colorColumn != '') {
       color = tcState.grid.data?.map((e: any) => e[`tab:${colorPlotConfig.colorColumn}`])
       colorbar = { orientation: 'v' }
     }
-    if (tcState.plots.color.filterOutliers && x.length == y.length && x.length > 0) {
+    if (tcState.plots.color.filterOutliers && x && y && x.length == y.length && x.length > 0) {
       [x, y] = filterOutliersBivariate(x, y)
     }
 
@@ -56,8 +57,8 @@ export default function ColorPlot() {
       name: 'points',
       marker: {
         color: color || 'tab:blue',
-        size: 2,
-        opacity: 0.5,
+        size: 3,
+        opacity: 0.7,
         colorbar: colorbar,
       },
       type: 'scatter'
@@ -183,17 +184,24 @@ export default function ColorPlot() {
         </Col>
 
         <Col sm={4} className="align-content-center ms-2">
-          <Form.Check
-            type="switch"
-            id="filter-outliers"
-            label="Filter outliers"
-            checked={tcState.plots.color.filterOutliers}
-            onChange={(e) => tcDispatch({
-              type: ContextActions.COLOR_PLOT_SETUP,
-              payload: {
-                filterOutliers: e.target.checked
-              }
-            })} />
+          <Stack direction="horizontal" gap={3}>
+            <Form.Check
+              type="switch"
+              id="filter-outliers"
+              label="Filter outliers"
+              checked={tcState.plots.color.filterOutliers}
+              onChange={(e) => tcDispatch({
+                type: ContextActions.COLOR_PLOT_SETUP,
+                payload: {
+                  filterOutliers: e.target.checked
+                }
+              })} />
+
+            <Button
+              disabled={tcState.plots.filterIndex.length == 0 || tcState.plots.filterView != 'color'}>
+              Inspect Selected
+            </Button>
+          </Stack>
         </Col>
       </Form.Group>
 
@@ -210,12 +218,17 @@ export default function ColorPlot() {
         layout={layout as Layout}
         className="w-100"
         config={{ responsive: true }}
-        onInitialized={() => console.log('initialized')}
-        onRedraw={() => console.log('redraw')}
-        onAfterPlot={() => console.log('after plot')}
         onSelected={(e) => {
-          console.log('selected', e)
-          console.log(e?.points?.map((x) => x.pointIndex))
+          const idx = e?.points?.map((x) => x.pointIndex)
+          if (idx && idx.length > 0) {
+            tcDispatch({
+              type: ContextActions.PLOT_SETUP,
+              payload: {
+                filterIndex: e?.points?.map((x) => x.pointIndex),
+                filterView: 'color'
+              }
+            })
+          }
         }}
       />
     </div>

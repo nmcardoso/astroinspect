@@ -28,4 +28,5 @@ export enum ContextActions {
   COLOR_PLOT_SETUP,
   HISTOGRAM_PLOT_SETUP,
   PLOT_VIEW_CHANGE,
+  PLOT_SETUP,
 }

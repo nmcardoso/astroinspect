@@ -4,7 +4,7 @@ import { ContextActions } from '@/interfaces/contextActions'
 import TableHelper from '@/lib/TableHelper'
 
 
-export const SCHEMA_VERSION: number = 19
+export const SCHEMA_VERSION: number = 21
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
@@ -109,6 +109,9 @@ const getInitialState = (): IState => ({
       filterOutliers: true,
     },
     currentView: 'scatter',
+    filterIndex: [],
+    filterView: undefined,
+    inspectSelected: false,
   }
 })
 const initialState = getInitialState()
@@ -227,6 +230,10 @@ const changePlotCurrentView = (state: IState, action: IAction<PlotsCurrentViewTy
   return s
 }
 
+const plotSetup = (state: IState, action: IAction<IPlots>) => {
+  return setAttributes(state, action, (s) => s.plots)
+}
+
 const changeCurrentView = (state: IState, action: IAction<CurrentViewType>) => {
   const s = { ...state }
   s.currentView = action.payload
@@ -255,6 +262,7 @@ const reducerMap = {
   [ContextActions.COLOR_PLOT_SETUP]: colorPlotSetup,
   [ContextActions.HISTOGRAM_PLOT_SETUP]: histogramPlotSetup,
   [ContextActions.PLOT_VIEW_CHANGE]: changePlotCurrentView,
+  [ContextActions.PLOT_SETUP]: plotSetup,
 }
 
 

@@ -3,9 +3,23 @@ import { ContextActions } from '@/interfaces/contextActions'
 import Nav from 'react-bootstrap/Nav'
 import ScatterPlot from './ScatterPlot'
 import ColorPlot from './ColorPlot'
+import { useEffect } from 'react'
 
 export default function Plots() {
   const { tcState, tcDispatch } = useXTableConfig()
+
+  useEffect(() => {
+    if (tcState.plots.inspectSelected || (tcState.plots.filterIndex && tcState.plots.filterIndex.length > 0)) {
+      tcDispatch({
+        type: ContextActions.PLOT_SETUP,
+        payload: {
+          inspectSelected: false,
+          filterIndex: [],
+          filterView: undefined,
+        }
+      })
+    }
+  }, [])
 
   return (
     <div className="container w-100">

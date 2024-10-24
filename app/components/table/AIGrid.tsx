@@ -22,9 +22,9 @@ import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 
-semaphore.create('img:legacy', 4)
-semaphore.create('img:splus', 4)
-semaphore.create('img:splus_photospec', 4)
+semaphore.create('img:legacy', 6)
+semaphore.create('img:splus', 5)
+semaphore.create('img:splus_photospec', 5)
 semaphore.create('img:sdss_spec', 4)
 semaphore.create('sdss_cat', 4)
 
@@ -319,6 +319,16 @@ export default function AIGrid() {
     gridOptions.rowHeight = 120
   }
 
+
+  const plotFilter = useCallback((node: IRowNode<any>): boolean => {
+    if (node.data) {
+      console.log(tcState.plots.filterIndex?.includes(node.sourceRowIndex), node.sourceRowIndex, tcState.plots.filterIndex)
+      return tcState.plots.filterIndex?.includes(node.sourceRowIndex)
+    }
+    return true
+  }, [tcState.plots.filterIndex])
+
+
   return (
     <Container fluid className="px-0" style={{ height: '100%' }}>
       <div
@@ -341,6 +351,8 @@ export default function AIGrid() {
           onFilterChanged={onChange}
           onCellKeyDown={onCellKeyDown}
           singleClickEdit={true}
+          isExternalFilterPresent={() => tcState.plots.inspectSelected}
+          doesExternalFilterPass={plotFilter}
         />
       </div>
       <ToastContainer />

@@ -9,6 +9,7 @@ import Row from 'react-bootstrap/Row'
 import Stack from 'react-bootstrap/Stack'
 import ColumnDropdown from './ColumnDropdown'
 import { PlotlyComponent } from './PlotlyComponent'
+import Button from 'react-bootstrap/Button'
 
 
 
@@ -38,8 +39,8 @@ export default function ScatterPlot() {
       name: 'points',
       marker: {
         color: color || 'tab:blue',
-        size: 2,
-        opacity: 0.5,
+        size: 3,
+        opacity: 0.7,
         colorbar: colorbar,
       },
       type: 'scatter'
@@ -155,17 +156,37 @@ export default function ScatterPlot() {
 
 
         <Col sm={3} className="align-content-center">
-          <Form.Check
-            type="switch"
-            id="filter-outliers"
-            label="Filter outliers"
-            checked={tcState.plots.scatter.filterOutliers}
-            onChange={(e) => tcDispatch({
-              type: ContextActions.SCATTER_PLOT_SETUP,
-              payload: {
-                filterOutliers: e.target.checked
-              }
-            })} />
+          <Stack direction="horizontal" gap={3}>
+            <Form.Check
+              type="switch"
+              id="filter-outliers"
+              label="Filter outliers"
+              checked={tcState.plots.scatter.filterOutliers}
+              onChange={(e) => tcDispatch({
+                type: ContextActions.SCATTER_PLOT_SETUP,
+                payload: {
+                  filterOutliers: e.target.checked
+                }
+              })} />
+
+            <Button
+              disabled={tcState.plots.filterIndex.length == 0 || tcState.plots.filterView != 'scatter'}
+              onClick={() => {
+                tcDispatch({
+                  type: ContextActions.PLOT_SETUP,
+                  payload: {
+                    inspectSelected: true
+                  }
+                })
+
+                tcDispatch({
+                  type: ContextActions.CURRENT_VIEW_CHANGE,
+                  payload: 'grid'
+                })
+              }}>
+              Inspect Selected
+            </Button>
+          </Stack>
         </Col>
 
       </Form.Group>
@@ -182,6 +203,18 @@ export default function ScatterPlot() {
         data={data as Data[]}
         layout={layout as Layout}
         config={{ responsive: true }}
+        onSelected={(e) => {
+          const idx = e?.points?.map((x) => x.pointIndex)
+          if (idx && idx.length > 0) {
+            tcDispatch({
+              type: ContextActions.PLOT_SETUP,
+              payload: {
+                filterIndex: e?.points?.map((x) => x.pointIndex),
+                filterView: 'scatter'
+              }
+            })
+          }
+        }}
       />
     </>
   )

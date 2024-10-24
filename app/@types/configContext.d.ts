@@ -135,6 +135,9 @@ interface IPlots {
   color: IColorPlot
   histogram: IHistogramPlot
   currentView: PlotsCurrentViewType
+  filterIndex: numebr[]
+  filterView?: PlotsCurrentViewType
+  inspectSelected: boolean
 }
 
 interface IState {
