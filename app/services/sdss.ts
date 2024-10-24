@@ -4,6 +4,7 @@ import { obj2formData, timeConvert } from '@/lib/utils'
 import JSONBigInt from 'json-bigint'
 import chunk from 'lodash/chunk'
 import { QueryClient, QueryOptions } from '@tanstack/react-query'
+import { processResponse } from './utils'
 
 semaphore.create('sdss_cone_spec', 4)
 semaphore.create('sdss_sql', 2)
@@ -201,7 +202,7 @@ export class SdssSpectra extends SdssService implements IResourceFetch {
   async fetch() {
     const specObjId = await this.getObjSpecId(this.ra, this.dec)
     if (!specObjId) return undefined
-    return {data: `${SPEC_PLOT_URL}?id=${specObjId}`}
+    return { data: `${SPEC_PLOT_URL}?id=${specObjId}` }
     // return await queryClient.fetchQuery({
     //   queryKey: [specObjId],
     //   queryFn: () => axios.get(SPEC_PLOT_URL, {
@@ -235,30 +236,32 @@ export class SdssCatalog extends SdssService implements IResourceFetch {
     const query = strategy.getCrossIdQuery(this.table, [this.column])
     const resp = await queryClient.fetchQuery({
       queryKey: ['sdss-query', this.ra, this.dec, this.table, this.column],
-      queryFn: () => axios.get(CROSSID_SEARCH, {
-        params: {
-          searchtool: 'CrossID',
-          searchType: strategy.objType,
-          photoScope: 'nearPrim',
-          spectroScope: 'nearPrim',
-          photoUpType: 'ra-dec',
-          spectroUpType: 'ra-dec',
-          radius: 0.016667,
-          firstcol: 1,
-          paste: this.getCsv([{ index: 0, ra: this.ra, dec: this.dec }]),
-          uquery: query,
-          format: 'JSON',
-        },
-        transformResponse: (data) => {
-          const parsed = JSONBigInt({ storeAsString: true }).parse(data)
-          let _data = parsed.find((e: any) => e.TableName == 'Table1').Rows
-          if (_data.length > 0) {
-            return _data[0]?.[this.column]
-          } else {
-            return undefined
+      queryFn: () => processResponse(
+        () => axios.get(CROSSID_SEARCH, {
+          params: {
+            searchtool: 'CrossID',
+            searchType: strategy.objType,
+            photoScope: 'nearPrim',
+            spectroScope: 'nearPrim',
+            photoUpType: 'ra-dec',
+            spectroUpType: 'ra-dec',
+            radius: 0.016667,
+            firstcol: 1,
+            paste: this.getCsv([{ index: 0, ra: this.ra, dec: this.dec }]),
+            uquery: query,
+            format: 'JSON',
+          },
+          transformResponse: (data) => {
+            const parsed = JSONBigInt({ storeAsString: true }).parse(data)
+            let _data = parsed.find((e: any) => e.TableName == 'Table1').Rows
+            if (_data.length > 0) {
+              return _data[0]?.[this.column]
+            } else {
+              return undefined
+            }
           }
-        }
-      })
+        })
+      )
     })
     return resp
   }

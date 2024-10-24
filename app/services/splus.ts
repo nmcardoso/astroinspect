@@ -1,9 +1,10 @@
-import axios, { AxiosInstance } from 'axios'
+import axios, { AxiosError, AxiosInstance } from 'axios'
 import { XMLParser } from 'fast-xml-parser'
 import { obj2qs } from '../lib/utils'
 import { QueryClient } from '@tanstack/react-query'
 import { timeConvert } from '../lib/utils'
 import { semaphore } from '../lib/Semaphore'
+import { processResponse } from './utils'
 
 
 type TableType = {
@@ -115,15 +116,15 @@ export default class SplusService {
 
   async getFluxRadius(ra: number, dec: number) {
     return semaphore.enqueue('splus-flux-radius', async () => {
-      const data = await queryClient.fetchQuery(
-        ['splus-service-flux-radius', ra, dec],
-        async () => {
+      const data = await queryClient.fetchQuery({
+        queryKey: ['splus-service-flux-radius', ra, dec],
+        queryFn: async () => {
           const resp = await axios.get(FLUX_RADIUS_URL, {
             params: { ra, dec }
           })
           return resp.data
         }
-      )
+      })
       return data
     })
   }
@@ -138,11 +139,11 @@ export class SplusStamp implements IResourceFetch {
   private type
   private config
   private stampSize
-  
+
   constructor(
-    ra: number, 
-    dec: number, 
-    pixscale: number, 
+    ra: number,
+    dec: number,
+    pixscale: number,
     type: 'trilogy' | 'lupton',
     config: ILuptonConfig | ITrilogyConfig,
   ) {
@@ -189,11 +190,13 @@ export class SplusStamp implements IResourceFetch {
   async fetch() {
     return await queryClient.fetchQuery({
       queryKey: [this.ra, this.dec, this.stampSize, this.type, this.config],
-      queryFn: () => axios.get(this.getUrl(), { 
-        responseType: 'blob', 
-        signal: semaphore.getSignal(),
-        params: this.getParams()
-      })
+      queryFn: () => processResponse(
+        () => axios.get(this.getUrl(), {
+          responseType: 'blob',
+          signal: semaphore.getSignal(),
+          params: this.getParams()
+        })
+      )
     })
   }
 }
@@ -203,7 +206,7 @@ export class SplusStamp implements IResourceFetch {
 export class SplusPhotoSpectra implements IResourceFetch {
   private ra
   private dec
-  private lines 
+  private lines
 
   constructor(ra: number, dec: number, lines: string[]) {
     this.ra = ra
@@ -214,15 +217,17 @@ export class SplusPhotoSpectra implements IResourceFetch {
   async fetch() {
     return await queryClient.fetchQuery({
       queryKey: [this.ra, this.dec, this.lines],
-      queryFn: () => axios.get(PHOTOSPEC_URL, { 
-        responseType: 'blob', 
-        signal: semaphore.getSignal(),
-        params: {
-          ra: this.ra,
-          dec: this.dec,
-          ...this.lines.reduce((acc: any, line) => {acc[line] = ''; return acc}, {}),
-        }
-      })
+      queryFn: () => processResponse(
+        () => axios.get(PHOTOSPEC_URL, {
+          responseType: 'blob',
+          signal: semaphore.getSignal(),
+          params: {
+            ra: this.ra,
+            dec: this.dec,
+            ...this.lines.reduce((acc: any, line) => { acc[line] = ''; return acc }, {}),
+          }
+        })
+      )
     })
   }
 }

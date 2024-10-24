@@ -4,6 +4,7 @@ import { QueryClient } from '@tanstack/react-query'
 import { timeConvert } from '../lib/utils'
 import { SimpleConeSearchClient } from './scs'
 import interp1 from 'interp1'
+import { processResponse } from './utils'
 
 const LEGACY_RGB = 'https://www.legacysurvey.org/viewer/cutout.jpg'
 // const LEGACY_RGB = 'https://checker-melted-forsythia.glitch.me/legacy.jpg'
@@ -28,12 +29,12 @@ export class LegacyStamp implements IResourceFetch {
   private pixscale
   private autoPixscale
   private layer
-  
+
   constructor(
-    ra: number, 
-    dec: number, 
-    size: number, 
-    pixscale: number, 
+    ra: number,
+    dec: number,
+    size: number,
+    pixscale: number,
     autoPixscale: boolean = true,
     layer: string = 'ls-dr10'
   ) {
@@ -48,7 +49,7 @@ export class LegacyStamp implements IResourceFetch {
   async computePixscale() {
     const scs = new SimpleConeSearchClient(SCS_URL)
     try {
-      const data = await scs.search(this.ra, this.dec, 1.5/3600)
+      const data = await scs.search(this.ra, this.dec, 1.5 / 3600)
       const mag_r = data?.mag_r
       const shape_r = data?.shape_r
       if (Number.isFinite(mag_r) && Number.isFinite(shape_r)) {
@@ -58,7 +59,7 @@ export class LegacyStamp implements IResourceFetch {
         return Math.max(Math.min(pixscale, 10), 0.12)
       }
       return undefined
-    } catch(e) {
+    } catch (e) {
       console.log(e)
       return undefined
     }
@@ -75,17 +76,19 @@ export class LegacyStamp implements IResourceFetch {
 
     return await queryClient.fetchQuery({
       queryKey: [this.ra, this.dec, this.size, pixscale, this.layer],
-      queryFn: () => axios.get(LEGACY_RGB, { 
-        responseType: 'blob', 
-        signal: semaphore.getSignal(),
-        params: {
-          ra: this.ra,
-          dec: this.dec,
-          size: this.size,
-          pixscale: pixscale,
-          layer: this.layer
-        }
-      })
+      queryFn: () => processResponse(
+        () => axios.get(LEGACY_RGB, {
+          responseType: 'blob',
+          signal: semaphore.getSignal(),
+          params: {
+            ra: this.ra,
+            dec: this.dec,
+            size: this.size,
+            pixscale: pixscale,
+            layer: this.layer
+          }
+        })
+      )
     })
   }
 }
