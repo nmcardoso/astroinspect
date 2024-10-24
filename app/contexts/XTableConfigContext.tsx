@@ -4,7 +4,7 @@ import { ContextActions } from '@/interfaces/contextActions'
 import TableHelper from '@/lib/TableHelper'
 
 
-export const SCHEMA_VERSION: number = 17
+export const SCHEMA_VERSION: number = 19
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
@@ -86,6 +86,30 @@ const getInitialState = (): IState => ({
       ]
     },
   },
+  plots: {
+    scatter: {
+      xColumn: '',
+      yColumn: '',
+      colorColumn: '',
+      sizeColumn: '',
+      filterOutliers: true,
+    },
+    color: {
+      xColumn1: '',
+      xColumn2: '',
+      yColumn1: '',
+      yColumn2: '',
+      colorColumn: '',
+      sizeColumn: '',
+      filterOutliers: true,
+    },
+    histogram: {
+      column: '',
+      bins: 30,
+      filterOutliers: true,
+    },
+    currentView: 'scatter',
+  }
 })
 const initialState = getInitialState()
 
@@ -185,6 +209,24 @@ const enableCustomImaging = (state: IState, action: IAction<{ enabled: boolean }
   return setAttributes(state, action, (s) => s.cols.customImaging)
 }
 
+const scatterPlotSetup = (state: IState, action: IAction<IScatterPlot>) => {
+  return setAttributes(state, action, (s) => s.plots.scatter)
+}
+
+const colorPlotSetup = (state: IState, action: IAction<IColorPlot>) => {
+  return setAttributes(state, action, (s) => s.plots.color)
+}
+
+const histogramPlotSetup = (state: IState, action: IAction<IHistogramPlot>) => {
+  return setAttributes(state, action, (s) => s.plots.histogram)
+}
+
+const changePlotCurrentView = (state: IState, action: IAction<PlotsCurrentViewType>) => {
+  const s = { ...state }
+  s.plots.currentView = action.payload
+  return s
+}
+
 const changeCurrentView = (state: IState, action: IAction<CurrentViewType>) => {
   const s = { ...state }
   s.currentView = action.payload
@@ -209,6 +251,10 @@ const reducerMap = {
   [ContextActions.CUSTOM_IMAGE_ENABLE]: enableCustomImaging,
   [ContextActions.GRID_UPDATE]: updateGridValues,
   [ContextActions.CURRENT_VIEW_CHANGE]: changeCurrentView,
+  [ContextActions.SCATTER_PLOT_SETUP]: scatterPlotSetup,
+  [ContextActions.COLOR_PLOT_SETUP]: colorPlotSetup,
+  [ContextActions.HISTOGRAM_PLOT_SETUP]: histogramPlotSetup,
+  [ContextActions.PLOT_VIEW_CHANGE]: changePlotCurrentView,
 }
 
 

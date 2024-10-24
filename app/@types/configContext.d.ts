@@ -103,7 +103,39 @@ interface ICols extends IterableInterface {
   customImaging: ICustomImaging,
 }
 
-type CurrentViewType = 'settings' | 'grid'
+type CurrentViewType = 'settings' | 'grid' | 'plots'
+
+
+interface IScatterPlot {
+  xColumn: string
+  yColumn: string
+  colorColumn: string
+  sizeColumn: string
+  filterOutliers: boolean
+}
+
+interface IColorPlot {
+  xColumn1: string
+  xColumn2: string
+  yColumn1: string
+  yColumn2: string
+  colorColumn: string
+  sizeColumn: string
+  filterOutliers: boolean
+}
+
+interface IHistogramPlot {
+  column: string
+  bins: number
+  filterOutliers: boolean
+}
+
+interface IPlots {
+  scatter: IScatterPlot
+  color: IColorPlot
+  histogram: IHistogramPlot
+  currentView: PlotsCurrentViewType
+}
 
 interface IState {
   schemaVersion: number,
@@ -111,8 +143,10 @@ interface IState {
   grid: IGrid,
   currentView: CurrentViewType,
   cols: ICols,
+  plots: IPlots,
 }
 
+type PlotsCurrentViewType = 'scatter' | 'color' | 'histogram'
 
 interface IAction<P> {
   type: number,
@@ -121,7 +155,7 @@ interface IAction<P> {
 
 type PayloadType = IState | ITrilogyConfig | ISplusImaging | ILuptonConfig
   | ITableConfig | IClassification | ILegacyImaging | ISdssSpectra
-  | ISdssCatalog | ISplusPhotoSpectra | IGrid
+  | ISdssCatalog | ISplusPhotoSpectra | IGrid | IPlots
 
 
 interface IContext {
