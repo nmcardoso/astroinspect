@@ -10,7 +10,7 @@ import Stack from 'react-bootstrap/Stack'
 import ColumnDropdown from './ColumnDropdown'
 import { PlotlyComponent } from './PlotlyComponent'
 import Button from 'react-bootstrap/Button'
-import { maskOutliersBivariate } from '@/lib/statistics'
+import { maskOutliersBivariate, maskOutliersTrivariate } from '@/lib/statistics'
 
 
 
@@ -33,7 +33,11 @@ export default function ScatterPlot() {
       colorbar = { orientation: 'v' }
     }
     if (tcState.plots.color.filterOutliers && x && y && x.length == y.length && x.length > 0) {
-      [x, y] = maskOutliersBivariate(x, y)
+      if (scatterConfig.colorColumn != '') {
+        [x, y, color] = maskOutliersTrivariate(x, y, color)
+      } else {
+        [x, y] = maskOutliersBivariate(x, y)
+      }
     }
 
     const trace1 = {

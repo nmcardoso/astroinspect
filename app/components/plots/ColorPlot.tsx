@@ -9,7 +9,7 @@ import Row from 'react-bootstrap/Row'
 import Stack from 'react-bootstrap/Stack'
 import ColumnDropdown from './ColumnDropdown'
 import { PlotlyComponent } from './PlotlyComponent'
-import { maskOutliersBivariate } from '@/lib/statistics'
+import { maskOutliersBivariate, maskOutliersTrivariate } from '@/lib/statistics'
 import Button from 'react-bootstrap/Button'
 
 
@@ -47,7 +47,11 @@ export default function ColorPlot() {
       colorbar = { orientation: 'v' }
     }
     if (tcState.plots.color.filterOutliers && x && y && x.length == y.length && x.length > 0) {
-      [x, y] = maskOutliersBivariate(x, y)
+      if (colorPlotConfig.colorColumn != '') {
+        [x, y, color] = maskOutliersTrivariate(x, y, color)
+      } else {
+        [x, y] = maskOutliersBivariate(x, y)
+      }
     }
 
     const trace1 = {
