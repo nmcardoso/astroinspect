@@ -9,7 +9,7 @@ export default function FilenameText() {
       style={{
         overflow: 'hidden', 
         textOverflow: 'ellipsis', 
-        maxWidth: '240px', 
+        maxWidth: '310px', 
         whiteSpace: 'nowrap'
       }}>
         {tcState.table?.file?.name}
