@@ -10,7 +10,7 @@ import Stack from 'react-bootstrap/Stack'
 import ColumnDropdown from './ColumnDropdown'
 import { PlotlyComponent } from './PlotlyComponent'
 import Button from 'react-bootstrap/Button'
-import { filterOutliersBivariate } from '@/lib/statistics'
+import { maskOutliersBivariate } from '@/lib/statistics'
 
 
 
@@ -33,7 +33,7 @@ export default function ScatterPlot() {
       colorbar = { orientation: 'v' }
     }
     if (tcState.plots.color.filterOutliers && x && y && x.length == y.length && x.length > 0) {
-      [x, y] = filterOutliersBivariate(x, y)
+      [x, y] = maskOutliersBivariate(x, y)
     }
 
     const trace1 = {
@@ -208,12 +208,13 @@ export default function ScatterPlot() {
         config={{ responsive: true }}
         className="w-100"
         onSelected={(e) => {
+          console.log(e)
           const idx = e?.points?.map((x) => x.pointIndex)
           if (idx && idx.length > 0) {
             tcDispatch({
               type: ContextActions.PLOT_SETUP,
               payload: {
-                filterIndex: e?.points?.map((x) => x.pointIndex),
+                filterIndex: idx,
                 filterView: 'scatter'
               }
             })

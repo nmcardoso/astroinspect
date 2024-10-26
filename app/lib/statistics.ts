@@ -21,23 +21,29 @@ export function computeQuantiles(arr: number[]): { q1: number, q3: number, iqr: 
 }
 
 
-export function filterOutliersUnivariate(arr: number[]) {
+export function maskOutliersUnivariate(arr: number[]) {
   if (arr.length < 4)
     return arr
 
   const stats = computeQuantiles(arr)
 
-  return arr.filter((x) => (x >= stats.minValue) && (x <= stats.maxValue))
+  return arr.map((x) => {
+    if ((x >= stats.minValue) && (x <= stats.maxValue)) {
+      return x
+    }
+    return undefined
+  })
 }
 
 
-export function filterOutliersBivariate(arr1: number[], arr2: number[]) {
+export function maskOutliersBivariate(arr1: number[], arr2: number[]) {
   if (arr1.length < 4 || arr2.length < 4)
     return [arr1, arr2]
 
   const stats1 = computeQuantiles(arr1)
   const stats2 = computeQuantiles(arr2)
-  const indices = []
+  const a1 = []
+  const a2 = []
 
   for (let i = 0; i < arr1.length; i++) {
     const e1 = arr1[i]
@@ -46,22 +52,28 @@ export function filterOutliersBivariate(arr1: number[], arr2: number[]) {
       ((e2 >= stats2.minValue) && (e2 <= stats2.maxValue))
 
     if (cond) {
-      indices.push(i)
+      a1.push(e1)
+      a2.push(e2)
+    } else {
+      a1.push(undefined)
+      a2.push(undefined)
     }
   }
 
-  return [indices.map(i => arr1[i]), indices.map(i => arr2[i])]
+  return [a1, a2]
 }
 
 
-export function filterOutliersTrivariate(arr1: number[], arr2: number[], arr3: number[]) {
+export function maskOutliersTrivariate(arr1: number[], arr2: number[], arr3: number[]) {
   if (arr1.length < 4 || arr2.length < 4 || arr3.length < 4)
     return [arr1, arr2, arr3]
 
   const stats1 = computeQuantiles(arr1)
   const stats2 = computeQuantiles(arr2)
   const stats3 = computeQuantiles(arr3)
-  const indices = []
+  const a1 = []
+  const a2 = []
+  const a3 = []
 
   for (let i = 0; i < arr1.length; i++) {
     const e1 = arr1[i]
@@ -72,9 +84,15 @@ export function filterOutliersTrivariate(arr1: number[], arr2: number[], arr3: n
       ((e3 >= stats3.minValue) && (e3 <= stats3.maxValue))
 
     if (cond) {
-      indices.push(i)
+      a1.push(e1)
+      a2.push(e2)
+      a3.push(e3)
+    } else {
+      a1.push(undefined)
+      a2.push(undefined)
+      a3.push(undefined)
     }
   }
 
-  return [indices.map(i => arr1[i]), indices.map(i => arr2[i]), indices.map(i => arr3[i])]
+  return [a1, a2, a3]
 }

@@ -10,7 +10,7 @@ import Stack from 'react-bootstrap/Stack'
 import ColumnDropdown from './ColumnDropdown'
 import { PlotlyComponent } from './PlotlyComponent'
 import Button from 'react-bootstrap/Button'
-import { filterOutliersUnivariate } from '@/lib/statistics'
+import { maskOutliersUnivariate } from '@/lib/statistics'
 
 
 
@@ -25,7 +25,7 @@ export default function Histogram() {
       x = tcState.grid.data?.map((e: any) => e[`tab:${histConfig.column}`])
     }
     if (tcState.plots.color.filterOutliers && x && x.length > 0) {
-      x = filterOutliersUnivariate(x)
+      x = maskOutliersUnivariate(x)
     }
 
     const trace1 = {
@@ -39,6 +39,7 @@ export default function Histogram() {
   }, [
     tcState.grid.data,
     histConfig.column,
+    tcState.plots.color.filterOutliers,
   ])
 
   const layout = {
