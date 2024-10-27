@@ -1,7 +1,6 @@
 import { useCallback, useEffect } from 'react'
 import A from 'aladin-lite'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
-import  pickBy  from 'lodash/pickBy'
 
 
 type AladinWrapperProps = {
