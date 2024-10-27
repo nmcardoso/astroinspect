@@ -2,110 +2,157 @@ import ButtonChip from '@/components/common/ButtonChip'
 import Help from '@/components/common/Help'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import { ContextActions } from '@/interfaces/contextActions'
-import Emitter from '@/lib/Emitter'
-import { GA_MEASUREMENT_ID } from '@/lib/gtag'
-import { getTableReader } from '@/lib/io'
-import { event } from 'nextjs-google-analytics'
-import { MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react'
+import { MouseEventHandler } from 'react'
 import Col from 'react-bootstrap/Col'
 import Form from 'react-bootstrap/Form'
 import Row from 'react-bootstrap/Row'
 import { HiCheck, HiX } from 'react-icons/hi'
-
-
-function LocalStorageControl({ onChange }: { onChange: (e: any) => void }) {
-  const { tcState } = useXTableConfig()
-  const inputRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    if (!!tcState.table.file && !!inputRef.current) {
-      const dataTransfer = new DataTransfer()
-      dataTransfer.items.add(tcState.table.file)
-      const fileList = dataTransfer.files
-      inputRef.current.files = fileList
-    }
-  }, [tcState.table.file])
-
-  return (
-    <>
-      <Form.Group as={Row} className="mb-2" controlId="tableFile">
-        <Form.Label column sm="1" className="text-end">
-          Table
-        </Form.Label>
-        <Col sm={8}>
-          <div className="d-flex align-items-center">
-            <Form.Control
-              type="file"
-              onChange={onChange}
-              ref={inputRef} />
-            <Help title="Local Upload" className="ms-1">
-              Load a table available in local computer. The only required
-              columns are <code>RA</code> and <code>DEC</code> in degrees.<br />
-              <u>Available formars</u>: <code>CSV</code>, <code>TSV</code>,
-              &nbsp;<code>DAT</code>, <code>PARQUET</code>.
-            </Help>
-          </div>
-        </Col>
-      </Form.Group>
-    </>
-  )
-}
-
-
-function RemoteStorageControl({ onChange }: { onChange: (e: any) => void }) {
-  const { tcState } = useXTableConfig()
-
-  return (
-    <Form.Group as={Row} className="mb-2" controlId="tableFile">
-      <Form.Label column sm="1" className="text-end">
-        URL
-      </Form.Label>
-      <Col sm={10}>
-        <div className="d-flex align-items-center">
-          <Form.Control
-            placeholder="File URL"
-            onChange={onChange}
-            value={tcState.table.url || ''} />
-          <Help title="Remote Upload" className="ms-1">
-            Loads a table available remotely in the internet.<br />
-            <u>Available formars</u>: <code>CSV</code>, <code>TSV</code>,
-            &nbsp;<code>DAT</code>, <code>PARQUET</code>.
-          </Help>
-        </div>
-      </Col>
-    </Form.Group>
-  )
-}
+import LocalFileInput from './LocalFileInput'
+import RemoteFileInput from './RemoteFileInput'
+import InputGroup from 'react-bootstrap/InputGroup'
 
 
 const StateMessage = ({ state }: { state: any }) => {
   if (state == 'loading') {
-    return <p className="text-secondary">
-      Loading table...
-    </p>
+    return (
+      <p className="text-secondary">
+        Loading table...
+      </p>
+    )
   }
 
   if (state == 'success') {
-    return <p className="text-success">
-      <HiCheck /> RA and DEC columns successfully detected
-    </p>
+    return (
+      <p className="text-success">
+        <HiCheck /> RA and DEC columns successfully detected
+      </p>
+    )
   }
 
   if (state == 'positionNotFound') {
-    return <p className="text-danger">
-      <HiX /> RA or DEC columns not detected
-    </p>
+    return (
+      <p className="text-danger">
+        <HiX /> RA or DEC columns not detected
+      </p>
+    )
   }
 
   if (state == 'error') {
-    return <p className="text-danger">
-      <HiX /> Failed to load this table, check if it&apos;s a valid csv file
-    </p>
+    return (
+      <p className="text-danger">
+        <HiX /> Failed to load this table, check if it&apos;s a valid csv file
+      </p>
+    )
   }
 
   return null
 }
 
+
+function PositionColumns() {
+  const { tcState, tcDispatch } = useXTableConfig()
+
+  const handleRAChange: React.ChangeEventHandler<HTMLSelectElement> = (e) => {
+    const selectedIndex = parseInt(e.target.value)
+    let selectedCols = [...tcState.table.selectedColumnsId]
+    if (tcState.table.raIndex != undefined && selectedCols.includes(tcState.table.raIndex)) {
+      selectedCols = selectedCols.filter((e) => e != tcState.table.raIndex)
+    }
+    if (!selectedCols.includes(selectedIndex)) {
+      selectedCols.push(selectedIndex)
+    }
+    tcDispatch({
+      type: ContextActions.USER_FILE_INPUT,
+      payload: {
+        raIndex: selectedIndex,
+        raCol: tcState.table.columns?.[e.target.value as unknown as number],
+        selectedColumnsId: selectedCols,
+        state: selectedIndex >= 0 && tcState.table.decIndex != undefined && tcState.table.decIndex >= 0 ? 'success' : tcState.table.state
+      }
+    })
+  }
+
+  const handleDECChange: React.ChangeEventHandler<HTMLSelectElement> = (e) => {
+    const selectedIndex = parseInt(e.target.value)
+    let selectedCols = [...tcState.table.selectedColumnsId]
+    if (tcState.table.decIndex != undefined && selectedCols.includes(tcState.table.decIndex)) {
+      selectedCols = selectedCols.filter((e) => e != tcState.table.decIndex)
+    }
+    if (!selectedCols.includes(selectedIndex)) {
+      selectedCols.push(selectedIndex)
+    }
+    tcDispatch({
+      type: ContextActions.USER_FILE_INPUT,
+      payload: {
+        decIndex: selectedIndex,
+        decCol: tcState.table.columns?.[e.target.value as unknown as number],
+        selectedColumnsId: selectedCols,
+        state: selectedIndex >= 0 && tcState.table.raIndex != undefined && tcState.table.raIndex >= 0 ? 'success' : tcState.table.state
+      }
+    })
+  }
+
+  return (
+    <Form.Group as={Row} className="mb-2" controlId="tableSourceSelector">
+      <Form.Label column sm="1" className="text-end">
+        { }
+      </Form.Label>
+      <Col sm={5}>
+        <InputGroup hasValidation>
+          <InputGroup.Text>RA</InputGroup.Text>
+          <Form.Select
+            required
+            isInvalid={tcState.table.raIndex == undefined || tcState.table.raIndex < 0}
+            isValid={tcState.table.raIndex !== undefined && tcState.table.raIndex >= 0}
+            value={tcState.table.raIndex as unknown as number}
+            onChange={handleRAChange}>
+            <option value={-1}>-</option>
+            {
+              tcState.table.columns.map((col, i) => (
+                <option value={i} key={col}>
+                  {col}
+                </option>
+              ))
+            }
+          </Form.Select>
+          <Form.Control.Feedback type="invalid">
+            RA column not found
+          </Form.Control.Feedback>
+          <Form.Control.Feedback type="valid">
+            RA column detected
+          </Form.Control.Feedback>
+        </InputGroup>
+      </Col>
+
+      <Col sm={5}>
+        <InputGroup hasValidation>
+          <InputGroup.Text>DEC</InputGroup.Text>
+          <Form.Select
+            required
+            isInvalid={tcState.table.decIndex == undefined || tcState.table.decIndex < 0}
+            isValid={tcState.table.decIndex !== undefined && tcState.table.decIndex >= 0}
+            value={tcState.table.decIndex as unknown as number}
+            onChange={handleDECChange}>
+            <option value={-1}>-</option>
+            {
+              tcState.table.columns.map((col, i) => (
+                <option value={i} key={col}>
+                  {col}
+                </option>
+              ))
+            }
+          </Form.Select>
+          <Form.Control.Feedback type="invalid">
+            DEC column not found
+          </Form.Control.Feedback>
+          <Form.Control.Feedback type="valid">
+            DEC column detected
+          </Form.Control.Feedback>
+        </InputGroup>
+      </Col>
+    </Form.Group>
+  )
+}
 
 
 const SourceSelector = () => {
@@ -164,7 +211,6 @@ const SourceSelector = () => {
 }
 
 
-
 function ColumnButton({ colName, colId }: { colName: string, colId: number }) {
   const { tcState, tcDispatch } = useXTableConfig()
   const cls = tcState.table.selectedColumnsId.includes(colId) ? 'btn-primary' : 'btn-outline-primary'
@@ -197,188 +243,11 @@ function ColumnButton({ colName, colId }: { colName: string, colId: number }) {
 }
 
 
-export default function FileInputTab() {
-  const { tcState, tcDispatch } = useXTableConfig()
-
-  const handleLocalFile = useCallback((e: any) => {
-    if (e.target.files.length > 0) {
-      const file = e.target.files[0]
-
-      tcDispatch({
-        type: ContextActions.USER_FILE_INPUT,
-        payload: {
-          status: 'loading'
-        }
-      })
-
-      getTableReader(file)?.getTableSummary().then(summary => {
-        console.log('positionFound', summary?.positionFound)
-        if (summary?.positionFound) {
-          const isSameFile = (
-            tcState.table.type === 'local' && (
-              file.name === tcState.table.file?.name ||
-              file.size === tcState.table.file?.size ||
-              file.lastModified === tcState.table.file?.lastModified
-            )
-          )
-          if (!isSameFile) {
-            tcDispatch({
-              type: ContextActions.GRID_UPDATE,
-              payload: {
-                data: [],
-                colDefs: [],
-              }
-            })
-          }
-          tcDispatch({
-            type: ContextActions.USER_FILE_INPUT,
-            payload: {
-              type: 'local',
-              columns: summary.columns,
-              selectedColumnsId: [summary.raIndex, summary.decIndex],
-              raIndex: summary.raIndex,
-              decIndex: summary.decIndex,
-              dataTypes: summary.dataTypes,
-              status: 'success',
-              file,
-              isSameFile,
-            }
-          })
-          tcDispatch({
-            type: ContextActions.PLOT_SETUP,
-            payload: {
-              filterIndex: [],
-              filterView: undefined,
-              inspectSelected: false,
-            }
-          })
-          event(
-            'load_file_local', {
-            category: 'load',
-            label: 'local',
-            userId: GA_MEASUREMENT_ID
-          })
-        } else {
-          tcDispatch({
-            type: ContextActions.USER_FILE_INPUT,
-            payload: {
-              status: 'positionNotFound'
-            }
-          })
-        }
-      }).catch(err => {
-        console.log(err)
-        tcDispatch({
-          type: ContextActions.USER_FILE_INPUT,
-          payload: {
-            status: 'error'
-          }
-        })
-      })
-    }
-  }, [tcState, tcDispatch])
-
-
-  const handleRemoteFile = useCallback((url: string, autoLoad: boolean = false) => {
-    if (url.length > 0) {
-      tcDispatch({
-        type: ContextActions.USER_FILE_INPUT,
-        payload: {
-          status: 'loading'
-        }
-      })
-
-      getTableReader(url)?.getTableSummary().then(summary => {
-        if (summary?.positionFound) {
-          const isSameFile = (
-            tcState.table.type === 'remote' &&
-            url == tcState.table.url
-          )
-          if (!isSameFile) {
-            tcDispatch({
-              type: ContextActions.GRID_UPDATE,
-              payload: {
-                data: [],
-                colDefs: [],
-              }
-            })
-          }
-          tcDispatch({
-            type: ContextActions.USER_FILE_INPUT,
-            payload: {
-              type: 'remote',
-              columns: summary.columns,
-              selectedColumnsId: [summary.raIndex, summary.decIndex],
-              raIndex: summary.raIndex,
-              decIndex: summary.decIndex,
-              dataTypes: summary.dataTypes,
-              status: 'success',
-              url,
-              isSameFile,
-            }
-          })
-          tcDispatch({
-            type: ContextActions.PLOT_SETUP,
-            payload: {
-              filterIndex: [],
-              filterView: undefined,
-              inspectSelected: false,
-            }
-          })
-          if (autoLoad) {
-            tcDispatch({
-              type: ContextActions.CURRENT_VIEW_CHANGE,
-              payload: 'grid'
-            })
-          }
-          event(
-            'load_file_remote', {
-            category: 'load',
-            label: 'remote',
-            userId: GA_MEASUREMENT_ID
-          })
-        } else {
-          tcDispatch({
-            type: ContextActions.USER_FILE_INPUT,
-            payload: {
-              status: 'positionNotFound'
-            }
-          })
-        }
-      }).catch(err => {
-        tcDispatch({
-          type: ContextActions.USER_FILE_INPUT,
-          payload: {
-            status: 'error'
-          }
-        })
-      })
-    }
-  }, [tcDispatch, tcState])
-
-  useEffect(() => {
-    Emitter.on('INSERT_URL', (e: any) => handleRemoteFile(e.url, true))
-    event(
-      'load_file_example', {
-      category: 'load',
-      label: 'example',
-      userId: GA_MEASUREMENT_ID
-    })
-  }, [handleRemoteFile])
+function FileInputColumns() {
+  const { tcState } = useXTableConfig()
 
   return (
     <>
-      <SourceSelector />
-
-      {
-        tcState.table.type == 'local' ?
-          <LocalStorageControl onChange={handleLocalFile} /> :
-          <RemoteStorageControl onChange={(e) => handleRemoteFile(e.target.value)} />
-      }
-
-      <StateMessage state={tcState.table.state} />
-
-
       {
         tcState.table.columns && tcState.table.columns.length > 0 && (
           <Form.Group as={Row} className="mb-2" controlId="tableSourceSelector">
@@ -401,6 +270,30 @@ export default function FileInputTab() {
           </Form.Group>
         )
       }
+    </>
+  )
+}
+
+
+export default function FileInputTab() {
+  const { tcState } = useXTableConfig()
+
+  return (
+    <>
+      <SourceSelector />
+
+      <div className={tcState.table.type == 'remote' ? 'd-none' : ''}>
+        <LocalFileInput />
+      </div>
+      <div className={tcState.table.type == 'local' ? 'd-none' : ''}>
+        <RemoteFileInput />
+      </div>
+
+      <div className={tcState.table.state == 'unloaded' ? 'd-none' : ''}>
+        <PositionColumns />
+      </div>
+
+      <FileInputColumns />
     </>
   )
 }

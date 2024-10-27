@@ -122,8 +122,8 @@ export default function ConfigForm() {
                 variant="success"
                 size="lg"
                 onClick={handleLoadClick}
-                disabled={tcState.table.status !== 'success'}>
-                {tcState.table.status === 'loading' ?
+                disabled={tcState.table.state !== 'success'}>
+                {tcState.table.state === 'loading' ?
                   <>
                     <Spinner
                       as="span"

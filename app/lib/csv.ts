@@ -16,6 +16,7 @@ export class CSVReader extends BaseReader {
       Papa.parse(this.file, {
         complete: ({ data }) => resolve(data),
         error: (e) => reject(e),
+        delimitersToGuess: [',', '\t', ' ', '|', ';', Papa.RECORD_SEP, Papa.UNIT_SEP],
         skipEmptyLines: true,
         header: true,
         dynamicTyping: true,

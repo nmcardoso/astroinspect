@@ -3,18 +3,20 @@ import localforage from 'localforage'
 import { ContextActions } from '@/interfaces/contextActions'
 
 
-export const SCHEMA_VERSION: number = 21
+export const SCHEMA_VERSION: number = 22
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
   table: {
     type: 'local',
-    file: null,
-    url: null,
+    file: undefined,
+    url: undefined,
     selectedColumnsId: [],
     columns: [],
-    raIndex: null,
-    decIndex: null,
+    raIndex: undefined,
+    decIndex: undefined,
+    raCol: undefined,
+    decCol: undefined,
     state: 'unloaded',
     isSameFile: false,
     dataTypes: undefined,

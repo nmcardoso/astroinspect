@@ -4,12 +4,14 @@ interface IterableInterface {
 
 interface ITableConfig extends IterableInterface {
   type: 'local' | 'remote',
-  file: File | null,
-  url: string | null,
+  file?: File,
+  url?: string,
   selectedColumnsId: number[]
   columns: string[],
-  raIndex: number | null,
-  decIndex: number | null,
+  raIndex?: number,
+  decIndex?: number,
+  raCol?: string,
+  decCol?: string,
   state: 'unloaded' | 'loading' | 'success' | 'positionNotFound' | 'error',
   isSameFile: boolean,
   dataTypes?: string[],
