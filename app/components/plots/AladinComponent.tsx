@@ -13,25 +13,30 @@ export default function AladinComponent({ width, height }: AladinWrapperProps) {
 
   useEffect(() => {
     A.init.then(() => {
-      const configs = {
+      let raField = tcState.table.columns?.[tcState.table.raIndex as number]
+      let decField = tcState.table.columns?.[tcState.table.decIndex as number]
+      raField = `tab:${raField}`
+      decField = `tab:${decField}`
+
+      const configs: any = {
         source: 'CDS/P/DESI-Legacy-Surveys/DR10/color',
-        fov: 360, 
+        fov: 180, 
         projection: "AIT", 
         cooFrame: 'ICRSd', 
         showCooGridControl: true, 
         showSimbadPointerControl: true, 
         showCooGrid: true,
       }
+      if (tcState.grid.data?.[0]) {
+        configs.target = `${tcState.grid.data[0][raField]} ${tcState.grid.data[0][decField]}`
+      }
+
       const aladin = A.aladin('#aladin-lite-div', configs)
       aladin.setImageSurvey('CDS/P/DESI-Legacy-Surveys/DR10/color')
-      const raField = tcState.table.columns?.[tcState.table.raIndex as number]
-      const decField = tcState.table.columns?.[tcState.table.decIndex as number]
+
       const sources = tcState.grid.data?.map((row: any) => {
-        const ra = row[`tab:${raField}`]
-        const dec = row[`tab:${decField}`]
-        // const filteredRow = pickBy(row, (value, key) => {
-        //   return key.startsWith('tab:')
-        // })
+        const ra = row[raField]
+        const dec = row[decField]
         const filteredRow = Object.entries(row).reduce((obj: any, [key, value]) => {
           if (key.startsWith('tab:')) {
             obj[key.slice(4)] = value
@@ -42,7 +47,6 @@ export default function AladinComponent({ width, height }: AladinWrapperProps) {
       })
       const cat = A.catalog({name: 'Input Table', raField, decField, onClick: 'showPopup'})
       cat.addSources(sources)
-      console.log(cat)
       aladin.addCatalog(cat)
     })
   }, [
