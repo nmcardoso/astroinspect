@@ -11,6 +11,7 @@ import ViewModeButton from './ViewModeButton'
 import NavButtons from './NavButtons'
 import  Stack  from 'react-bootstrap/Stack'
 import FilenameText from './FilenameText'
+import PlotFilterButton from './PlotFilterButton'
 
 
 
@@ -23,6 +24,7 @@ export default function Appbar() {
       <Container fluid>
         {/* Left side */}
         <NavButtons />
+        <PlotFilterButton />
 
         {/* Middle */}
         <Stack direction="horizontal" className="mx-auto"> 

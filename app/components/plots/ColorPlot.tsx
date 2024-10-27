@@ -60,7 +60,7 @@ export default function ColorPlot() {
       mode: 'markers',
       name: 'points',
       marker: {
-        color: color || 'tab:blue',
+        color: color || 'royalblue',
         size: 3,
         opacity: 0.7,
         colorbar: colorbar,
@@ -82,7 +82,7 @@ export default function ColorPlot() {
     const trace3 = {
       x: x,
       name: 'x density',
-      marker: { color: 'tab:blue' },
+      marker: { color: 'royalblue' },
       yaxis: 'y2',
       type: 'histogram'
     }
@@ -90,7 +90,7 @@ export default function ColorPlot() {
     const trace4 = {
       y: y,
       name: 'y density',
-      marker: { color: 'tab:blue' },
+      marker: { color: 'royalblue' },
       xaxis: 'x2',
       type: 'histogram'
     }

@@ -31,7 +31,7 @@ export default function Histogram() {
     const trace1 = {
       x: x,
       name: 'x density',
-      marker: { color: 'tab:blue' },
+      marker: { color: 'royalblue' },
       type: 'histogram',
     }
 

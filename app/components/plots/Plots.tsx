@@ -10,19 +10,6 @@ import Aladin from './Aladin'
 export default function Plots() {
   const { tcState, tcDispatch } = useXTableConfig()
 
-  useEffect(() => {
-    if (tcState.plots.inspectSelected || (tcState.plots.filterIndex && tcState.plots.filterIndex.length > 0)) {
-      tcDispatch({
-        type: ContextActions.PLOT_SETUP,
-        payload: {
-          inspectSelected: false,
-          filterIndex: [],
-          filterView: undefined,
-        }
-      })
-    }
-  }, [tcState.plots.inspectSelected, tcState.plots.filterIndex, tcDispatch])
-
   return (
     <div className="w-100 h-100 d-flex flex-column">
       <Nav

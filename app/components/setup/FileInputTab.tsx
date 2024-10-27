@@ -246,6 +246,14 @@ export default function FileInputTab() {
               isSameFile,
             }
           })
+          tcDispatch({
+            type: ContextActions.PLOT_SETUP,
+            payload: {
+              filterIndex: [],
+              filterView: undefined,
+              inspectSelected: false,
+            }
+          })
           event(
             'load_file_local', {
             category: 'load',
@@ -309,6 +317,14 @@ export default function FileInputTab() {
               status: 'success',
               url,
               isSameFile,
+            }
+          })
+          tcDispatch({
+            type: ContextActions.PLOT_SETUP,
+            payload: {
+              filterIndex: [],
+              filterView: undefined,
+              inspectSelected: false,
             }
           })
           if (autoLoad) {
