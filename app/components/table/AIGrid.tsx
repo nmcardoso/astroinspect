@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import { ContextActions } from '@/interfaces/contextActions'
+import { getTableReader } from '@/lib/io'
 import { semaphore } from '@/lib/Semaphore'
 import { loadErrorState, loadingState, queuedState } from '@/lib/states'
 import TableHelper from '@/lib/TableHelper'
@@ -110,9 +111,9 @@ export default function AIGrid() {
 
     let data
     if (tcState.table.type === 'local') {
-      data = await TableHelper.load(tcState.table.file as File)
+      data = await getTableReader(tcState.table.file as File)?.read()
     } else {
-      data = await TableHelper.load(tcState.table.url as string)
+      data = await getTableReader(tcState.table.url as string)?.read()
     }
 
     const { colDef, initVal } = TableHelper.getColDefs(tcState)

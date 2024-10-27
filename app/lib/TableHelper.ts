@@ -2,17 +2,8 @@ import AsyncTextCell from '@/components/table/AsyncTextCell'
 import ClassCell from '@/components/table/ClassCell'
 import imageCellFactory from '@/components/table/ImageCell'
 import { ColDef } from '@ag-grid-community/core'
-import TableReader from './io'
 import { queuedState } from './states'
-import { findIndex } from './utils'
 
-
-interface ITableSummary {
-  raIndex: number,
-  decIndex: number,
-  columns: string[],
-  positionFound: boolean
-}
 
 
 const idColDef: ColDef = {
@@ -82,7 +73,6 @@ const userTableColDefFactory = (
   dtype?: string
 ): ColDef => {
   const cellDtype = dtype ? {cellDataType: dtype} : {}
-  console.log(colName, cellDtype)
   return {
     field: `tab:${colName}`,
     flex: 1,
@@ -97,35 +87,6 @@ const userTableColDefFactory = (
 
 
 class TableHelper {
-  async load(file: File | string) {
-    const reader = new TableReader(file)
-    return await reader.read()
-  }
-
-  getHeaderSummary(header: string[]) {
-    const raIndex = findIndex('ra', header)
-    const decIndex = findIndex('dec', header)
-    const summary: ITableSummary = {
-      raIndex,
-      decIndex,
-      columns: header,
-      positionFound: (raIndex > -1) && (decIndex > -1)
-    }
-    return summary
-  }
-
-  async getTableSummary(file: File | string) {
-    const reader = new TableReader(file)
-    const cols = await reader.getColumns()
-    const dataTypes = await reader.getDataTypes()
-    console.log(dataTypes)
-    if (!!cols) {
-      return {...this.getHeaderSummary(cols), dataTypes}
-    } else {
-      return undefined
-    }
-  }
-
   getColDefs(tcState: IState): { colDef: ColDef[], initVal: any } {
     const defs: ColDef[] = [idColDef]
     const initVal: any = {}

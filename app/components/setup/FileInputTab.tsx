@@ -4,13 +4,11 @@ import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import { ContextActions } from '@/interfaces/contextActions'
 import Emitter from '@/lib/Emitter'
 import { GA_MEASUREMENT_ID } from '@/lib/gtag'
-import TableHelper from '@/lib/TableHelper'
+import { getTableReader } from '@/lib/io'
 import { event } from 'nextjs-google-analytics'
 import { MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react'
-import Button from 'react-bootstrap/Button'
 import Col from 'react-bootstrap/Col'
 import Form from 'react-bootstrap/Form'
-import Modal from 'react-bootstrap/Modal'
 import Row from 'react-bootstrap/Row'
 import { HiCheck, HiX } from 'react-icons/hi'
 
@@ -213,7 +211,7 @@ export default function FileInputTab() {
         }
       })
 
-      TableHelper.getTableSummary(file).then(summary => {
+      getTableReader(file)?.getTableSummary().then(summary => {
         console.log('positionFound', summary?.positionFound)
         if (summary?.positionFound) {
           const isSameFile = (
@@ -290,7 +288,7 @@ export default function FileInputTab() {
         }
       })
 
-      TableHelper.getTableSummary(url).then(summary => {
+      getTableReader(url)?.getTableSummary().then(summary => {
         if (summary?.positionFound) {
           const isSameFile = (
             tcState.table.type === 'remote' &&
