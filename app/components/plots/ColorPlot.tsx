@@ -11,6 +11,7 @@ import ColumnDropdown from './ColumnDropdown'
 import { PlotlyComponent } from './PlotlyComponent'
 import { maskOutliersBivariate, maskOutliersTrivariate } from '@/lib/statistics'
 import Button from 'react-bootstrap/Button'
+import SwapButton from './SwapButton'
 
 
 export default function ColorPlot() {
@@ -153,6 +154,16 @@ export default function ColorPlot() {
               value={colorPlotConfig.xColumn2}
               dispatchKey="xColumn2"
               dispatchType={ContextActions.COLOR_PLOT_SETUP} />
+            <SwapButton
+              onClick={() => tcDispatch({
+                type: ContextActions.COLOR_PLOT_SETUP,
+                payload: {
+                  xColumn1: colorPlotConfig.yColumn1,
+                  yColumn1: colorPlotConfig.xColumn1,
+                  xColumn2: colorPlotConfig.yColumn2,
+                  yColumn2: colorPlotConfig.xColumn2,
+                }
+              })} />
           </Stack>
         </Col>
 

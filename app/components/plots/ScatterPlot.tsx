@@ -1,6 +1,5 @@
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import { ContextActions } from '@/interfaces/contextActions'
-import dynamic from 'next/dynamic'
 import { Data, Layout } from 'plotly.js'
 import { useMemo } from 'react'
 import Col from 'react-bootstrap/Col'
@@ -11,8 +10,8 @@ import ColumnDropdown from './ColumnDropdown'
 import { PlotlyComponent } from './PlotlyComponent'
 import Button from 'react-bootstrap/Button'
 import { maskOutliersBivariate, maskOutliersTrivariate } from '@/lib/statistics'
-
-
+import { MdSwapHoriz } from "react-icons/md";
+import SwapButton from './SwapButton'
 
 
 export default function ScatterPlot() {
@@ -125,7 +124,7 @@ export default function ScatterPlot() {
   return (
     <div className="container-fluid w-100 mt-2">
       <Form.Group as={Row} className="mb-3" controlId="x-axis">
-        <Col sm={3}>
+        <Col>
           <Stack direction="horizontal" gap={2}>
             <span className="fw-bold" style={{ wordBreak: 'keep-all' }}>
               x-axis:
@@ -134,11 +133,19 @@ export default function ScatterPlot() {
               value={scatterConfig.xColumn}
               dispatchKey="xColumn"
               dispatchType={ContextActions.SCATTER_PLOT_SETUP} />
+            <SwapButton
+              onClick={() => tcDispatch({
+                type: ContextActions.SCATTER_PLOT_SETUP,
+                payload: {
+                  xColumn: scatterConfig.yColumn,
+                  yColumn: scatterConfig.xColumn,
+                }
+              })} />
           </Stack>
         </Col>
 
 
-        <Col sm={3}>
+        <Col>
           <Stack direction="horizontal" gap={2}>
             <span className="fw-bold ms-lg-2" style={{ wordBreak: 'keep-all' }}>
               y-axis:
@@ -151,7 +158,7 @@ export default function ScatterPlot() {
         </Col>
 
 
-        <Col sm={3}>
+        <Col>
           <Stack direction="horizontal" gap={2}>
             <span className="fw-bold ms-lg-2" style={{ wordBreak: 'keep-all' }}>
               color:
@@ -164,7 +171,7 @@ export default function ScatterPlot() {
         </Col>
 
 
-        <Col sm={3} className="align-content-center">
+        <Col className="align-content-center">
           <Stack direction="horizontal" gap={3}>
             <Form.Check
               type="switch"

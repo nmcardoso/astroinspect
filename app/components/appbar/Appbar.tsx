@@ -34,6 +34,7 @@ export default function Appbar() {
         
         {/* Right side */}
         <Stack direction="horizontal" gap={2}>
+          <span className="text-muded small">v1.0</span>
           <DownloadTableButton />
           <ViewModeButton />
           {/* <GithubButton /> */}
