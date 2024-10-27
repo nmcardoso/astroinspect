@@ -19,7 +19,7 @@ export default function AladinComponent({ width, height }: AladinWrapperProps) {
       decField = `tab:${decField}`
 
       const configs: any = {
-        source: 'CDS/P/DESI-Legacy-Surveys/DR10/color',
+        survey: 'CDS/P/DESI-Legacy-Surveys/DR10/color',
         fov: 180, 
         projection: "AIT", 
         cooFrame: 'ICRSd', 
