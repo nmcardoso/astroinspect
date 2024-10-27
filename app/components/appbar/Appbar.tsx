@@ -12,6 +12,7 @@ import NavButtons from './NavButtons'
 import  Stack  from 'react-bootstrap/Stack'
 import FilenameText from './FilenameText'
 import PlotFilterButton from './PlotFilterButton'
+import Version from './Version'
 
 
 
@@ -34,7 +35,7 @@ export default function Appbar() {
         
         {/* Right side */}
         <Stack direction="horizontal" gap={2}>
-          <span className="text-muded small">v1.0</span>
+          <Version />
           <DownloadTableButton />
           <ViewModeButton />
           {/* <GithubButton /> */}
