@@ -1,6 +1,5 @@
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import { ContextActions } from '@/interfaces/contextActions'
-import dynamic from 'next/dynamic'
 import { Data, Layout } from 'plotly.js'
 import { useMemo } from 'react'
 import Col from 'react-bootstrap/Col'
