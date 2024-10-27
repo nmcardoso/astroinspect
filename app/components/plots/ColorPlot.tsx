@@ -136,7 +136,7 @@ export default function ColorPlot() {
   }
 
   return (
-    <div className="w-100">
+    <div className="container-fluid w-100 mt-2">
       <Form.Group as={Row} className="mb-3" controlId="x-axis">
         <Col sm={6}>
 

@@ -80,3 +80,7 @@ a {
 .alert {
   position: unset;
 }
+
+#aladin-lite-div .aladin-popup-container {
+  width: 300px;
+}

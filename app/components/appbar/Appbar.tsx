@@ -20,7 +20,7 @@ export default function Appbar() {
 
   return (
     <Navbar bg="light" expand="lg" className="p-1">
-      <Container>
+      <Container fluid>
         {/* Left side */}
         <NavButtons />
 

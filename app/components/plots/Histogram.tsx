@@ -62,7 +62,7 @@ export default function Histogram() {
   }
 
   return (
-    <>
+    <div className="container-fluid w-100 mt-2">
       <Form.Group as={Row} className="mb-3" controlId="x-axis">
         <Col sm={3}>
           <Stack direction="horizontal" gap={2}>
@@ -138,6 +138,6 @@ export default function Histogram() {
           }
         }}
       />
-    </>
+    </div>
   )
 }

@@ -24,7 +24,7 @@ const DownloadModal = ({ show, onHide }: any) => {
 
     const getColKeys = () => {
       let userTableCols = []
-      if (colFilter === 'all') {
+      if (colFilter === 'selected') {
         userTableCols = tcState.table.selectedColumnsId.map(i => (
           `tab:${tcState.table.columns[i]}`
         ))
@@ -64,6 +64,7 @@ const DownloadModal = ({ show, onHide }: any) => {
       }
       return column.getColDef().headerName
     }
+    
     tcState.grid.api.exportDataAsCsv({
       suppressQuotes: true,
       columnKeys: getColKeys(),

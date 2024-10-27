@@ -5,6 +5,7 @@ import ScatterPlot from './ScatterPlot'
 import ColorPlot from './ColorPlot'
 import { useEffect } from 'react'
 import Histogram from './Histogram'
+import Aladin from './Aladin'
 
 export default function Plots() {
   const { tcState, tcDispatch } = useXTableConfig()
@@ -20,16 +21,16 @@ export default function Plots() {
         }
       })
     }
-  }, [])
+  }, [tcState.plots.inspectSelected, tcState.plots.filterIndex, tcDispatch])
 
   return (
-    <div className="container w-100">
+    <div className="w-100 h-100 d-flex flex-column">
       <Nav
         justify
         fill
         variant="underline"
         defaultActiveKey={tcState.plots.currentView}
-        className="mb-3 mt-1"
+        className="mt-1"
         onSelect={(eventKey) => {
           tcDispatch({
             type: ContextActions.PLOT_VIEW_CHANGE,
@@ -45,11 +46,15 @@ export default function Plots() {
         <Nav.Item>
           <Nav.Link eventKey="histogram">Histogram</Nav.Link>
         </Nav.Item>
+        <Nav.Item>
+          <Nav.Link eventKey="aladin">Aladin</Nav.Link>
+        </Nav.Item>
       </Nav>
 
       {tcState.plots.currentView == 'scatter' && <ScatterPlot />}
       {tcState.plots.currentView == 'color' && <ColorPlot />}
       {tcState.plots.currentView == 'histogram' && <Histogram />}
+      {tcState.plots.currentView == 'aladin' && <Aladin />}
     </div>
   )
 }

@@ -149,7 +149,7 @@ interface IState {
   plots: IPlots,
 }
 
-type PlotsCurrentViewType = 'scatter' | 'color' | 'histogram'
+type PlotsCurrentViewType = 'scatter' | 'color' | 'histogram' | 'aladin'
 
 interface IAction<P> {
   type: number,
