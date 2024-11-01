@@ -202,7 +202,7 @@ export default function ColorPlot() {
           <Stack direction="horizontal" gap={3}>
             <Form.Check
               type="switch"
-              id="filter-outliers"
+              id="filter-outliers-color"
               label="Filter outliers"
               checked={tcState.plots.color.filterOutliers}
               onChange={(e) => tcDispatch({

@@ -31,7 +31,7 @@ export default function ScatterPlot() {
       color = tcState.grid.data?.map((e: any) => e[`tab:${scatterConfig.colorColumn}`])
       colorbar = { orientation: 'v' }
     }
-    if (tcState.plots.color.filterOutliers && x && y && x.length == y.length && x.length > 0) {
+    if (tcState.plots.scatter.filterOutliers && x && y && x.length == y.length && x.length > 0) {
       if (scatterConfig.colorColumn != '') {
         [x, y, color] = maskOutliersTrivariate(x, y, color)
       } else {
@@ -86,7 +86,7 @@ export default function ScatterPlot() {
     scatterConfig.xColumn,
     scatterConfig.yColumn,
     scatterConfig.colorColumn,
-    tcState.plots.color.filterOutliers,
+    tcState.plots.scatter.filterOutliers,
   ])
 
   const layout = {
@@ -175,7 +175,7 @@ export default function ScatterPlot() {
           <Stack direction="horizontal" gap={3}>
             <Form.Check
               type="switch"
-              id="filter-outliers"
+              id="filter-outliers-scatter"
               label="Filter outliers"
               checked={tcState.plots.scatter.filterOutliers}
               onChange={(e) => tcDispatch({

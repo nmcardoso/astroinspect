@@ -24,7 +24,7 @@ export default function Histogram() {
     if (histConfig.column != '') {
       x = tcState.grid.data?.map((e: any) => e[`tab:${histConfig.column}`])
     }
-    if (tcState.plots.color.filterOutliers && x && x.length > 0) {
+    if (tcState.plots.histogram.filterOutliers && x && x.length > 0) {
       x = maskOutliersUnivariate(x)
     }
 
@@ -39,7 +39,7 @@ export default function Histogram() {
   }, [
     tcState.grid.data,
     histConfig.column,
-    tcState.plots.color.filterOutliers,
+    tcState.plots.histogram.filterOutliers,
   ])
 
   const layout = {
@@ -81,7 +81,7 @@ export default function Histogram() {
           <Stack direction="horizontal" gap={3}>
             <Form.Check
               type="switch"
-              id="filter-outliers"
+              id="filter-outliers-histogram"
               label="Filter outliers"
               checked={tcState.plots.histogram.filterOutliers}
               onChange={(e) => tcDispatch({
