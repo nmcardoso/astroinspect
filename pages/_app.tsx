@@ -1,8 +1,11 @@
-import 'bootstrap/dist/css/bootstrap.min.css'
 import '@/styles/globals.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
 import type { AppProps, NextWebVitalsMetric } from 'next/app'
+import { Lato } from 'next/font/google'
 import { GoogleAnalytics, event, usePageViews } from 'nextjs-google-analytics'
 import { GA_MEASUREMENT_ID } from '../app/lib/gtag'
+
+const lato = Lato({ subsets: ['latin'], weight: ['400', '700'], style: ['normal', 'italic'] })
 
 export function reportWebVitals({
   id,
@@ -40,6 +43,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   usePageViews({ gaMeasurementId: GA_MEASUREMENT_ID })
 
   return <>
+    <style jsx global>{`
+      html {
+        font-family: ${lato.style.fontFamily};
+      }
+    `}</style>
     <GoogleAnalytics gaMeasurementId={GA_MEASUREMENT_ID} />
     <Component {...pageProps} />
   </>

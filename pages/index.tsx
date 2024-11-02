@@ -15,7 +15,6 @@ export default function XTable() {
       
       <XTableConfigProvider>
         <LoadInitialState />
-
         <App />
       </XTableConfigProvider>
     </>
