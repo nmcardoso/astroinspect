@@ -109,6 +109,10 @@ export default function AIGrid() {
       prevClass = tcState.grid.data.map((e) => ({ 'ai:class': e['ai:class'] }))
     }
 
+    if (tcState.table.file === undefined && tcState.table.url === undefined) {
+      return
+    }
+
     let data
     if (tcState.table.type === 'local') {
       data = await getTableReader(tcState.table.file as File)?.read()
@@ -237,7 +241,7 @@ export default function AIGrid() {
           const riCol = `tab:${tcState.table.columns[col.columnIndex]}`
           const url = `${col.url}${e[riCol] || ''}${col.fileExtension || ''}`
           const colId = `img:custom_${idx}`
-          customImageResource({url, colId, rowId, grid: gridRef.current})
+          customImageResource({ url, colId, rowId, grid: gridRef.current })
         })
       }
 
