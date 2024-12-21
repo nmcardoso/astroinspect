@@ -1,17 +1,20 @@
 import { useEffect, useMemo, useState } from 'react'
-import Form from 'react-bootstrap/Form'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
-import Spinner from 'react-bootstrap/Spinner'
 import ListView from '@/components/common/ListView'
-import Modal from 'react-bootstrap/Modal'
-import { Button, Table } from 'react-bootstrap'
-import { useXTableConfig } from '@/contexts/XTableConfigContext'
-import { BiPlus } from 'react-icons/bi'
-import { HiMinusSm } from 'react-icons/hi'
-import { ContextActions } from '@/interfaces/contextActions'
-import Chip from '@/components/common/Chip'
+import Button from '@mui/material/Button'
+import AddIcon from '@mui/icons-material/Add'
+import RemoveIcon from '@mui/icons-material/Remove'
+import Chip from '@mui/material/Chip'
 import uniq from 'lodash/uniq'
+import FormControl from '@mui/material/FormControl'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import InputLabel from '@mui/material/InputLabel'
+import Grid from '@mui/material/Grid2'
+import Typography from '@mui/material/Typography'
+import CircularProgress from '@mui/material/CircularProgress'
+import Stack from '@mui/material/Stack'
+import Box from '@mui/material/Box'
+
 
 type CatalogDisplayProps = {
   initialSelectedTable?: string,
@@ -71,139 +74,104 @@ export default function CatalogDisplay({
   ), [selectedColumns, activeColumn, activeTable])
 
   return (
-    <>
-      {/* <Row>
-        <Col>
-          {selectedColumns.length > 0 && <>
-            {selectedTables.map(table => (
-              <div key={table} className="mb-2">
-                <span className="me-2 fw-bold">{table}:</span>
-                {selectedColumns.filter(col => col.table == table).map(col => (
-                  <Chip
-                    key={col.column}
-                    className="mb-1 me-1"
-                    onClose={() => onRemoveColumn(col.table, col.column)}>
-                    {col.column}
-                  </Chip>
-                ))}
-              </div>
-            ))}
-          </>}
-        </Col>
-      </Row> */}
+    <Stack spacing={4}>
+      <Grid container spacing={2}>
+        <Grid size={5}>
+          <Stack spacing={1}>
+          <FormControl fullWidth>
+            <InputLabel id="sdss-catalog-select-label">Table</InputLabel>
+            <Select
+              labelId="sdss-catalog-select-label"
+              id="sdss-catalog-select"
+              value={activeTable}
+              label="Table"
+              onChange={(e) => {
+                setLoading(true)
+                setActiveColumn('')
+                setActiveTable(e.target.value)
+              }}>
+              {tables && tables.map(table => (
+                <MenuItem value={table} key={table}>{table}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-      <Row>
-        <Col sm={5}>
-          <Row className="align-items-center">
-            <Col lg={2}>
-              <span className="text-muted fw-bold">Table:</span>
-            </Col>
-            <Col>
-              <Form.Select
-                defaultValue={activeTable}
-                onChange={(e) => {
-                  setLoading(true)
-                  setActiveColumn('')
-                  setActiveTable(e.target.value)
-                }}>
-                {tables && tables.map(table => (
-                  <option value={table} key={table}>{table}</option>
-                ))}
-              </Form.Select>
-            </Col>
-          </Row>
           <ListView
             placeholder={loading}
             items={colNames}
             active={activeColumn}
-            className="mt-2"
             height={290}
             onClick={({ title }) => setActiveColumn(title)} />
-        </Col>
-        {loading ? (
-          <Col>
-            <Spinner
-              animation="border"
-              variant="secondary"
-              as="span"
-              size="sm"
-              className="me-2" />
-            <span className="text-muted">
-              Loading columns of the <u>{activeTable}</u> table
-            </span>
-          </Col>
-        ) : (
-          <Col>
-            {/* {selectedColumns.filter(e => e.table == activeTable).length > 0 && (
-              <div className="mb-2">
-                <span className="text-muted fw-bold">
-                  Selected columns of current table:&nbsp;
-                </span>
-                {selectedColumns.filter(e => e.table == activeTable).map(e => (
-                  <Chip
-                    closeable
-                    className="mb-1 me-1"
-                    key={e.column}
-                    onClose={() => onRemoveColumn(activeTable, e.column)}>
-                    {e.column}
-                  </Chip>
-                ))}
-              </div>
-            )} */}
-
-            {activeColumnObj && <div>
-              <div className="mb-2">
-                <b>{activeColumnObj.name}:</b>&nbsp;
-                {activeColumnObj.description}.&nbsp;
-                {activeColumnObj.unit && <>
-                  Unit: <i dangerouslySetInnerHTML={{ __html: activeColumnObj.unit }} />
-                </>}
-              </div>
-              <div>
-                {isActiveColumnSelected ? (
-                  <Button
-                    variant="outline-danger"
-                    size="sm"
-                    onClick={() => onRemoveColumn(activeTable, activeColumn)}>
-                    <HiMinusSm /> Remove Selected Column
-                  </Button>
-                ) : (
-                  <Button
-                    variant="outline-success"
-                    size="sm"
-                    onClick={() => onAddColumn(activeTable, activeColumn)}>
-                    <BiPlus size={16} /> Add Selected Column
-                  </Button>
-                )}
-              </div>
-            </div>}
+            </Stack>
+        </Grid>
 
 
+        <Grid size={7}>
+          {loading ? (
+            <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+              <CircularProgress color="inherit" size={22} />
+              <Typography>
+                Loading columns of the <u>{activeTable}</u> table
+              </Typography>
+            </Stack>
+          ) : (
+            <>
+              {activeColumnObj && <div>
+                <div>
+                  <b>{activeColumnObj.name}:</b>&nbsp;
+                  {activeColumnObj.description}.&nbsp;
+                  {activeColumnObj.unit && <>
+                    Unit: <i dangerouslySetInnerHTML={{ __html: activeColumnObj.unit }} />
+                  </>}
+                </div>
+                <div>
+                  {isActiveColumnSelected ? (
+                    <Button
+                      variant="contained"
+                      startIcon={<RemoveIcon />}
+                      onClick={() => onRemoveColumn(activeTable, activeColumn)}>
+                      Remove Selected Column
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      startIcon={<AddIcon />}
+                      onClick={() => onAddColumn(activeTable, activeColumn)}>
+                      Add Selected Column
+                    </Button>
+                  )}
+                </div>
+              </div>}
+            </>
+          )}
+        </Grid>
+      </Grid>
 
+      {
+        selectedColumns.length > 0 && <Box sx={{ mt: 2 }}>
+          <Stack spacing={1}>
             {
-              selectedColumns.length > 0 && <div className="mt-4">
-                {
-                  selectedTables.map(table => (
-                    <div key={table} className="mb-1">
-                      <span className="me-2 fw-bold text-muted">{table}:</span>
-                      {
-                        selectedColumns.filter(col => col.table == table).map(col => (
-                          <Chip
-                            key={col.column}
-                            className="mb-1 me-1"
-                            onClose={() => onRemoveColumn(col.table, col.column)}>
-                            {col.column}
-                          </Chip>
-                        ))
-                      }
-                    </div>
-                  ))
-                }
-              </div>
+              selectedTables.map(table => (
+                <Box key={table}>
+                  <Box>
+                    <Typography>{table}:</Typography>
+                    {
+                      selectedColumns.filter(col => col.table == table).map(col => (
+                        <Chip
+                          key={col.column}
+                          label={col.column}
+                          onDelete={() => onRemoveColumn(col.table, col.column)}
+                          sx={{ my: 1, mx: 1 }}
+                        />
+                      ))
+                    }
+                  </Box>
+                </Box>
+              ))
             }
-          </Col>
-        )}
-      </Row>
-    </>
+          </Stack>
+        </Box>
+      }
+    </Stack>
   )
 }
