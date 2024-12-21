@@ -1,16 +1,15 @@
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import { ContextActions } from '@/interfaces/contextActions'
-import dynamic from 'next/dynamic'
 import { Data, Layout } from 'plotly.js'
 import { useMemo } from 'react'
-import Col from 'react-bootstrap/Col'
-import Form from 'react-bootstrap/Form'
-import Row from 'react-bootstrap/Row'
 import Stack from 'react-bootstrap/Stack'
 import ColumnDropdown from './ColumnDropdown'
 import { PlotlyComponent } from './PlotlyComponent'
-import Button from 'react-bootstrap/Button'
+import Button from '@mui/material/Button'
 import { maskOutliersUnivariate } from '@/lib/statistics'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Checkbox from '@mui/material/Checkbox'
+import Box from '@mui/material/Box'
 
 
 
@@ -62,27 +61,18 @@ export default function Histogram() {
   }
 
   return (
-    <div className="container-fluid w-100 mt-2">
-      <Form.Group as={Row} className="mb-3" controlId="x-axis">
-        <Col sm={3}>
-          <Stack direction="horizontal" gap={2}>
-            <span className="fw-bold" style={{ wordBreak: 'keep-all' }}>
-              x-axis:
-            </span>
-            <ColumnDropdown
-              value={histConfig.column}
-              dispatchKey="column"
-              dispatchType={ContextActions.HISTOGRAM_PLOT_SETUP} />
-          </Stack>
-        </Col>
+    <Box sx={{ width: '100%' }}>
+      <Stack direction="horizontal" gap={2}>
+        <ColumnDropdown
+          label="column"
+          value={histConfig.column}
+          dispatchKey="column"
+          dispatchType={ContextActions.HISTOGRAM_PLOT_SETUP} />
 
-
-        <Col sm={3} className="align-content-center">
-          <Stack direction="horizontal" gap={3}>
-            <Form.Check
-              type="switch"
-              id="filter-outliers-histogram"
-              label="Filter outliers"
+        <FormControlLabel
+          label="Filter outliers"
+          control={
+            <Checkbox
               checked={tcState.plots.histogram.filterOutliers}
               onChange={(e) => tcDispatch({
                 type: ContextActions.HISTOGRAM_PLOT_SETUP,
@@ -90,29 +80,28 @@ export default function Histogram() {
                   filterOutliers: e.target.checked
                 }
               })} />
+          } />
 
-            <Button
-              disabled={tcState.plots.filterIndex.length == 0 || tcState.plots.filterView != 'histogram'}
-              onClick={() => {
-                tcDispatch({
-                  type: ContextActions.PLOT_SETUP,
-                  payload: {
-                    inspectSelected: true
-                  }
-                })
+        <Button
+          disabled={tcState.plots.filterIndex.length == 0 || tcState.plots.filterView != 'histogram'}
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            tcDispatch({
+              type: ContextActions.PLOT_SETUP,
+              payload: {
+                inspectSelected: true
+              }
+            })
 
-                tcDispatch({
-                  type: ContextActions.CURRENT_VIEW_CHANGE,
-                  payload: 'grid'
-                })
-              }}>
-              Inspect Selected
-            </Button>
-          </Stack>
-        </Col>
-
-      </Form.Group>
-
+            tcDispatch({
+              type: ContextActions.CURRENT_VIEW_CHANGE,
+              payload: 'grid'
+            })
+          }}>
+          Inspect Selected
+        </Button>
+      </Stack>
 
 
       {/* <ColumnDropdown
@@ -138,6 +127,6 @@ export default function Histogram() {
           }
         }}
       />
-    </div>
+    </Box>
   )
 }
