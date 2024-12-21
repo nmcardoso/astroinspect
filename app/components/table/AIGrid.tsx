@@ -357,6 +357,7 @@ export default function AIGrid() {
           singleClickEdit={true}
           isExternalFilterPresent={() => tcState.plots.inspectSelected}
           doesExternalFilterPass={plotFilter}
+          colorSchemeVariable="data-toolpad-color-scheme"
         />
       </div>
       <ToastContainer />
