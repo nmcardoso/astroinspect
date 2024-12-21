@@ -1,9 +1,10 @@
-import Col from 'react-bootstrap/Col'
-import Row from 'react-bootstrap/Row'
-import Tab from 'react-bootstrap/Tab'
-import ListGroup from 'react-bootstrap/ListGroup'
-import Placeholder from 'react-bootstrap/Placeholder'
 import React from 'react'
+import List from '@mui/material/List'
+import ListItem from '@mui/material/ListItem'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemText from '@mui/material/ListItemText'
+import Paper from '@mui/material/Paper'
+import Skeleton from '@mui/material/Skeleton'
 
 
 type ListViewClickEvent = ({ title, index, event }: {
@@ -25,17 +26,19 @@ type ListViewProps = {
 
 export const SingleListView = ({ items, active, onClick, height, className }: ListViewProps) => {
   return (
-    <ListGroup className={`${className} overflow-auto`} style={{ height }}>
-      {items.map((title, index) => (
-        <ListGroup.Item
-          action
-          key={index}
-          active={active == title}
-          onClick={(event) => onClick({ title, index, event })}>
-          {title}
-        </ListGroup.Item>
-      ))}
-    </ListGroup>
+    <Paper>
+      <List sx={{ height, overflow: 'auto' }}>
+        {items.map((title, index) => (
+          <ListItem
+            key={`${title}-${index}`}
+            disablePadding>
+            <ListItemButton onClick={(event) => onClick({ title, index, event })}>
+              <ListItemText id={`${title}-${index}`} primary={title} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Paper>
   )
 }
 
@@ -43,17 +46,19 @@ export const SingleListView = ({ items, active, onClick, height, className }: Li
 
 export const MultipleListView = ({ items, active, onClick, height, className }: ListViewProps) => {
   return (
-    <ListGroup className={`${className} overflow-auto`} style={{ height }}>
-      {items.map((title, index) => (
-        <ListGroup.Item
-          action
-          key={index}
-          variant={active && active.includes(title) ? 'primary' : ''}
-          onClick={(event) => onClick({ title, index, event })}>
-          {title}
-        </ListGroup.Item>
-      ))}
-    </ListGroup>
+    <Paper>
+      <List sx={{ height, overflow: 'auto' }}>
+        {items.map((title, index) => (
+          <ListItem
+            key={`${title}-${index}`}
+            disablePadding>
+            <ListItemButton onClick={(event) => onClick({ title, index, event })}>
+              <ListItemText id={`${title}-${index}`} primary={title} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Paper>
   )
 }
 
@@ -61,32 +66,21 @@ export const MultipleListView = ({ items, active, onClick, height, className }: 
 
 const PlaceholderListView = ({ className, height }: { className?: string, height?: number | string }) => {
   return (
-    <ListGroup className={`${className} overflow-auto`} style={{ height }}>
-      <Placeholder as={ListGroup.Item} animation="glow">
-        <Placeholder xs={6} />
-      </Placeholder>
-      <Placeholder as={ListGroup.Item} animation="glow">
-        <Placeholder xs={9} />
-      </Placeholder>
-      <Placeholder as={ListGroup.Item} animation="glow">
-        <Placeholder xs={4} />
-      </Placeholder>
-      <Placeholder as={ListGroup.Item} animation="glow">
-        <Placeholder xs={5} />
-      </Placeholder>
-      <Placeholder as={ListGroup.Item} animation="glow">
-        <Placeholder xs={11} />
-      </Placeholder>
-      <Placeholder as={ListGroup.Item} animation="glow">
-        <Placeholder xs={7} />
-      </Placeholder>
-      <Placeholder as={ListGroup.Item} animation="glow">
-        <Placeholder xs={8} />
-      </Placeholder>
-      <Placeholder as={ListGroup.Item} animation="glow">
-        <Placeholder xs={5} />
-      </Placeholder>
-    </ListGroup>
+    <Paper>
+      <List sx={{ height, overflow: 'auto' }}>
+        {[6, 9, 4, 5, 11, 7, 8, 5].map(i => (
+          <ListItem
+            key={`skeleton-${i}`}
+            disablePadding>
+            <ListItemButton>
+              <Skeleton variant="rectangular" width={45*i} height={18} sx={{my: 1}} />
+              {/* <Skeleton variant="text" sx={{ fontSize: '1rem' }} /> */}
+              {/* <ListItemText id={`${title}-${index}`} primary={title} /> */}
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Paper>
   )
 }
 
