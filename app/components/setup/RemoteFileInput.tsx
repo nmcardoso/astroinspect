@@ -5,6 +5,8 @@ import Emitter from '@/lib/Emitter'
 import { GA_MEASUREMENT_ID } from '@/lib/gtag'
 import { getTableReader } from '@/lib/io'
 import { isUrlValid } from '@/lib/utils'
+import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
 import { event } from 'nextjs-google-analytics'
 import { useCallback, useEffect } from 'react'
 import Col from 'react-bootstrap/Col'
@@ -116,23 +118,18 @@ export default function RemoteFileInput() {
   }, [handleRemoteFile])
 
   return (
-    <Form.Group as={Row} className="mb-2" controlId="tableFile">
-      <Form.Label column sm="1" className="text-end">
-        URL
-      </Form.Label>
-      <Col sm={10}>
-        <div className="d-flex align-items-center">
-          <Form.Control
-            placeholder="File URL"
-            onChange={(e) => handleRemoteFile(e.target.value)}
-            value={tcState.table.url || ''} />
-          <Help title="Remote Upload" className="ms-1">
-            Loads a table available remotely in the internet.<br />
-            <u>Available formars</u>: <code>CSV</code>, <code>TSV</code>,
-            &nbsp;<code>DAT</code>, <code>PARQUET</code>.
-          </Help>
-        </div>
-      </Col>
-    </Form.Group>
+    <Stack direction="row" sx={{ alignItems: 'center' }}>
+      <TextField 
+      label="URL" 
+      variant="outlined" 
+      sx={{width: '55ch'}}
+      value={tcState.table.url || ''} 
+      onChange={(e) => handleRemoteFile(e.target.value)} />
+      <Help title="Remote Upload">
+        Loads a table available remotely in the internet.<br />
+        <u>Available formars</u>: <code>CSV</code>, <code>TSV</code>,
+        &nbsp;<code>DAT</code>, <code>PARQUET</code>.
+      </Help>
+    </Stack>
   )
 }
