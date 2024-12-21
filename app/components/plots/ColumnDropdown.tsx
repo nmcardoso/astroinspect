@@ -1,33 +1,29 @@
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
-import { ContextActions } from '@/interfaces/contextActions'
-import Form from 'react-bootstrap/Form'
-import InputGroup from 'react-bootstrap/InputGroup'
+import  Autocomplete  from '@mui/material/Autocomplete'
+import TextField from '@mui/material/TextField'
 
 export default function ColumnDropdown({ label = undefined, value = '', dispatchKey, dispatchType }: ColumnDropdownProps) {
   const { tcState, tcDispatch } = useXTableConfig()
 
-  const handleChange: React.ChangeEventHandler<HTMLSelectElement> = (e) => {
+  const handleChange = (event: React.SyntheticEvent, newValue: string | null) => {
     tcDispatch({
       type: dispatchType,
       payload: {
-        [dispatchKey]: e.target.value
+        [dispatchKey]: newValue
       }
     })
   }
 
   return (
-    <InputGroup>
-      {label && <InputGroup.Text>{label}</InputGroup.Text>}
-      <Form.Select
-        value={value}
-        onChange={handleChange}>
-        <option value="">-</option>
-        {tcState.table.columns.map(col => (
-          <option value={col} key={col}>
-            {col}
-          </option>
-        ))}
-      </Form.Select>
-    </InputGroup>
+    <Autocomplete
+      disablePortal
+      sx={{flexGrow: 1}}
+      getOptionKey={e => e}
+      getOptionLabel={e => e}
+      options={tcState.table.columns}
+      value={value}
+      renderInput={(params) => <TextField {...params} label={label} />}
+      onChange={handleChange}
+    />
   )
 }
