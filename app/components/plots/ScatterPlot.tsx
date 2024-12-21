@@ -2,16 +2,16 @@ import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import { ContextActions } from '@/interfaces/contextActions'
 import { Data, Layout } from 'plotly.js'
 import { useMemo } from 'react'
-import Col from 'react-bootstrap/Col'
-import Form from 'react-bootstrap/Form'
-import Row from 'react-bootstrap/Row'
-import Stack from 'react-bootstrap/Stack'
+import Stack from '@mui/material/Stack'
 import ColumnDropdown from './ColumnDropdown'
 import { PlotlyComponent } from './PlotlyComponent'
-import Button from 'react-bootstrap/Button'
+import Button from '@mui/material/Button'
 import { maskOutliersBivariate, maskOutliersTrivariate } from '@/lib/statistics'
-import { MdSwapHoriz } from "react-icons/md";
 import SwapButton from './SwapButton'
+import Box from '@mui/material/Box'
+import Checkbox from '@mui/material/Checkbox'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Divider from '@mui/material/Divider'
 
 
 export default function ScatterPlot() {
@@ -122,61 +122,41 @@ export default function ScatterPlot() {
   }
 
   return (
-    <div className="container-fluid w-100 mt-2">
-      <Form.Group as={Row} className="mb-3" controlId="x-axis">
-        <Col>
-          <Stack direction="horizontal" gap={2}>
-            <span className="fw-bold" style={{ wordBreak: 'keep-all' }}>
-              x-axis:
-            </span>
-            <ColumnDropdown
-              value={scatterConfig.xColumn}
-              dispatchKey="xColumn"
-              dispatchType={ContextActions.SCATTER_PLOT_SETUP} />
-            <SwapButton
-              onClick={() => tcDispatch({
-                type: ContextActions.SCATTER_PLOT_SETUP,
-                payload: {
-                  xColumn: scatterConfig.yColumn,
-                  yColumn: scatterConfig.xColumn,
-                }
-              })} />
-          </Stack>
-        </Col>
+    <Box sx={{ width: '100%' }}>
+      <Stack direction="row" gap={2} sx={{ alignItems: 'center' }}>
+        <ColumnDropdown
+          label="x axis"
+          value={scatterConfig.xColumn}
+          dispatchKey="xColumn"
+          dispatchType={ContextActions.SCATTER_PLOT_SETUP} />
 
+        <SwapButton
+          onClick={() => tcDispatch({
+            type: ContextActions.SCATTER_PLOT_SETUP,
+            payload: {
+              xColumn: scatterConfig.yColumn,
+              yColumn: scatterConfig.xColumn,
+            }
+          })} />
 
-        <Col>
-          <Stack direction="horizontal" gap={2}>
-            <span className="fw-bold ms-lg-2" style={{ wordBreak: 'keep-all' }}>
-              y-axis:
-            </span>
-            <ColumnDropdown
-              value={scatterConfig.yColumn}
-              dispatchKey="yColumn"
-              dispatchType={ContextActions.SCATTER_PLOT_SETUP} />
-          </Stack>
-        </Col>
+        <ColumnDropdown
+          label='y axis'
+          value={scatterConfig.yColumn}
+          dispatchKey="yColumn"
+          dispatchType={ContextActions.SCATTER_PLOT_SETUP} />
 
+        <Divider orientation="vertical" variant="middle" flexItem sx={{ mx: 1 }} />
 
-        <Col>
-          <Stack direction="horizontal" gap={2}>
-            <span className="fw-bold ms-lg-2" style={{ wordBreak: 'keep-all' }}>
-              color:
-            </span>
-            <ColumnDropdown
-              value={scatterConfig.colorColumn}
-              dispatchKey="colorColumn"
-              dispatchType={ContextActions.SCATTER_PLOT_SETUP} />
-          </Stack>
-        </Col>
+        <ColumnDropdown
+          label="color"
+          value={scatterConfig.colorColumn}
+          dispatchKey="colorColumn"
+          dispatchType={ContextActions.SCATTER_PLOT_SETUP} />
 
-
-        <Col className="align-content-center">
-          <Stack direction="horizontal" gap={3}>
-            <Form.Check
-              type="switch"
-              id="filter-outliers-scatter"
-              label="Filter outliers"
+        <FormControlLabel
+          label="Filter outliers"
+          control={
+            <Checkbox
               checked={tcState.plots.scatter.filterOutliers}
               onChange={(e) => tcDispatch({
                 type: ContextActions.SCATTER_PLOT_SETUP,
@@ -184,27 +164,28 @@ export default function ScatterPlot() {
                   filterOutliers: e.target.checked
                 }
               })} />
+          } />
 
-            <Button
-              disabled={tcState.plots.filterIndex.length == 0 || tcState.plots.filterView != 'scatter'}
-              onClick={() => {
-                tcDispatch({
-                  type: ContextActions.PLOT_SETUP,
-                  payload: {
-                    inspectSelected: true
-                  }
-                })
+        <Button
+          disabled={tcState.plots.filterIndex.length == 0 || tcState.plots.filterView != 'scatter'}
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            tcDispatch({
+              type: ContextActions.PLOT_SETUP,
+              payload: {
+                inspectSelected: true
+              }
+            })
 
-                tcDispatch({
-                  type: ContextActions.CURRENT_VIEW_CHANGE,
-                  payload: 'grid'
-                })
-              }}>
-              Inspect Selected
-            </Button>
-          </Stack>
-        </Col>
-      </Form.Group>
+            tcDispatch({
+              type: ContextActions.CURRENT_VIEW_CHANGE,
+              payload: 'grid'
+            })
+          }}>
+          Inspect Selected
+        </Button>
+      </Stack>
 
 
 
@@ -231,6 +212,6 @@ export default function ScatterPlot() {
           }
         }}
       />
-    </div>
+    </Box>
   )
 }
