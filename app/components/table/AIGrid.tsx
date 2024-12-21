@@ -347,7 +347,7 @@ export default function AIGrid() {
           loading={isLoading}
           style={{ height: '100%' }}
           pagination={true}
-          paginationPageSize={50}
+          paginationPageSize={100}
           paginationPageSizeSelector={paginationPageSizeSelector}
           onGridReady={onGridReady}
           onPaginationChanged={onChange}
