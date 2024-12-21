@@ -1,47 +1,37 @@
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import { ContextActions } from '@/interfaces/contextActions'
-import Nav from 'react-bootstrap/Nav'
 import ScatterPlot from './ScatterPlot'
 import ColorPlot from './ColorPlot'
-import { useEffect } from 'react'
 import Histogram from './Histogram'
-import Aladin from './Aladin'
+import Box from '@mui/material/Box'
+import Tab from '@mui/material/Tab'
+import TabContext from '@mui/lab/TabContext'
+import TabPanel from '@mui/lab/TabPanel'
+import TabList from '@mui/lab/TabList'
+import { SyntheticEvent } from 'react'
 
 export default function Plots() {
   const { tcState, tcDispatch } = useXTableConfig()
 
-  return (
-    <div className="w-100 h-100 d-flex flex-column">
-      <Nav
-        justify
-        fill
-        variant="underline"
-        defaultActiveKey={tcState.plots.currentView}
-        className="mt-1"
-        onSelect={(eventKey) => {
-          tcDispatch({
-            type: ContextActions.PLOT_VIEW_CHANGE,
-            payload: eventKey
-          })
-        }}>
-        <Nav.Item>
-          <Nav.Link eventKey="scatter">Scatter plot</Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link eventKey="color">Color-color diagram</Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link eventKey="histogram">Histogram</Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link eventKey="aladin">Aladin</Nav.Link>
-        </Nav.Item>
-      </Nav>
+  const handleChange = (e: SyntheticEvent, newValue: string) => {
+    tcDispatch({
+      type: ContextActions.PLOT_VIEW_CHANGE,
+      payload: newValue
+    })
+  }
 
-      {tcState.plots.currentView == 'scatter' && <ScatterPlot />}
-      {tcState.plots.currentView == 'color' && <ColorPlot />}
-      {tcState.plots.currentView == 'histogram' && <Histogram />}
-      {tcState.plots.currentView == 'aladin' && <Aladin />}
-    </div>
+  return (
+    <TabContext value={tcState.plots.currentView}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', width: '100%', height: '100%' }}>
+        <TabList onChange={handleChange} aria-label="data visualization">
+          <Tab label="Scatter plot" value="scatter" />
+          <Tab label="Color-color diagram" value="color" />
+          <Tab label="Histogram" value="histogram" />
+        </TabList>
+      </Box>
+      <TabPanel value="scatter"><ScatterPlot /></TabPanel>
+      <TabPanel value="color"><ColorPlot /></TabPanel>
+      <TabPanel value="histogram"><Histogram /></TabPanel>
+    </TabContext>
   )
 }
