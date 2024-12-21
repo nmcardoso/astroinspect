@@ -1,17 +1,25 @@
 import Col from 'react-bootstrap/Col'
 import Form from 'react-bootstrap/Form'
 import Row from 'react-bootstrap/Row'
-import InputGroup from 'react-bootstrap/InputGroup'
-import Button from 'react-bootstrap/Button'
+import Button from '@mui/material/Button'
 import Help from '@/components/common/Help'
-import { AiOutlineCloudDownload } from 'react-icons/ai'
 import { useCallback, useEffect, useState } from 'react'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
-import Chip from '@/components/common/Chip'
-import { FaRegKeyboard } from 'react-icons/fa'
+import Chip from '@mui/material/Chip'
 import Modal from 'react-bootstrap/Modal'
 import { ContextActions } from '@/interfaces/contextActions'
-import { BiPlus } from 'react-icons/bi'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Checkbox from '@mui/material/Checkbox'
+import TextField from '@mui/material/TextField'
+import Box from '@mui/material/Box'
+import KeyboardAltIcon from '@mui/icons-material/KeyboardAlt'
+import AddIcon from '@mui/icons-material/Add'
+import Grid2 from '@mui/material/Grid2'
+import Stack from '@mui/material/Stack'
+import InputAdornment from '@mui/material/InputAdornment'
+import Typography from '@mui/material/Typography'
+import { DialogsProvider, useDialogs } from '@toolpad/core/useDialogs'
+import Alert from '@mui/material/Alert'
 
 type handlerType = (value: string, classes: string[], dispatcher: any) => void
 
@@ -39,178 +47,82 @@ function CategoricalControl() {
   const cls = tcState.cols.classification
   const [classInput, setClassInput] = useState('')
   const [showHotkeyModal, setHotkeyModal] = useState(false)
+  const dialogs = useDialogs()
 
   return (
-    <Form.Group as={Row} className="mb-2" controlId="classNames">
-      <Form.Label column sm={1}>
-        Classes
-      </Form.Label>
-      <Col sm={8}>
-        <Form
+    <>
+      <Stack direction="row" sx={{ alignItems: 'center' }}>
+        <Box
+          component="form"
           onSubmit={(e) => {
             e.preventDefault()
             e.stopPropagation()
             handleAddClass(classInput, cls.classNames, tcDispatch)
             setClassInput('')
           }}>
-          <div className="d-flex align-items-center mb-2">
-            <InputGroup>
-              <Form.Control
-                placeholder="Class name"
-                value={classInput}
-                onChange={e => setClassInput(e.target.value)} />
-              <Button 
-                variant="primary" 
-                type="submit" 
-                className="d-inline-flex align-items-center">
-                <BiPlus size={20} className="me-1" />
-                <span>Add</span>
-              </Button>
-            </InputGroup>
-            <Help title="Class Name" className="ms-1">
-              Type the class name and press <kbd>ENTER</kbd> or click Add button
-            </Help>
-            <Button
-              style={{ whiteSpace: 'nowrap' }}
-              className="ms-4"
-              variant="outline-primary"
-              disabled={tcState.cols.classification.classNames.length == 0}
-              onClick={() => setHotkeyModal(true)}>
-              <FaRegKeyboard size={20} className="me-1" /> Hotkeys
-            </Button>
-            <Help title="Hotkeys" className="ms-1">
-              Classify your table quickly by configuring keyboard keys to
-              select classes
-            </Help>
-            <HotkeyModal
-              show={showHotkeyModal}
-              onHide={() => setHotkeyModal(false)} />
-          </div>
-        </Form>
+
+          <TextField
+            label="Class name"
+            variant="outlined"
+            sx={{ width: '40ch' }}
+            value={classInput}
+            onChange={e => setClassInput(e.target.value)}
+            slotProps={{
+              input: {
+                endAdornment: <InputAdornment position="start">
+                  <Button type="submit" variant="contained" startIcon={<AddIcon />}>
+                    Add
+                  </Button>
+                </InputAdornment>,
+              },
+            }}
+          />
+        </Box>
+        <Help title="Class Name" className="ms-1">
+          Type the class name and press <kbd>ENTER</kbd> or click Add button
+        </Help>
+      </Stack>
+
+
+      <Box>
         {cls.classNames.map(className => (
           <Chip
             key={`cname_${className}`}
-            className="mb-1 me-1"
-            onClose={() => handleDelClass(className, cls.classNames, tcDispatch)}>
-            {className}
-            {className in tcState.cols.classification.keyMap && (
-              <span>
-                {' ('}
-                <b>{tcState.cols.classification.keyMap[className].toUpperCase()}</b>
-                {')'}
-              </span>
-            )}
-          </Chip>
-        ))}
-      </Col>
-    </Form.Group>
-  )
-}
-
-function HotkeyModal({ show, onHide }: any) {
-  const { tcState, tcDispatch } = useXTableConfig()
-  const cls = tcState.cols.classification
-  const [selectedClass, setSelectedClass] = useState<any>(-1)
-
-  const handleKeyDown = useCallback((event: any) => {
-    event.stopPropagation()
-    if (/^[\w\d]$/i.test(event.key) && selectedClass != -1) {
-      tcDispatch({
-        type: ContextActions.CLASSIFICATION_CONFIG,
-        payload: {
-          keyMap: {
-            ...tcState.cols.classification.keyMap,
-            [selectedClass]: event.key
-          }
-        }
-      })
-    }
-  }, [tcDispatch, tcState, selectedClass])
-
-  useEffect(() => {
-    if (show) {
-      document.addEventListener("keydown", handleKeyDown, true)
-    } else {
-      document.removeEventListener("keydown", handleKeyDown, true)
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown, true)
-    }
-  }, [handleKeyDown, show])
-
-  return (
-    <Modal
-      show={show}
-      onHide={onHide}
-      animation={false}
-      centered>
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">
-          Hotkeys configuration
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <p className="mb-3">
-          Select a class below and press an alphanumeric (A-Z, 0-9)
-          character on the keyboard.
-          After associating the keyboard shortcuts for the desired classes,
-          just click on the table row and press the key referring to the class.
-        </p>
-        <Form onSubmit={e => e.preventDefault()}>
-          <Form.Group as={Row} className="mb-3" controlId="hotkeyClass">
-            <Form.Label column sm={2}>
-              Class
-            </Form.Label>
-            <Col sm={10}>
-              <Form.Select
-                value={selectedClass}
-                onChange={(e) => setSelectedClass(e.target.value)}>
-                <option value={-1}>Select a class</option>
-                {cls.classNames.map(className => (
-                  <option
-                    key={className}
-                    value={className}>
-                    {className}
-                  </option>
-                ))}
-              </Form.Select>
-            </Col>
-          </Form.Group>
-
-          <Row className="d-inline-flex align-items-center">
-            <Col sm={2}>
-              Hotkey
-            </Col>
-            <Col sm={3}>
-              <Form.Control
-                readOnly
-                type="text"
-                size="lg"
-                value={cls.keyMap[selectedClass] ? cls.keyMap[selectedClass].toUpperCase() : ''}
-                style={{ fontWeight: 800, textAlign: 'center' }} />
-            </Col>
-            <Col>
-              <Button
-                className="ps-0"
-                variant="link"
-                onClick={() => {
-                  const keyMap = tcState.cols.classification.keyMap
-                  if (selectedClass in keyMap) {
-                    delete keyMap[selectedClass]
-                    tcDispatch({
-                      type: ContextActions.CLASSIFICATION_CONFIG,
-                      payload: { keyMap }
-                    })
+            sx={{ m: 1 }}
+            onDelete={() => handleDelClass(className, cls.classNames, tcDispatch)}
+            onClick={async () => {
+              const hotkey = await dialogs.prompt(
+                'Type the hotkey (one character) then press <ENTER>',
+                { title: '', okText: 'set hotkey' }
+              )
+              if (hotkey) {
+                tcDispatch({
+                  type: ContextActions.CLASSIFICATION_CONFIG,
+                  payload: {
+                    keyMap: {
+                      ...tcState.cols.classification.keyMap,
+                      [className]: hotkey
+                    }
                   }
-                }}>
-                Clear
-              </Button>
-            </Col>
-          </Row>
-        </Form>
-      </Modal.Body>
-    </Modal>
+                })
+              }
+            }}
+            label={
+              <Typography fontSize={15}>
+                {className}
+                {className in tcState.cols.classification.keyMap && (
+                  <span>
+                    {' ('}
+                    <b>{tcState.cols.classification.keyMap[className].toUpperCase()}</b>
+                    {')'}
+                  </span>
+                )}
+              </Typography>
+            }
+          />
+        ))}
+      </Box>
+    </>
   )
 }
 
@@ -263,29 +175,30 @@ export default function ClassTab() {
 
   return (
     <>
-      <Form.Group as={Row} className="mb-2" controlId="classCheck">
-        <Form.Label column sm="1">
-          Enable
-        </Form.Label>
-        <Col sm="11" className="d-flex align-items-center">
-          <div className="d-flex align-items-center">
-            <Form.Check
-              type="switch"
-              label="Show classification column"
-              checked={cls.enabled}
-              onChange={(e) => tcDispatch({
-                type: ContextActions.CLASSIFICATION_CONFIG,
-                payload: { enabled: e.target.checked }
-              })} />
-            <Help title="Enable Classifications" className="ms-1">
-              Select this option if you want to classify the table,
-              unsect to hide the classification column
-            </Help>
-          </div>
-        </Col>
-      </Form.Group>
+      <Stack direction="row" sx={{ alignItems: 'center' }}>
+        <FormControlLabel
+          control={<Checkbox defaultChecked />}
+          label="Show classification column"
+          checked={cls.enabled}
+          onChange={(e) => tcDispatch({
+            type: ContextActions.CLASSIFICATION_CONFIG,
+            payload: { enabled: e.target.checked }
+          })}
+        />
+        <Help title="Enable Classifications">
+          Select this option if you want to classify the table,
+          unsect to hide the classification column
+        </Help>
+      </Stack>
 
       <CategoricalControl />
+
+      <Box sx={{display: 'flex', pt: 2}}>
+        <Alert severity="info">
+          <b>Tip:</b> click in the class name to set a hotkey for faster classification
+        </Alert>
+      </Box>
+
     </>
   )
 }
