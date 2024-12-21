@@ -2,15 +2,17 @@ import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import { ContextActions } from '@/interfaces/contextActions'
 import { Data, Layout } from 'plotly.js'
 import { useMemo } from 'react'
-import Col from 'react-bootstrap/Col'
 import Form from 'react-bootstrap/Form'
-import Row from 'react-bootstrap/Row'
 import Stack from 'react-bootstrap/Stack'
 import ColumnDropdown from './ColumnDropdown'
 import { PlotlyComponent } from './PlotlyComponent'
 import { maskOutliersBivariate, maskOutliersTrivariate } from '@/lib/statistics'
-import Button from 'react-bootstrap/Button'
+import Button from '@mui/material/Button'
 import SwapButton from './SwapButton'
+import Box from '@mui/material/Box'
+import  Divider from '@mui/material/Divider'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Checkbox from '@mui/material/Checkbox'
 
 
 export default function ColorPlot() {
@@ -136,74 +138,60 @@ export default function ColorPlot() {
   }
 
   return (
-    <div className="container-fluid w-100 mt-2">
-      <Form.Group as={Row} className="mb-3" controlId="x-axis">
-        <Col sm={6}>
+    <Box sx={{ width: '100%' }}>
+      <Stack direction="horizontal" gap={1}>
+        <ColumnDropdown
+          label="x axis"
+          value={colorPlotConfig.xColumn1}
+          dispatchKey="xColumn1"
+          dispatchType={ContextActions.COLOR_PLOT_SETUP} />
 
-          <Stack direction="horizontal" gap={2}>
-            <span className="fw-bold" style={{ wordBreak: 'keep-all' }}>
-              x-axis:
-            </span>
-            <ColumnDropdown
-              value={colorPlotConfig.xColumn1}
-              dispatchKey="xColumn1"
-              dispatchType={ContextActions.COLOR_PLOT_SETUP} />
-            <span className="fw-bold">&mdash;</span>
-            <ColumnDropdown
-              value={colorPlotConfig.xColumn2}
-              dispatchKey="xColumn2"
-              dispatchType={ContextActions.COLOR_PLOT_SETUP} />
-            <SwapButton
-              onClick={() => tcDispatch({
-                type: ContextActions.COLOR_PLOT_SETUP,
-                payload: {
-                  xColumn1: colorPlotConfig.yColumn1,
-                  yColumn1: colorPlotConfig.xColumn1,
-                  xColumn2: colorPlotConfig.yColumn2,
-                  yColumn2: colorPlotConfig.xColumn2,
-                }
-              })} />
-          </Stack>
-        </Col>
+        <span className="fw-bold">&mdash;</span>
+
+        <ColumnDropdown
+          label="x axis"
+          value={colorPlotConfig.xColumn2}
+          dispatchKey="xColumn2"
+          dispatchType={ContextActions.COLOR_PLOT_SETUP} />
+
+        <SwapButton
+          onClick={() => tcDispatch({
+            type: ContextActions.COLOR_PLOT_SETUP,
+            payload: {
+              xColumn1: colorPlotConfig.yColumn1,
+              yColumn1: colorPlotConfig.xColumn1,
+              xColumn2: colorPlotConfig.yColumn2,
+              yColumn2: colorPlotConfig.xColumn2,
+            }
+          })} />
+
+        <ColumnDropdown
+          label="y axis"
+          value={colorPlotConfig.yColumn1}
+          dispatchKey="yColumn1"
+          dispatchType={ContextActions.COLOR_PLOT_SETUP} />
+
+        <span className="mx-2 fw-bold">&mdash;</span>
+
+        <ColumnDropdown
+          label="y axis"
+          value={colorPlotConfig.yColumn2}
+          dispatchKey="yColumn2"
+          dispatchType={ContextActions.COLOR_PLOT_SETUP} />
 
 
-        <Col sm={6}>
-          <Stack direction="horizontal" gap={2}>
-            <span className="fw-bold ms-lg-2" style={{ wordBreak: 'keep-all' }}>
-              y-axis:
-            </span>
-            <ColumnDropdown
-              value={colorPlotConfig.yColumn1}
-              dispatchKey="yColumn1"
-              dispatchType={ContextActions.COLOR_PLOT_SETUP} />
-            <span className="mx-2 fw-bold">&mdash;</span>
-            <ColumnDropdown
-              value={colorPlotConfig.yColumn2}
-              dispatchKey="yColumn2"
-              dispatchType={ContextActions.COLOR_PLOT_SETUP} />
-          </Stack>
-        </Col>
-      </Form.Group>
+        <Divider orientation="vertical" variant="middle" flexItem sx={{mx: 1}} />
 
-      <Form.Group as={Row} controlId="x-axis">
-        <Col sm={4}>
-          <Stack direction="horizontal" gap={2}>
-            <span className="fw-bold ms-lg-2" style={{ wordBreak: 'keep-all' }}>
-              color:
-            </span>
-            <ColumnDropdown
-              value={colorPlotConfig.colorColumn}
-              dispatchKey="colorColumn"
-              dispatchType={ContextActions.COLOR_PLOT_SETUP} />
-          </Stack>
-        </Col>
+        <ColumnDropdown
+          label="color"
+          value={colorPlotConfig.colorColumn}
+          dispatchKey="colorColumn"
+          dispatchType={ContextActions.COLOR_PLOT_SETUP} />
 
-        <Col sm={4} className="align-content-center ms-2">
-          <Stack direction="horizontal" gap={3}>
-            <Form.Check
-              type="switch"
-              id="filter-outliers-color"
-              label="Filter outliers"
+        <FormControlLabel
+          label="Filter outliers"
+          control={
+            <Checkbox
               checked={tcState.plots.color.filterOutliers}
               onChange={(e) => tcDispatch({
                 type: ContextActions.COLOR_PLOT_SETUP,
@@ -211,27 +199,28 @@ export default function ColorPlot() {
                   filterOutliers: e.target.checked
                 }
               })} />
+          } />
 
-            <Button
-              disabled={tcState.plots.filterIndex.length == 0 || tcState.plots.filterView != 'color'}
-              onClick={() => {
-                tcDispatch({
-                  type: ContextActions.PLOT_SETUP,
-                  payload: {
-                    inspectSelected: true
-                  }
-                })
+        <Button
+          disabled={tcState.plots.filterIndex.length == 0 || tcState.plots.filterView != 'color'}
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            tcDispatch({
+              type: ContextActions.PLOT_SETUP,
+              payload: {
+                inspectSelected: true
+              }
+            })
 
-                tcDispatch({
-                  type: ContextActions.CURRENT_VIEW_CHANGE,
-                  payload: 'grid'
-                })
-              }}>
-              Inspect Selected
-            </Button>
-          </Stack>
-        </Col>
-      </Form.Group>
+            tcDispatch({
+              type: ContextActions.CURRENT_VIEW_CHANGE,
+              payload: 'grid'
+            })
+          }}>
+          Inspect Selected
+        </Button>
+      </Stack>
 
 
       {/* <ColumnDropdown
@@ -258,6 +247,6 @@ export default function ColorPlot() {
           }
         }}
       />
-    </div>
+    </Box>
   )
 }
