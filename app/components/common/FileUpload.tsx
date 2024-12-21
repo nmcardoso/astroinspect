@@ -16,9 +16,10 @@ type PropsType = {
 
 export default function FileUpload({ width, inputRef, onChange, sx }: PropsType) {
   const [filename, setFilename] = useState<string | undefined>(undefined)
-
+  
+  const defaultRef = useRef<HTMLInputElement>(null)
   if (!inputRef) {
-    inputRef = useRef<HTMLInputElement>(null)
+    inputRef = defaultRef
   }
 
   const handleClick = () => {
