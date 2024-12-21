@@ -1,13 +1,14 @@
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
-import { useCallback, useEffect, useRef } from 'react'
-import Col from 'react-bootstrap/Col'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Form from 'react-bootstrap/Form'
 import Help from '@/components/common/Help'
-import Row from 'react-bootstrap/Row'
 import { getTableReader } from '@/lib/io'
 import { ContextActions } from '@/interfaces/contextActions'
 import { GA_MEASUREMENT_ID } from '@/lib/gtag'
 import { event } from 'nextjs-google-analytics'
+import FileUpload from '@/components/common/FileUpload'
+import  Stack  from '@mui/material/Stack'
+import Box from '@mui/material/Box'
 
 
 export default function LocalFileInput() {
@@ -112,27 +113,39 @@ export default function LocalFileInput() {
     }
   }, [tcState, tcDispatch])
 
+
+
+
+  const [activeStep, setActiveStep] = useState(0);
+
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleReset = () => {
+    setActiveStep(0);
+  };
+
   return (
     <>
-      <Form.Group as={Row} className="mb-2" controlId="tableFile">
-        <Form.Label column sm="1" className="text-end">
-          Table
-        </Form.Label>
-        <Col sm={8}>
-          <div className="d-flex align-items-center">
-            <Form.Control
-              type="file"
-              onChange={handleLocalFile}
-              ref={inputRef} />
-            <Help title="Local Upload" className="ms-1">
-              Load a table available in local computer. The only required
-              columns are <code>RA</code> and <code>DEC</code> in degrees.<br />
-              <u>Available formars</u>: <code>CSV</code>, <code>TSV</code>,
-              &nbsp;<code>DAT</code>, <code>PARQUET</code>.
-            </Help>
-          </div>
-        </Col>
-      </Form.Group>
+      {/* <Form.Control
+        type="file"
+        onChange={handleLocalFile}
+        ref={inputRef} /> */}
+
+      <Stack direction="row" sx={{ alignItems: 'center' }}>
+        <FileUpload onChange={handleLocalFile} inputRef={inputRef} width={400} />
+        <Help title="Local Upload" className="ms-1">
+          Load a table available in local computer. The only required
+          columns are <code>RA</code> and <code>DEC</code> in degrees.<br />
+          <u>Available formars</u>: <code>CSV</code>, <code>TSV</code>,
+          {' '}<code>DAT</code>, <code>PARQUET</code>.
+        </Help>
+      </Stack>
     </>
   )
 }
