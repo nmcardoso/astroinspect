@@ -22,16 +22,16 @@ export default function Plots() {
 
   return (
     <TabContext value={tcState.plots.currentView}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', width: '100%', height: '100%' }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', width: '100%' }}>
         <TabList onChange={handleChange} aria-label="data visualization">
           <Tab label="Scatter plot" value="scatter" />
           <Tab label="Color-color diagram" value="color" />
           <Tab label="Histogram" value="histogram" />
         </TabList>
       </Box>
-      <TabPanel value="scatter"><ScatterPlot /></TabPanel>
-      <TabPanel value="color"><ColorPlot /></TabPanel>
-      <TabPanel value="histogram"><Histogram /></TabPanel>
+      <TabPanel value="scatter" sx={{}}><ScatterPlot /></TabPanel>
+      <TabPanel value="color" sx={{}}><ColorPlot /></TabPanel>
+      <TabPanel value="histogram" sx={{}}><Histogram /></TabPanel>
     </TabContext>
   )
 }

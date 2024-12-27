@@ -12,6 +12,7 @@ import Box from '@mui/material/Box'
 import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Divider from '@mui/material/Divider'
+import InspectSelectedButton from './InspectSelectedButton'
 
 
 export default function ScatterPlot() {
@@ -166,25 +167,7 @@ export default function ScatterPlot() {
               })} />
           } />
 
-        <Button
-          disabled={tcState.plots.filterIndex.length == 0 || tcState.plots.filterView != 'scatter'}
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            tcDispatch({
-              type: ContextActions.PLOT_SETUP,
-              payload: {
-                inspectSelected: true
-              }
-            })
-
-            tcDispatch({
-              type: ContextActions.CURRENT_VIEW_CHANGE,
-              payload: 'grid'
-            })
-          }}>
-          Inspect Selected
-        </Button>
+        <InspectSelectedButton view="scatter" />
       </Stack>
 
 
@@ -198,7 +181,7 @@ export default function ScatterPlot() {
         data={data as Data[]}
         layout={layout as Layout}
         config={{ responsive: true }}
-        className="w-100"
+        style={{ width: '100%' }}
         onSelected={(e) => {
           const idx = e?.points?.map((x) => x.pointIndex)
           if (idx && idx.length > 0) {

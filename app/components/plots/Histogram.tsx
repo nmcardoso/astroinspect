@@ -2,7 +2,6 @@ import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import { ContextActions } from '@/interfaces/contextActions'
 import { Data, Layout } from 'plotly.js'
 import { useMemo } from 'react'
-import Stack from 'react-bootstrap/Stack'
 import ColumnDropdown from './ColumnDropdown'
 import { PlotlyComponent } from './PlotlyComponent'
 import Button from '@mui/material/Button'
@@ -10,6 +9,8 @@ import { maskOutliersUnivariate } from '@/lib/statistics'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
 import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
+import InspectSelectedButton from './InspectSelectedButton'
 
 
 
@@ -62,7 +63,7 @@ export default function Histogram() {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Stack direction="horizontal" gap={2}>
+      <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
         <ColumnDropdown
           label="column"
           value={histConfig.column}
@@ -82,25 +83,7 @@ export default function Histogram() {
               })} />
           } />
 
-        <Button
-          disabled={tcState.plots.filterIndex.length == 0 || tcState.plots.filterView != 'histogram'}
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            tcDispatch({
-              type: ContextActions.PLOT_SETUP,
-              payload: {
-                inspectSelected: true
-              }
-            })
-
-            tcDispatch({
-              type: ContextActions.CURRENT_VIEW_CHANGE,
-              payload: 'grid'
-            })
-          }}>
-          Inspect Selected
-        </Button>
+        <InspectSelectedButton view="histogram" />
       </Stack>
 
 
@@ -113,7 +96,7 @@ export default function Histogram() {
         data={data as Data[]}
         layout={layout as Layout}
         config={{ responsive: true }}
-        className="w-100"
+        style={{ width: '100%' }}
         onSelected={(e) => {
           const idx = e?.points?.map((x) => x.pointIndex)
           if (idx && idx.length > 0) {

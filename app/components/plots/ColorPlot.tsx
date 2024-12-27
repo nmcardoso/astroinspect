@@ -2,8 +2,6 @@ import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import { ContextActions } from '@/interfaces/contextActions'
 import { Data, Layout } from 'plotly.js'
 import { useMemo } from 'react'
-import Form from 'react-bootstrap/Form'
-import Stack from 'react-bootstrap/Stack'
 import ColumnDropdown from './ColumnDropdown'
 import { PlotlyComponent } from './PlotlyComponent'
 import { maskOutliersBivariate, maskOutliersTrivariate } from '@/lib/statistics'
@@ -13,6 +11,8 @@ import Box from '@mui/material/Box'
 import  Divider from '@mui/material/Divider'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
+import Stack from '@mui/material/Stack'
+import InspectSelectedButton from './InspectSelectedButton'
 
 
 export default function ColorPlot() {
@@ -139,7 +139,7 @@ export default function ColorPlot() {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Stack direction="horizontal" gap={1}>
+      <Stack direction="row" spacing={1} sx={{alignItems: 'center'}}>
         <ColumnDropdown
           label="x axis"
           value={colorPlotConfig.xColumn1}
@@ -201,25 +201,7 @@ export default function ColorPlot() {
               })} />
           } />
 
-        <Button
-          disabled={tcState.plots.filterIndex.length == 0 || tcState.plots.filterView != 'color'}
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            tcDispatch({
-              type: ContextActions.PLOT_SETUP,
-              payload: {
-                inspectSelected: true
-              }
-            })
-
-            tcDispatch({
-              type: ContextActions.CURRENT_VIEW_CHANGE,
-              payload: 'grid'
-            })
-          }}>
-          Inspect Selected
-        </Button>
+        <InspectSelectedButton view="color" />
       </Stack>
 
 
@@ -233,7 +215,7 @@ export default function ColorPlot() {
         data={data as Data[]}
         layout={layout as Layout}
         config={{ responsive: true }}
-        className="w-100"
+        style={{ width: '100%' }}
         onSelected={(e) => {
           const idx = e?.points?.map((x) => x.pointIndex)
           if (idx && idx.length > 0) {
