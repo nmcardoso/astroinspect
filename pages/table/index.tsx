@@ -1,4 +1,4 @@
-import Plots from '@/components/plots/Plots'
+import AIGrid from '@/components/table/AIGrid'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
@@ -11,9 +11,9 @@ export default function Index() {
     if (!tcState.grid.data) {
       router.push('/')
     }
-  }, [tcState.grid.data, router])
+  }, [])
   
   return (
-    <Plots />
+    <AIGrid />
   )
 }
