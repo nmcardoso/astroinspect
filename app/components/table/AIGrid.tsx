@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import { ContextActions } from '@/interfaces/contextActions'
-import { getTableReader } from '@/lib/io'
 import { semaphore } from '@/lib/Semaphore'
 import { loadErrorState, loadingState, queuedState } from '@/lib/states'
 import TableHelper from '@/lib/TableHelper'
@@ -10,18 +9,20 @@ import { LegacyStamp } from '@/services/legacy'
 import { SdssCatalog, SdssSpectra } from '@/services/sdss'
 import { SplusPhotoSpectra, SplusStamp } from '@/services/splus'
 import {
-  CellKeyDownEvent, GetRowIdParams, GridOptions, GridReadyEvent,
-  IRowNode
-} from "@ag-grid-community/core"
-import "ag-grid-community/styles/ag-grid.css"
-import "ag-grid-community/styles/ag-theme-quartz.css"
+  AllCommunityModule, ModuleRegistry, CellKeyDownEvent, GetRowIdParams, 
+  GridOptions, GridReadyEvent, IRowNode, themeQuartz, colorSchemeDark,
+  colorSchemeLight,
+} from 'ag-grid-community'
 import { AgGridReact } from 'ag-grid-react'
-import { cloneDeep } from 'lodash'
-import React, { useCallback, useMemo, useRef, useState } from 'react'
-import { Container } from 'react-bootstrap'
-import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+// import 'ag-grid-community/styles/ag-grid.css'
+// import 'ag-grid-community/styles/ag-theme-quartz.css'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useTheme } from '@mui/material'
+import copy from 'copy-to-clipboard'
+import { useNotifications } from '@/contexts/NotificationsContext'
 
+ModuleRegistry.registerModules([AllCommunityModule])
+// provideGlobalGridOptions({ theme: "legacy" })
 
 semaphore.create('img:legacy', 6)
 semaphore.create('img:splus', 5)
@@ -29,7 +30,7 @@ semaphore.create('img:splus_photospec', 5)
 semaphore.create('img:sdss_spec', 4)
 semaphore.create('sdss_cat', 4)
 
-const FETCH_BUFFER = process.env.NODE_ENV === 'development' ? 0 : 100
+const FETCH_BUFFER = process.env.NODE_ENV === 'development' ? 0 : 400
 
 
 const downloadResource = async ({
@@ -93,63 +94,40 @@ const customImageResource = ({
 }
 
 
+const paginationPageSizeSelector = [50, 100, 200, 400, 600, 800, 1000]
+
+const tableWrapperStyle = {
+  '--ag-cell-horizontal-padding': '8px',
+  '--ag-borders': 'solid 1px',
+  '--ag-wrapper-border-radius': '0px',
+  '--ag-header-height': '38px',
+} as React.CSSProperties
+
+
 export default function AIGrid() {
   const { tcState, tcDispatch } = useXTableConfig()
-  const [isLoading, setLoading] = useState(true)
-
+  const theme = useTheme()
   const gridRef = useRef<AgGridReact>(null)
+  const notification = useNotifications()
 
-  const onGridReady = useCallback(async (event: GridReadyEvent) => {
-    let prevClass = undefined
-    if (
-      tcState.table.isSameFile &&
-      tcState.grid.currColConfigs?.classification.enabled &&
-      tcState.cols.classification.enabled
-    ) {
-      prevClass = tcState.grid.data.map((e) => ({ 'ai:class': e['ai:class'] }))
+  const onGridReady = useCallback((event: GridReadyEvent) => {
+    if (!tcState.grid.api) {
+      tcDispatch({
+        type: ContextActions.GRID_UPDATE,
+        payload: {
+          api: event.api,
+        }
+      })
     }
-
-    if (tcState.table.file === undefined && tcState.table.url === undefined) {
-      return
-    }
-
-    let data
-    if (tcState.table.type === 'local') {
-      data = await getTableReader(tcState.table.file as File)?.read()
-    } else {
-      data = await getTableReader(tcState.table.url as string)?.read()
-    }
-
-    const { colDef, initVal } = TableHelper.getColDefs(tcState)
-
-    data = data?.map((e, i, _) => ({ ...e, ...initVal, 'ai:id': String(i + 1) }))
-
-    if (prevClass) {
-      data = data?.map((e, i, _) => ({ ...e, ...prevClass[i] }))
-    }
-
-    setLoading(false)
-
-    tcDispatch({
-      type: ContextActions.GRID_UPDATE,
-      payload: {
-        data: data,
-        colDef: colDef,
-        isLoaded: true,
-        currColConfigs: cloneDeep(tcState.cols),
-        currTable: { ...tcState.table },
-        api: event.api,
-      }
-    })
 
     tcDispatch({
       type: ContextActions.USER_FILE_INPUT,
       payload: {
         isSameFile: true,
+        state: 'success',
       }
     })
   }, [tcState, tcDispatch])
-
 
 
   const onChange = useCallback((event: any) => {
@@ -264,51 +242,49 @@ export default function AIGrid() {
   }, [tcState])
 
 
-
+  
   const onCellKeyDown = useCallback((event: CellKeyDownEvent) => {
     const keyEvent = event.event as KeyboardEvent
     if (!keyEvent) return
 
-    if (keyEvent.key.toLowerCase() === 'c' && keyEvent.ctrlKey) {
-      navigator.clipboard.writeText(event.value)
-      toast.success(`Copied: ${event.value}`, {
-        position: 'bottom-center',
-        autoClose: 1000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-        theme: 'dark',
-        delay: 100,
+    if (keyEvent.key.toLowerCase() === 'c' && (keyEvent.ctrlKey || keyEvent.metaKey) && !tcState.grid.editable) {
+      copy(event.value, {
+        format: 'text/plain',
+        onCopy: () => {
+          notification?.show(`Copied: ${event.value}`, { autoHideDuration: 2000, severity: 'success' })
+        }
       })
+    } else if (keyEvent.key.toLowerCase() === 'x' && (keyEvent.ctrlKey || keyEvent.metaKey) && !tcState.grid.editable) {
+      if (tcState.table.raCol && tcState.table.decCol) {
+        const ra = event.data[`tab:${tcState.table.raCol}`]
+        const dec = event.data[`tab:${tcState.table.decCol}`]
+        copy(`${ra} ${dec}`, {
+          format: 'text/plain',
+          onCopy: () => {
+            notification?.show(`Copied: ${ra} ${dec}`, { autoHideDuration: 2000, severity: 'success' })
+          }
+        })
+      } else {
+        notification?.show('Can not find RA and DEC columns', { autoHideDuration: 2000, severity: 'error' })
+      }
     } else if (tcState.cols.classification.enabled && !keyEvent.altKey && !keyEvent.ctrlKey && !keyEvent.shiftKey) {
       for (const [cls, hotkey] of Object.entries(tcState.cols.classification.keyMap)) {
         if (hotkey.toLowerCase() == keyEvent.key.toLowerCase()) {
-          event.node.setDataValue('ai:class', cls)
+          if (event.node.data?.['ai:class'] == cls) {
+            event.node.setDataValue('ai:class', undefined)
+          } else {
+            event.node.setDataValue('ai:class', cls)
+          }
         }
       }
     }
   }, [tcState.cols.classification.enabled, tcState.cols.classification.keyMap])
 
 
-
   const getRowId = useCallback((params: GetRowIdParams): string => {
     return params.data['ai:id']
   }, [])
 
-
-  const paginationPageSizeSelector = useMemo<number[] | boolean>(() => {
-    return [50, 100, 200, 400, 600, 800, 1000]
-  }, [])
-
-
-  const style = {
-    '--ag-cell-horizontal-padding': '8px',
-    '--ag-borders': 'solid 1px',
-    '--ag-wrapper-border-radius': '0px',
-    '--ag-header-height': '38px',
-  } as React.CSSProperties
 
   let gridOptions: GridOptions = {
     suppressHorizontalScroll: false,
@@ -321,7 +297,7 @@ export default function AIGrid() {
     tcState.cols.splusPhotoSpectra.enabled ||
     (tcState.cols.customImaging.enabled && tcState.cols.customImaging.columns.length > 0)
   ) {
-    gridOptions.rowHeight = 120
+    gridOptions.rowHeight = parseInt(tcState.ui.figureSize as any as string)
   }
 
 
@@ -333,34 +309,57 @@ export default function AIGrid() {
   }, [tcState.plots.filterIndex])
 
 
+  useEffect(() => {
+    const { colDef, initVal } = TableHelper.getColDefs(tcState)
+    tcDispatch({
+      type: ContextActions.GRID_UPDATE,
+      payload: {
+        data: tcState.grid.data?.map((d: any) => ({ ...d, ...initVal })),
+        // currColConfigs: cloneDeep(tcState.cols),
+        // currTable: { ...tcState.table },
+        colDef: colDef,
+      }
+    })
+  }, [
+    tcState.cols.classification.enabled, tcState.table.selectedColumnsId,
+    tcState.cols.customImaging.enabled, tcState.cols.legacyImaging.enabled,
+    tcState.cols.sdssCatalog.enabled, tcState.cols.sdssSpectra.enabled,
+    tcState.cols.splusImaging.enabled, tcState.cols.splusPhotoSpectra.enabled,
+    tcState.grid.editable, tcState.ui.figureSize
+  ])
+
+  const gridTheme = useMemo(() => {
+    if (theme.palette.mode == 'light') {
+      return themeQuartz.withPart(colorSchemeLight)
+    }
+    return themeQuartz.withPart(colorSchemeDark)
+  }, [theme.palette.mode])
+
   return (
-    <Container fluid className="px-0" style={{ height: '100%' }}>
-      <div
-        className="ag-theme-quartz"
-        style={{ width: '100%', height: '100%', ...style }}>
-        <AgGridReact
-          gridOptions={gridOptions}
-          ref={gridRef}
-          rowData={tcState.grid.data || []}
-          columnDefs={tcState.grid.colDef || []}
-          getRowId={getRowId}
-          loading={isLoading}
-          style={{ height: '100%' }}
-          pagination={true}
-          paginationPageSize={100}
-          paginationPageSizeSelector={paginationPageSizeSelector}
-          onGridReady={onGridReady}
-          onPaginationChanged={onChange}
-          onSortChanged={onChange}
-          onFilterChanged={onChange}
-          onCellKeyDown={onCellKeyDown}
-          singleClickEdit={true}
-          isExternalFilterPresent={() => tcState.plots.inspectSelected}
-          doesExternalFilterPass={plotFilter}
-          colorSchemeVariable="data-toolpad-color-scheme"
-        />
-      </div>
-      <ToastContainer />
-    </Container>
+    <div
+      className="ag-theme-quartz"
+      style={{ width: '100%', height: '100%', ...tableWrapperStyle }}>
+      <AgGridReact
+        gridOptions={gridOptions}
+        ref={gridRef}
+        rowData={tcState.grid.data || []}
+        columnDefs={tcState.grid.colDef || []}
+        getRowId={getRowId}
+        loading={tcState.table.state === 'loading'}
+        theme={gridTheme}
+        pagination={true}
+        paginationPageSize={100}
+        paginationPageSizeSelector={paginationPageSizeSelector}
+        onGridReady={onGridReady}
+        onPaginationChanged={onChange}
+        onSortChanged={onChange}
+        onFilterChanged={onChange}
+        onCellKeyDown={onCellKeyDown}
+        singleClickEdit={true}
+        isExternalFilterPresent={() => tcState.plots.inspectSelected}
+        doesExternalFilterPass={plotFilter}
+      // colorSchemeVariable="data-toolpad-color-scheme"
+      />
+    </div>
   )
 }
