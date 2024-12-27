@@ -36,7 +36,7 @@ function MinimalAppbar() {
     <AppBar position="static" color="inherit" variant="outlined">
       <Toolbar variant="dense">
         {
-          tcState.table.state != 'loading' && (
+          tcState.table.state == 'success' && (
             <Button
               variant="contained"
               onClick={() => router.push('/table')}
