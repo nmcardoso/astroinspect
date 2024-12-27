@@ -10,7 +10,7 @@ export default function Index() {
       <Stack gap={4} sx={{ py: 4, mb: 4 }}>
         <Paper elevation={4} sx={{ p: 3 }}>
           <Typography variant="h6">Load table</Typography>
-          <Typography sx={{mb: 2}}>
+          <Typography sx={{ mb: 2 }}>
             Follow the steps bellow to load a table to analyse
           </Typography>
           <FileInputTab />
