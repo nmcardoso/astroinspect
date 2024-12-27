@@ -23,7 +23,7 @@ interface IGrid extends IterableInterface {
   api?: GridApi,
   isLoaded: boolean,
   currColConfigs?: ICols,
-  currTale?: ITableConfig,
+  currTable?: ITableConfig,
   editable: boolean,
 }
 
@@ -73,6 +73,7 @@ interface ISdssSpectra extends IterableInterface {
 }
 
 interface ISdssCatalog extends IterableInterface {
+  enabled: boolean
   selectedColumns: {
     table: string,
     column: string
@@ -142,6 +143,12 @@ interface IPlots {
   inspectSelected: boolean
 }
 
+interface IUserInterface {
+  figureSize: number
+  invertColorDarkMode: boolean
+  showReticle: boolean
+}
+
 interface IState {
   schemaVersion: number,
   table: ITableConfig,
@@ -149,6 +156,7 @@ interface IState {
   currentView: CurrentViewType,
   cols: ICols,
   plots: IPlots,
+  ui: IUserInterface,
 }
 
 type PlotsCurrentViewType = 'scatter' | 'color' | 'histogram' | 'aladin'
