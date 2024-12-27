@@ -1,10 +1,10 @@
-import Spinner from 'react-bootstrap/Spinner'
-import Stack from 'react-bootstrap/Stack'
+import CircularProgress from '@mui/material/CircularProgress'
+import Stack from '@mui/material/Stack'
 
 export default function Loading() {
   return (
-    <Stack direction="horizontal">
-      <Spinner animation="border" role="status" variant="secondary" size="sm" />
+    <Stack direction="row" sx={{alignItems: 'center'}}>
+      <CircularProgress />
       <span className="text-secondary ms-2">Loading...</span>
     </Stack>
   )
