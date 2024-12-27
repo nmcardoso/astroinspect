@@ -46,7 +46,7 @@ export class ParquetReader extends BaseReader {
     return new Promise<{}[]>((resolve: any, reject: any) => {
       const wrapper = async () => {
         await parquetRead({
-          file: await asyncBufferFromUrl(<string>this.file),
+          file: await asyncBufferFromUrl({ url: <string>this.file }),
           onComplete: (data: any) => resolve(data),
           compressors: compressors,
         })
@@ -82,7 +82,7 @@ export class ParquetReader extends BaseReader {
 
   private async getMetaFromUrl() {
     if (this.meta === undefined) {
-      this.meta = await parquetMetadataAsync(await asyncBufferFromUrl(<string>this.file))
+      this.meta = await parquetMetadataAsync(await asyncBufferFromUrl({ url: <string>this.file }))
     }
     return this.meta
   }
