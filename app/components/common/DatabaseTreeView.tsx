@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
-import Col from 'react-bootstrap/Col'
-import Row from 'react-bootstrap/Row'
 import ListView from './ListView'
+import Stack from '@mui/material/Stack'
 
 type PropsType = {
   service: any,
@@ -57,24 +56,22 @@ export default function DatabaseTreeView({
 
 
   return (
-    <>
-      <Row>
-        <Col>
-          <span className="fw-bold">Tables</span>
-          <ListView
-            items={tables}
-            active={selectedTable}
-            onClick={({ title }: { title: string }) => setSelectedTable(title)} />
-        </Col>
-        <Col>
-          <span className="fw-bold">Columns</span>
-          <ListView
-            multiple
-            items={columns}
-            active={selectedColumns.filter(e => e.table == selectedTable).map(e => e.column)}
-            onClick={handleColumnClick} />
-        </Col>
-      </Row>
-    </>
+    <Stack direction="row">
+      <>
+        <span className="fw-bold">Tables</span>
+        <ListView
+          items={tables}
+          active={selectedTable}
+          onClick={({ title }: { title: string }) => setSelectedTable(title)} />
+      </>
+      <>
+        <span className="fw-bold">Columns</span>
+        <ListView
+          multiple
+          items={columns}
+          active={selectedColumns.filter(e => e.table == selectedTable).map(e => e.column)}
+          onClick={handleColumnClick} />
+      </>
+    </Stack>
   )
 }
