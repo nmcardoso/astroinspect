@@ -68,14 +68,10 @@ const PlaceholderListView = ({ className, height }: { className?: string, height
   return (
     <Paper>
       <List sx={{ height, overflow: 'auto' }}>
-        {[6, 9, 4, 5, 11, 7, 8, 5].map(i => (
-          <ListItem
-            key={`skeleton-${i}`}
-            disablePadding>
+        {[6, 9, 4, 5, 11, 7, 8, 10].map(i => (
+          <ListItem key={`skeleton-${i}`} disablePadding>
             <ListItemButton>
               <Skeleton variant="rectangular" width={45*i} height={18} sx={{my: 1}} />
-              {/* <Skeleton variant="text" sx={{ fontSize: '1rem' }} /> */}
-              {/* <ListItemText id={`${title}-${index}`} primary={title} /> */}
             </ListItemButton>
           </ListItem>
         ))}
