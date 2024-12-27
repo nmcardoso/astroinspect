@@ -1,12 +1,8 @@
-import Col from 'react-bootstrap/Col'
-import Form from 'react-bootstrap/Form'
-import Row from 'react-bootstrap/Row'
 import Button from '@mui/material/Button'
 import Help from '@/components/common/Help'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import Chip from '@mui/material/Chip'
-import Modal from 'react-bootstrap/Modal'
 import { ContextActions } from '@/interfaces/contextActions'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
@@ -18,10 +14,18 @@ import Grid2 from '@mui/material/Grid2'
 import Stack from '@mui/material/Stack'
 import InputAdornment from '@mui/material/InputAdornment'
 import Typography from '@mui/material/Typography'
-import { DialogsProvider, useDialogs } from '@toolpad/core/useDialogs'
 import Alert from '@mui/material/Alert'
+import MenuItem from '@mui/material/MenuItem'
+import Menu from '@mui/material/Menu'
+import useFocus from '@/hooks/useFocus'
+import { mapValues, pickBy } from 'lodash'
 
 type handlerType = (value: string, classes: string[], dispatcher: any) => void
+type ClassChipProps = {
+  className: string
+  onSelect: () => void
+  isSelected: boolean
+}
 
 const handleAddClass: handlerType = (value, classes, dispatcher) => {
   const sanitizedValue = value.trim()
@@ -42,12 +46,69 @@ const handleDelClass: handlerType = (value, classes, dispatcher) => {
   })
 }
 
+
+function ClassChip({ className, onSelect, isSelected }: ClassChipProps) {
+  const { tcState, tcDispatch } = useXTableConfig()
+
+  const cb = useCallback((e: KeyboardEvent) => {
+    if (/^[a-z\d]$/i.test(e.key)) {
+      const newKeyMap = pickBy(tcState.cols.classification.keyMap, (v, k) => {
+        return (v != e.key) && !!v
+      })
+      tcDispatch({
+        type: ContextActions.CLASSIFICATION_CONFIG,
+        payload: {
+          keyMap: {
+            ...newKeyMap,
+            [className]: e.key
+          }
+        }
+      })
+    }
+  }, [tcState, className])
+
+  useEffect(() => {
+    if (isSelected) {
+      document.addEventListener('keydown', cb, false)
+    } else {
+      document.removeEventListener('keydown', cb, false)
+    }
+
+    return () => {
+      document.removeEventListener('keydown', cb, false)
+    }
+  }, [isSelected, cb])
+
+  return (
+    <Chip
+      color={isSelected ? 'primary' : 'default'}
+      key={`cname_${className}`}
+      sx={{ m: 1 }}
+      onDelete={() => handleDelClass(className, tcState.cols.classification.classNames, tcDispatch)}
+      onClick={onSelect}
+      label={
+        <Typography fontSize={15}>
+          {className}
+          {className in tcState.cols.classification.keyMap && (
+            <span>
+              {' ('}
+              <b>{tcState.cols.classification.keyMap[className]?.toUpperCase()}</b>
+              {')'}
+            </span>
+          )}
+        </Typography>
+      }
+    />
+  )
+}
+
+
+
 function CategoricalControl() {
   const { tcState, tcDispatch } = useXTableConfig()
   const cls = tcState.cols.classification
   const [classInput, setClassInput] = useState('')
-  const [showHotkeyModal, setHotkeyModal] = useState(false)
-  const dialogs = useDialogs()
+  const [selectedClass, setSelectedClass] = useState<string | undefined>(undefined)
 
   return (
     <>
@@ -60,7 +121,6 @@ function CategoricalControl() {
             handleAddClass(classInput, cls.classNames, tcDispatch)
             setClassInput('')
           }}>
-
           <TextField
             label="Class name"
             variant="outlined"
@@ -83,43 +143,19 @@ function CategoricalControl() {
         </Help>
       </Stack>
 
-
       <Box>
         {cls.classNames.map(className => (
-          <Chip
-            key={`cname_${className}`}
-            sx={{ m: 1 }}
-            onDelete={() => handleDelClass(className, cls.classNames, tcDispatch)}
-            onClick={async () => {
-              const hotkey = await dialogs.prompt(
-                'Type the hotkey (one character) then press <ENTER>',
-                { title: '', okText: 'set hotkey' }
-              )
-              if (hotkey) {
-                tcDispatch({
-                  type: ContextActions.CLASSIFICATION_CONFIG,
-                  payload: {
-                    keyMap: {
-                      ...tcState.cols.classification.keyMap,
-                      [className]: hotkey
-                    }
-                  }
-                })
+          <ClassChip
+            key={className}
+            className={className}
+            onSelect={() => {
+              if (className != selectedClass) {
+                setSelectedClass(className)
+              } else {
+                setSelectedClass(undefined)
               }
             }}
-            label={
-              <Typography fontSize={15}>
-                {className}
-                {className in tcState.cols.classification.keyMap && (
-                  <span>
-                    {' ('}
-                    <b>{tcState.cols.classification.keyMap[className].toUpperCase()}</b>
-                    {')'}
-                  </span>
-                )}
-              </Typography>
-            }
-          />
+            isSelected={selectedClass == className} />
         ))}
       </Box>
     </>
@@ -177,14 +213,15 @@ export default function ClassTab() {
     <>
       <Stack direction="row" sx={{ alignItems: 'center' }}>
         <FormControlLabel
-          control={<Checkbox defaultChecked />}
-          label="Show classification column"
-          checked={cls.enabled}
-          onChange={(e) => tcDispatch({
-            type: ContextActions.CLASSIFICATION_CONFIG,
-            payload: { enabled: e.target.checked }
-          })}
-        />
+        label="Show classification columns"
+        control={
+          <Checkbox
+            checked={cls.enabled}
+            onChange={e => tcDispatch({
+              type: ContextActions.CLASSIFICATION_CONFIG,
+              payload: { enabled: e.target.checked }
+            })} />
+        } />
         <Help title="Enable Classifications">
           Select this option if you want to classify the table,
           unsect to hide the classification column
@@ -193,12 +230,11 @@ export default function ClassTab() {
 
       <CategoricalControl />
 
-      <Box sx={{display: 'flex', pt: 2}}>
+      <Box sx={{ display: 'flex', pt: 2 }}>
         <Alert severity="info">
           <b>Tip:</b> click in the class name to set a hotkey for faster classification
         </Alert>
       </Box>
-
     </>
   )
 }
