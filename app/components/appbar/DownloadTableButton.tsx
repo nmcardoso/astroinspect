@@ -1,15 +1,22 @@
 import Help from '@/components/common/Help'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
-import { ProcessHeaderForExportParams, ShouldRowBeSkippedParams } from '@ag-grid-community/core'
+import type { ProcessHeaderForExportParams, ShouldRowBeSkippedParams } from 'ag-grid-community'
 import { useCallback, useState } from 'react'
-import Button from 'react-bootstrap/Button'
-import Col from 'react-bootstrap/Col'
-import Form from 'react-bootstrap/Form'
-import InputGroup from 'react-bootstrap/InputGroup'
-import Modal from 'react-bootstrap/Modal'
-import Row from 'react-bootstrap/Row'
-import { AiOutlineCloudDownload } from 'react-icons/ai'
-
+import AppbarButton from '@/components/appbar/AppbarButton'
+import DownloadIcon from '@mui/icons-material/Download'
+import InputAdornment from '@mui/material/InputAdornment'
+import TextField from '@mui/material/TextField'
+import FormControl from '@mui/material/FormControl'
+import FormLabel from '@mui/material/FormLabel'
+import RadioGroup from '@mui/material/RadioGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Radio from '@mui/material/Radio'
+import Stack from '@mui/material/Stack'
+import Checkbox from '@mui/material/Checkbox'
+import { ContextActions } from '@/interfaces/contextActions'
+import Button from '@mui/material/Button'
+import Box from '@mui/material/Box'
+import { Typography } from '@mui/material'
 
 const DownloadModal = ({ show, onHide }: any) => {
   const { tcState, tcDispatch } = useXTableConfig()
@@ -20,7 +27,7 @@ const DownloadModal = ({ show, onHide }: any) => {
 
   const handleDownload: React.FormEventHandler<HTMLFormElement> = (event) => {//useCallback((event) => {
     event.preventDefault()
-    // event.stopPropagation()
+    event.stopPropagation()
 
     const getColKeys = () => {
       let userTableCols = []
@@ -41,7 +48,7 @@ const DownloadModal = ({ show, onHide }: any) => {
     }
 
     const skipClassified = ({ node }: ShouldRowBeSkippedParams) => (
-      node.data?.['ai:class'] === undefined || node.data?.['ai:class'] === '' 
+      node.data?.['ai:class'] === undefined || node.data?.['ai:class'] === ''
     )
 
     const skipUnclassified = ({ node }: ShouldRowBeSkippedParams) => (
@@ -64,7 +71,7 @@ const DownloadModal = ({ show, onHide }: any) => {
       }
       return column.getColDef().headerName
     }
-    
+
     tcState.grid.api.exportDataAsCsv({
       suppressQuotes: true,
       columnKeys: getColKeys(),
@@ -76,148 +83,96 @@ const DownloadModal = ({ show, onHide }: any) => {
   }//, [tcState, classFilter, colFilter, filterAndSort, filename])
 
   return (
-    <Modal
-      show={show}
-      onHide={onHide}
-      animation={false}
-      size="lg"
-      centered>
-      <Modal.Header closeButton>
-        <Modal.Title as="h5" id="contained-modal-title-vcenter">
-          Download current table
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form
-          onSubmit={handleDownload}
-          className="mt-3">
-          <Form.Group as={Row} className="mb-2" controlId="classDownload">
-            <Form.Label column sm="2" className="text-end">
-              File name
-            </Form.Label>
-            <Col sm={8}>
-              <div className="d-flex align-items-center">
-                <InputGroup>
-                  <Form.Control
-                    value={filename}
-                    onChange={(e) => setFilename(e.target.value)}
-                    placeholder="File name" />
-                  <InputGroup.Text id="basic-addon2">.csv</InputGroup.Text>
-                </InputGroup>
-                <Help title="File name" className="ms-2">
-                  Choose a name and save your classifications in local computer
-                </Help>
-              </div>
-            </Col>
-          </Form.Group>
+    <Box
+      component="form"
+      onSubmit={handleDownload}>
+      <Stack direction="row" sx={{ alignItems: 'center' }}>
+        <TextField
+          label="File name"
+          id="download-modal-filename"
+          sx={{ width: '42ch' }}
+          value={filename}
+          onChange={(e) => setFilename(e.target.value)}
+          slotProps={{
+            input: {
+              endAdornment: <InputAdornment position="start">.csv</InputAdornment>,
+            },
+          }} />
+        <Help title="File name" className="ms-2">
+          Choose a name and save your classifications in local computer
+        </Help>
+      </Stack>
+
+      {tcState.cols.classification.enabled &&
+        <FormControl>
+          <Typography variant="overline" sx={{ mt: 2 }}>Classification settings</Typography>
+          <Stack direction="row" sx={{ alignItems: 'center' }}>
+            <RadioGroup
+              row
+              aria-labelledby="download-modal-column-filter-label"
+              name="download-modal-column-filter"
+              value={classFilter}
+              onChange={(e, value) => setClassFilter(value as ('all' | 'classified' | 'unclassified'))}>
+              <FormControlLabel value="all" control={<Radio />} label="all" />
+              <FormControlLabel value="classified" control={<Radio />} label="classified only" />
+              <FormControlLabel value="unclassified" control={<Radio />} label="unclassified only" />
+            </RadioGroup>
+            <Help title="Filter rows by class" className="ms-0">
+              This setting will sample the rows based in the classification
+              state:
+              <ul>
+                <li>
+                  <b>all: </b> in this case, no filtering is performed and
+                  the output table will contain all rows, including both
+                  classified and unclassified rows
+                </li>
+                <li>
+                  <b>classified only: </b> the output table will contain only classified
+                  rows
+                </li>
+                <li>
+                  <b>unclassified only: </b> the output table will contain only unclassified
+                  rows
+                </li>
+              </ul>
+            </Help>
+          </Stack>
+        </FormControl>
+      }
+
+      <FormControl>
+        <Typography variant="overline" sx={{ mt: 1.5 }}>Row settings</Typography>
+        <Stack direction="row" sx={{ alignItems: 'center' }}>
+          <FormControlLabel
+            label="filter & sort"
+            control={
+              <Checkbox
+                checked={filterAndSort}
+                onChange={e => setFilterAndSort(!filterAndSort)} />
+            } />
+          <Help title="Filter rows by filter">
+            This setting will sample the rows based in the following
+            criteria:
+            <ul>
+              <li>
+                If this option is <b>selected</b>, the same filters applied in the application will
+                also be applied to the output table, that is, it will contain the <u>same
+                  rows that you are seeing in the application</u> and in the same order.
+              </li>
+              <li>
+                If this option is <b>unselected</b>, no filtering is performed
+                and the output table will have the <u>same rows as the input table</u> and
+                in same order.
+              </li>
+            </ul>
+            <b>Note: </b> If you have not applied any filtering or sorting to the
+            columns, then the result will be the same for any option in this setting.
+          </Help>
+        </Stack>
+      </FormControl>
 
 
-          {tcState.cols.classification.enabled &&
-            <Form.Group as={Row} className="mb-2" controlId="colFilter">
-              <Form.Label column sm="2" className="text-end">
-                Classification
-              </Form.Label>
-              <Col sm={8}>
-                <div className="d-flex align-items-center mt-2">
-                  <Form.Check
-                    inline
-                    className="me-4"
-                    checked={classFilter === 'all'}
-                    label="all"
-                    name="filterClass"
-                    type="radio"
-                    value="all"
-                    id="filterClass-1"
-                    onChange={(e) => setClassFilter('all')}
-                  />
-                  <Form.Check
-                    inline
-                    className="me-4"
-                    checked={classFilter === 'classified'}
-                    label="classified only"
-                    name="filterClass"
-                    type="radio"
-                    value="classified"
-                    id="filterClass-2"
-                    onChange={(e) => setClassFilter('classified')}
-                  />
-                  <Form.Check
-                    inline
-                    className="me-2"
-                    checked={classFilter === 'unclassified'}
-                    label="unclassified only"
-                    name="filterClass"
-                    type="radio"
-                    value="unclassified"
-                    id="filterClass-3"
-                    onChange={(e) => setClassFilter('unclassified')}
-                  />
-                  <Help title="Filter rows by class" className="ms-0">
-                    This setting will sample the rows based in the classification
-                    state:
-                    <ul>
-                      <li>
-                        <b>all: </b> in this case, no filtering is performed and
-                        the output table will contain all rows, including both
-                        classified and unclassified rows
-                      </li>
-                      <li>
-                        <b>classified only: </b> the output table will contain only classified
-                        rows
-                      </li>
-                      <li>
-                        <b>unclassified only: </b> the output table will contain only unclassified
-                        rows
-                      </li>
-                    </ul>
-                  </Help>
-                </div>
-              </Col>
-            </Form.Group>
-          }
-
-
-          <Form.Group as={Row} className="mb-2" controlId="filterRow-2">
-            <Form.Label column sm="2" className="text-end">
-              Rows
-            </Form.Label>
-            <Col sm={8}>
-              <div className="d-flex align-items-center mt-2">
-                <Form.Check
-                  inline
-                  checked={filterAndSort}
-                  label="filter & sort"
-                  name="filterRow"
-                  type="checkbox"
-                  value="filteredAndSorted"
-                  id="filterRow-2"
-                  onChange={(e) => setFilterAndSort(!filterAndSort)}
-                />
-                <Help title="Filter rows by filter" className="ms-0">
-                  This setting will sample the rows based in the following
-                  criteria:
-                  <ul>
-                    <li>
-                      If this option is <b>selected</b>, the same filters applied in the application will
-                      also be applied to the output table, that is, it will contain the <u>same
-                        rows that you are seeing in the application</u> and in the same order.
-                    </li>
-                    <li>
-                      If this option is <b>unselected</b>, no filtering is performed
-                      and the output table will have the <u>same rows as the input table</u> and
-                      in same order.
-                    </li>
-                  </ul>
-                  <b>Note: </b> If you have not applied any filtering or sorting to the
-                  columns, then the result will be the same for any option in this setting.
-                </Help>
-              </div>
-            </Col>
-          </Form.Group>
-
-
-
-          {/* <Form.Group as={Row} className="mb-2" controlId="rowFilter">
+      {/* <Form.Group as={Row} className="mb-2" controlId="rowFilter">
             <Form.Label column sm="2" className="text-end">
               Columns
             </Form.Label>
@@ -261,43 +216,25 @@ const DownloadModal = ({ show, onHide }: any) => {
             </Col>
           </Form.Group> */}
 
-
-          <Form.Group as={Row} className="my-3" controlId="classDownloadBtn">
-            <Form.Label column sm="2" className="text-end" />
-            <Col sm={8}>
-              <InputGroup>
-                <Button variant="primary" type="submit">
-                  <AiOutlineCloudDownload size={18} className="me-1" />
-                  {' '}Download table
-                </Button>
-              </InputGroup>
-            </Col>
-          </Form.Group>
-        </Form>
-      </Modal.Body>
-    </Modal>
+      <Box component="div" sx={{ display: 'block' }}>
+        <Button startIcon={<DownloadIcon />} variant="contained" type="submit" sx={{ mt: 2 }}>
+          Download table
+        </Button>
+      </Box>
+    </Box>
   )
 }
 
 
 
 export default function DownloadTableButton() {
-  const { tcState } = useXTableConfig()
-  const [showModal, setShowModal] = useState(false)
-
-  if (!tcState.grid.isLoaded) return null
-
   return (
-    <>
-      <Button
-        variant="outline-primary"
-        className="d-inline-flex align-items-center"
-        onClick={() => setShowModal(true)}
-        size="sm">
-        <AiOutlineCloudDownload size={19} className="me-1" />
-        <span>Download</span>
-      </Button>
-      <DownloadModal show={showModal} onHide={() => setShowModal(false)} />
-    </>
+    <AppbarButton
+      icon={<DownloadIcon />}
+      tooltip="Download table"
+      modal={<DownloadModal />}
+      modalWidth={580}
+      modalTitle="Download table"
+      modalIcon={<DownloadIcon />} />
   )
 }
