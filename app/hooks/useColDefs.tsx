@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import ClassCell from '@/components/table/ClassCell'
-import { ColDef } from '@ag-grid-community/core'
+import type { ColDef } from 'ag-grid-community'
 import imageCellFactory from '@/components/table/ImageCell'
 
 
