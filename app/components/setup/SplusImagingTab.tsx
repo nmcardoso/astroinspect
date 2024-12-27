@@ -65,6 +65,10 @@ function TrilogyParams() {
   return (
     <Stack spacing={2}>
       <Box>
+      <Typography component="div" variant="overline">
+        Color mapping
+      </Typography>
+
         <Stack direction="row" sx={{ alignItems: 'center' }} spacing={1}>
           <Typography width={110} textAlign="right" color="error" fontWeight="bold">Red channel</Typography>
           {splusBands.map(band => (
@@ -117,6 +121,9 @@ function TrilogyParams() {
         </Stack>
       </Box>
 
+      <Typography component="div" variant="overline">
+        Algorithm parameters
+      </Typography>
       <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
         <TextField
           label="Noise"
@@ -149,6 +156,10 @@ function LuptonParams() {
 
   return (
     <Stack spacing={2}>
+      <Typography component="div" variant="overline">
+        Color mapping
+      </Typography>
+
       <Grid container spacing={3}>
         <Grid size={4}>
           <Stack direction="row" sx={{ alignItems: 'center' }}>
@@ -222,6 +233,10 @@ function LuptonParams() {
           </Stack>
         </Grid>
       </Grid>
+
+      <Typography component="div" variant="overline">
+        Algorithm parameters
+      </Typography>
 
       <Stack direction="row" spacing={2}>
         <TextField
