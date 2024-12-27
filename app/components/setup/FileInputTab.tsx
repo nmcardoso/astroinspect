@@ -1,14 +1,11 @@
 import Help from '@/components/common/Help'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import { ContextActions } from '@/interfaces/contextActions'
-import { MouseEventHandler, SyntheticEvent } from 'react'
-import Form from 'react-bootstrap/Form'
+import { SyntheticEvent, useCallback, useState } from 'react'
 import { HiCheck, HiX } from 'react-icons/hi'
-import LocalFileInput from './LocalFileInput'
-import RemoteFileInput from './RemoteFileInput'
-import InputGroup from 'react-bootstrap/InputGroup'
+import LocalFileInput from '@/components/setup/LocalFileInput'
+import RemoteFileInput from '@/components/setup/RemoteFileInput'
 import FormControl from '@mui/material/FormControl'
-import FormLabel from '@mui/material/FormLabel'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
@@ -18,11 +15,15 @@ import Step from '@mui/material/Step'
 import StepLabel from '@mui/material/StepLabel'
 import StepContent from '@mui/material/StepContent'
 import Typography from '@mui/material/Typography'
-import TextField from '@mui/material/TextField'
-import Autocomplete from '@mui/material/Autocomplete'
 import Box from '@mui/material/Box'
-import Chip from '@mui/material/Chip'
-import AIAutocomplete from '../common/AIAutocomplete'
+import AIAutocomplete from '@/components/common/AIAutocomplete'
+import FileInputColumns from '@/components/setup/FileInputColumns'
+import { useRouter } from 'next/navigation'
+import { getTableReader } from '@/lib/io'
+import TableHelper from '@/lib/TableHelper'
+import { cloneDeep } from 'lodash'
+import LoadingButton from '@mui/lab/LoadingButton'
+import FlashOnIcon from '@mui/icons-material/FlashOn'
 
 
 const StateMessage = ({ state }: { state: any }) => {
@@ -91,7 +92,7 @@ function PositionColumns() {
           raIndex: selectedIndex,
           raCol: tcState.table.columns?.[newValue],
           selectedColumnsId: selectedCols,
-          state: selectedIndex >= 0 && tcState.table.decIndex != undefined && tcState.table.decIndex >= 0 ? 'success' : tcState.table.state
+          // state: selectedIndex >= 0 && tcState.table.decIndex != undefined && tcState.table.decIndex >= 0 ? 'success' : tcState.table.state
         }
       })
     }
@@ -196,71 +197,67 @@ const SourceSelector = () => {
 }
 
 
-function ColumnButton({ colName, colId }: { colName: string, colId: number }) {
-  const { tcState, tcDispatch } = useXTableConfig()
-  const variant = tcState.table.selectedColumnsId.includes(colId) ? 'filled' : 'outlined'
+export default function FileInputTab() {
+  const { tcState } = useXTableConfig()
+  const router = useRouter()
+  const { tcDispatch } = useXTableConfig()
 
-  const handleToggle: MouseEventHandler<HTMLDivElement> = () => {
-    let newColumns = []
-    if (tcState.table.selectedColumnsId.includes(colId)) {
-      const itemId = tcState.table.selectedColumnsId.indexOf(colId)
-      newColumns = [...tcState.table.selectedColumnsId]
-      newColumns.splice(itemId, 1)
-    } else {
-      newColumns = [...tcState.table.selectedColumnsId, colId]
-    }
-    // newColumns.sort((a, b) => a - b)
+  const step1Error = false
+  const step2Error = tcState.table.state == 'error'
+  const step3Error = tcState.table.state == 'positionNotFound' && (
+    tcState.table.raIndex == undefined || tcState.table.raIndex < 0 ||
+    tcState.table.decIndex == undefined || tcState.table.decIndex < 0
+  )
+  const step4Error = !(tcState.table.columns && tcState.table.columns.length > 0)
 
+  const handleTableLoad = useCallback(async () => {
     tcDispatch({
       type: ContextActions.USER_FILE_INPUT,
       payload: {
-        selectedColumnsId: newColumns
+        state: 'loading'
       }
     })
-  }
-  return (
-    <Chip
-      variant={variant}
-      color="primary"
-      sx={{ mr: 1, mt: 1 }}
-      onClick={handleToggle}
-      label={colName} />
-  )
-}
 
+    let data
+    if (tcState.table.type === 'local' && !!tcState.table.file) {
+      data = await getTableReader(tcState.table.file as File)?.read()
+    } else if (tcState.table.type === 'remote' && !!tcState.table.url) {
+      data = await getTableReader(tcState.table.url as string)?.read()
+    } else {
+      return
+    }
 
-function FileInputColumns() {
-  const { tcState } = useXTableConfig()
+    const { colDef, initVal } = TableHelper.getColDefs(tcState)
 
-  return (
-    <>
-      {
-        tcState.table.columns && tcState.table.columns.length > 0 && (
-          <Box sx={{ maxWidth: '100%', maxHeight: 250, overflow: 'auto' }}>
-            {
-              tcState.table.columns.map(((col, i) => (
-                <ColumnButton key={i} colId={i} colName={col} />
-              )))
-            }
-            {/* <Help title="Add Columns">
-              Select columns from input table to include.
-            </Help> */}
-          </Box>
-        )
+    data = data?.map((e, i, _) => ({ ...e, ...initVal, 'ai:id': String(i + 1) }))
+
+    tcDispatch({
+      type: ContextActions.GRID_UPDATE,
+      payload: {
+        data: data,
+        colDef: colDef,
+        isLoaded: true,
+        currColConfigs: cloneDeep(tcState.cols),
+        currTable: { ...tcState.table },
+        api: undefined,
       }
-    </>
-  )
-}
+    })
 
+    // tcDispatch({
+    //   type: ContextActions.USER_FILE_INPUT,
+    //   payload: {
+    //     state: 'success'
+    //   }
+    // })
 
-export default function FileInputTab() {
-  const { tcState } = useXTableConfig()
+    router.push('/table')
+  }, [tcState, router,])
 
   return (
     <>
       <Stepper activeStep={0} orientation="vertical" nonLinear={true}>
         <Step expanded={true} active={true}>
-          <StepLabel optional={undefined}>
+          <StepLabel optional={undefined} error={step1Error}>
             Source type
           </StepLabel>
           <StepContent TransitionProps={{ unmountOnExit: false }}>
@@ -269,7 +266,7 @@ export default function FileInputTab() {
         </Step>
 
         <Step expanded={true} active={true}>
-          <StepLabel optional={undefined}>
+          <StepLabel optional={undefined} error={step2Error}>
             Upload file
           </StepLabel>
           <StepContent TransitionProps={{ unmountOnExit: false }}>
@@ -282,8 +279,19 @@ export default function FileInputTab() {
           </StepContent>
         </Step>
 
-        <Step expanded={true} active={tcState.table.state != 'unloaded'}>
-          <StepLabel optional={undefined}>
+        <Step
+          expanded={!step2Error}
+          active={
+            !step2Error && tcState.table.state !== 'unloaded' &&
+            tcState.table.state !== 'loading'
+          }>
+          <StepLabel
+            optional={
+              step3Error && <Typography variant="caption" color="error">
+                Can not detect coordinates columns automatically,
+                please select the RA and DEC columns manually
+              </Typography>}
+            error={step3Error}>
             Configure coordinates
           </StepLabel>
           <StepContent TransitionProps={{ unmountOnExit: false }}>
@@ -293,15 +301,32 @@ export default function FileInputTab() {
           </StepContent>
         </Step>
 
-        <Step expanded={true} active={tcState.table.columns && tcState.table.columns.length > 0}>
-          <StepLabel optional={undefined}>
+        <Step
+          expanded={!step3Error}
+          active={!step2Error && !step3Error && tcState.table.state !== 'unloaded' &&
+            tcState.table.state !== 'loading'
+          }>
+          <StepLabel>
             Select columns
           </StepLabel>
           <StepContent TransitionProps={{ unmountOnExit: false }}>
-            <FileInputColumns />
+            {!step3Error && <FileInputColumns />}
           </StepContent>
         </Step>
       </Stepper>
+
+      <Box sx={{ display: 'flex', width: '100%', justifyContent: 'center', mt: 3 }}>
+        <LoadingButton
+          loading={tcState.table.state == 'loading'}
+          loadingPosition="start"
+          disabled={step1Error || step2Error || step3Error || tcState.table.state == 'unloaded'}
+          variant="contained"
+          size="large"
+          startIcon={<FlashOnIcon />}
+          onClick={handleTableLoad}>
+          Load table
+        </LoadingButton>
+      </Box>
     </>
   )
 }

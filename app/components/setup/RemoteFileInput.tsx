@@ -5,13 +5,12 @@ import Emitter from '@/lib/Emitter'
 import { GA_MEASUREMENT_ID } from '@/lib/gtag'
 import { getTableReader } from '@/lib/io'
 import { isUrlValid } from '@/lib/utils'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import { event } from 'nextjs-google-analytics'
-import { useCallback, useEffect } from 'react'
-import Col from 'react-bootstrap/Col'
-import Form from 'react-bootstrap/Form'
-import Row from 'react-bootstrap/Row'
+import { FormEventHandler, useCallback, useEffect } from 'react'
 
 
 
@@ -38,7 +37,7 @@ export default function RemoteFileInput() {
               type: ContextActions.GRID_UPDATE,
               payload: {
                 data: [],
-                colDefs: [],
+                colDef: [],
               }
             })
           }
@@ -117,19 +116,31 @@ export default function RemoteFileInput() {
     })
   }, [handleRemoteFile])
 
+
+  const handleSubmit: FormEventHandler<HTMLFormElement> = useCallback((e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    handleRemoteFile(e.target.url.value)
+  }, [handleRemoteFile])
+
   return (
-    <Stack direction="row" sx={{ alignItems: 'center' }}>
-      <TextField 
-      label="URL" 
-      variant="outlined" 
-      sx={{width: '55ch'}}
-      value={tcState.table.url || ''} 
-      onChange={(e) => handleRemoteFile(e.target.value)} />
-      <Help title="Remote Upload">
-        Loads a table available remotely in the internet.<br />
-        <u>Available formars</u>: <code>CSV</code>, <code>TSV</code>,
-        &nbsp;<code>DAT</code>, <code>PARQUET</code>.
-      </Help>
-    </Stack>
+    <Box component="form" onSubmit={handleSubmit}>
+      <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+        <TextField
+          label="URL"
+          name="url"
+          variant="outlined"
+          sx={{ width: '55ch' }}
+          defaultValue={tcState.table.url || ''} />
+        <Button type="submit" variant="contained">
+          Fetch
+        </Button>
+        <Help title="Remote Upload">
+          Loads a table available remotely in the internet.<br />
+          <u>Available formars</u>: <code>CSV</code>, <code>TSV</code>,
+          &nbsp;<code>DAT</code>, <code>PARQUET</code>.
+        </Help>
+      </Stack>
+    </Box>
   )
 }

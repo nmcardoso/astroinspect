@@ -8,14 +8,17 @@ import { SxProps } from "@mui/material"
 import { Theme } from "@mui/system"
 
 type PropsType = {
+  filename?: string
   width?: number
-  inputRef?: RefObject<HTMLInputElement> | null
+  inputRef?: RefObject<HTMLInputElement | null>
   onChange?: ChangeEventHandler<HTMLInputElement>
   sx?: SxProps<Theme>
 }
 
-export default function FileUpload({ width, inputRef, onChange, sx }: PropsType) {
-  const [filename, setFilename] = useState<string | undefined>(undefined)
+export default function FileInput({ filename, width, inputRef, onChange, sx }: PropsType) {
+  const [filenameInt, setFilenameInt] = useState<string | undefined>(undefined)
+
+  filename = filename || filenameInt
   
   const defaultRef = useRef<HTMLInputElement>(null)
   if (!inputRef) {
@@ -27,7 +30,7 @@ export default function FileUpload({ width, inputRef, onChange, sx }: PropsType)
   }
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-    setFilename(e.target.files?.[0].name)
+    setFilenameInt(e.target.files?.[0].name)
     onChange!(e)
   }
 
