@@ -243,12 +243,12 @@ export default function FileInputTab() {
       }
     })
 
-    tcDispatch({
-      type: ContextActions.USER_FILE_INPUT,
-      payload: {
-        state: 'success'
-      }
-    })
+    // tcDispatch({
+    //   type: ContextActions.USER_FILE_INPUT,
+    //   payload: {
+    //     state: 'success'
+    //   }
+    // })
 
     router.push('/table')
   }, [tcState, router,])

@@ -71,7 +71,7 @@ export default function LocalFileInput() {
               raCol: summary.raCol,
               decCol: summary.decCol,
               dataTypes: summary.dataTypes,
-              // state: summary.positionFound ? 'success' : 'positionNotFound',
+              state: summary.positionFound ? 'success' : 'positionNotFound',
               file,
               isSameFile,
             }
