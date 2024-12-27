@@ -14,6 +14,7 @@ const nextConfig = {
   },
   basePath,
   transpilePackages: ['@mui/material/styles/createTheme'],
+  optimizePackageImports: true,
 }
 
 module.exports = nextConfig
