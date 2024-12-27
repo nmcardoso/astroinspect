@@ -1,9 +1,16 @@
 import AsyncTextCell from '@/components/table/AsyncTextCell'
 import ClassCell from '@/components/table/ClassCell'
 import imageCellFactory from '@/components/table/ImageCell'
-import { ColDef } from '@ag-grid-community/core'
 import { queuedState } from './states'
+import { ColDef } from 'ag-grid-community'
+import stampCellFactory from '@/components/table/StampCell'
 
+
+const SDSS_SPEC_RATIO = 1134 / 810
+const SPLUS_PHOTOSPEC_RATIO = 840 / 659
+const LEGACY_STAMP_RATIO = 1
+const SPLUS_STAMP_RATIO = 1
+const IMAGE_PADDING = 14
 
 
 const idColDef: ColDef = {
@@ -20,33 +27,41 @@ const classificationColDef: ColDef = {
   cellRenderer: ClassCell
 }
 
-const splusImagingColDef: ColDef = {
+const splusImagingColDef = (state: IState): ColDef => ({
   field: 'img:splus',
-  flex: 1,
+  // flex: 1,
+  width: Math.ceil(state.ui.figureSize * SPLUS_STAMP_RATIO) + IMAGE_PADDING,
   headerName: 'splus',
-  cellRenderer: imageCellFactory({ zoomHeight: 650, modalSize: 'lg' }),
-}
+  cellRenderer: stampCellFactory({ zoomHeight: 650, modalSize: 'lg' }),
+  autoHeight: false,
+})
 
-const legacyImagingColDef: ColDef = {
+const legacyImagingColDef = (state: IState): ColDef => ({
   field: 'img:legacy',
-  flex: 1,
+  // flex: 1,
+  width: Math.ceil(state.ui.figureSize * LEGACY_STAMP_RATIO) + IMAGE_PADDING,
   headerName: 'legacy',
-  cellRenderer: imageCellFactory({ zoomHeight: 650, modalSize: 'lg' }),
-}
+  cellRenderer: stampCellFactory({ zoomHeight: 650, modalSize: 'lg' }),
+  autoHeight: false,
+})
 
-const sdssSpectraColDef: ColDef = {
+const sdssSpectraColDef = (state: IState): ColDef => ({
   field: 'img:sdss_spec',
-  flex: 1,
+  // flex: 1,
+  width: Math.ceil(state.ui.figureSize * SDSS_SPEC_RATIO) + IMAGE_PADDING,
   headerName: 'spec',
-  cellRenderer: imageCellFactory({ zoomHeight: 620, modalSize: 'lg' }),
-}
+  cellRenderer: imageCellFactory({ zoomHeight: 620, modalSize: 'lg', isPlotImage: true }),
+  autoHeight: false,
+})
 
-const splusPhotoSpectraColDef: ColDef = {
+const splusPhotoSpectraColDef = (state: IState): ColDef => ({
   field: 'img:splus_photospec',
-  flex: 1,
+  // flex: 1,
+  width: Math.ceil(state.ui.figureSize * SPLUS_PHOTOSPEC_RATIO) + IMAGE_PADDING,
   headerName: 'photo spec',
-  cellRenderer: imageCellFactory({ zoomHeight: 625, modalSize: 'lg' }),
-}
+  cellRenderer: imageCellFactory({ zoomHeight: 625, modalSize: 'lg', isPlotImage: true }),
+  autoHeight: false,
+})
 
 const customImagingColDefFactory = (id: number): ColDef => {
   return {
@@ -94,8 +109,8 @@ class TableHelper {
     // Classification
     if (tcState.cols.classification.enabled) {
       defs.push(classificationColDef)
-      initVal['ai:class'] = undefined
     }
+    initVal['ai:class'] = undefined
 
     // User Table
     if (!!tcState.table.selectedColumnsId) {
@@ -117,27 +132,27 @@ class TableHelper {
 
     // SDSS Spectra
     if (tcState.cols.sdssSpectra.enabled) {
-      defs.push(sdssSpectraColDef)
-      initVal['img:sdss_spec'] = queuedState
+      defs.push(sdssSpectraColDef(tcState))
     }
+    initVal['img:sdss_spec'] = queuedState
 
     // S-PLUS Photo Spectra
     if (tcState.cols.splusPhotoSpectra.enabled) {
-      defs.push(splusPhotoSpectraColDef)
-      initVal['img:splus_photospec'] = queuedState
+      defs.push(splusPhotoSpectraColDef(tcState))
     }
+    initVal['img:splus_photospec'] = queuedState
 
     // Legacy Stamp
     if (tcState.cols.legacyImaging.enabled) {
-      defs.push(legacyImagingColDef)
-      initVal['img:legacy'] = queuedState
+      defs.push(legacyImagingColDef(tcState))
     }
+    initVal['img:legacy'] = queuedState
 
     // S-PLUS Stamp
     if (tcState.cols.splusImaging.enabled) {
-      defs.push(splusImagingColDef)
-      initVal['img:splus'] = queuedState
+      defs.push(splusImagingColDef(tcState))
     }
+    initVal['img:splus'] = queuedState
 
     // Custom Imaging
     if (tcState.cols.customImaging.enabled) {
