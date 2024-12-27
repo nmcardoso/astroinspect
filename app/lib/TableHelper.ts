@@ -83,11 +83,11 @@ const sdssCatalogColDefFactory = (table: string, col: string): ColDef => {
 }
 
 const userTableColDefFactory = (
-  colName: string, 
-  editable: boolean = false, 
+  colName: string,
+  editable: boolean = false,
   dtype?: string
 ): ColDef => {
-  const cellDtype = dtype ? {cellDataType: dtype} : {}
+  const cellDtype = dtype ? { cellDataType: dtype } : {}
   return {
     field: `tab:${colName}`,
     flex: 1,
@@ -123,10 +123,12 @@ class TableHelper {
     }
 
     // SDSS Catalog
-    if (!!tcState.cols.sdssCatalog.selectedColumns) {
-      for (const col of tcState.cols.sdssCatalog.selectedColumns) {
-        defs.push(sdssCatalogColDefFactory(col.table, col.column))
-        initVal[`sdss:${col.table}_${col.column}`] = queuedState
+    if (tcState.cols.sdssCatalog.enabled) {
+      if (!!tcState.cols.sdssCatalog.selectedColumns) {
+        for (const col of tcState.cols.sdssCatalog.selectedColumns) {
+          defs.push(sdssCatalogColDefFactory(col.table, col.column))
+          initVal[`sdss:${col.table}_${col.column}`] = queuedState
+        }
       }
     }
 
