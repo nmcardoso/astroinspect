@@ -3,7 +3,7 @@ import localforage from 'localforage'
 import { ContextActions } from '@/interfaces/contextActions'
 
 
-export const SCHEMA_VERSION: number = 22
+export const SCHEMA_VERSION: number = 23
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
@@ -27,7 +27,7 @@ const getInitialState = (): IState => ({
     api: undefined,
     isLoaded: false,
     currColConfigs: undefined,
-    currTale: undefined,
+    currTable: undefined,
     editable: false,
   },
   currentView: 'settings',
@@ -42,6 +42,7 @@ const getInitialState = (): IState => ({
       keyMap: {}
     },
     sdssCatalog: {
+      enabled: false,
       selectedColumns: []
     },
     splusImaging: {
@@ -113,7 +114,12 @@ const getInitialState = (): IState => ({
     filterIndex: [],
     filterView: undefined,
     inspectSelected: false,
-  }
+  },
+  ui: {
+    figureSize: 120,
+    invertColorDarkMode: true,
+    showReticle: true,
+  },
 })
 const initialState = getInitialState()
 
@@ -235,6 +241,10 @@ const plotSetup = (state: IState, action: IAction<IPlots>) => {
   return setAttributes(state, action, (s) => s.plots)
 }
 
+const uiSetup = (state: IState, action: IAction<IUserInterface>) => {
+  return setAttributes(state, action, (s) => s.ui)
+}
+
 const changeCurrentView = (state: IState, action: IAction<CurrentViewType>) => {
   const s = { ...state }
   s.currentView = action.payload
@@ -264,6 +274,7 @@ const reducerMap = {
   [ContextActions.HISTOGRAM_PLOT_SETUP]: histogramPlotSetup,
   [ContextActions.PLOT_VIEW_CHANGE]: changePlotCurrentView,
   [ContextActions.PLOT_SETUP]: plotSetup,
+  [ContextActions.UI_SETUP]: uiSetup,
 }
 
 
