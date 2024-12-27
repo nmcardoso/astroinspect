@@ -2,8 +2,6 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   height: 100vh !important;
 }
 
@@ -11,76 +9,22 @@ body {
   height: 100vh !important;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-* {
-  box-sizing: border-box;
+#aladin-lite-div .aladin-popup-container {
+  width: 300px;
 }
 
 .cursor-pointer {
   cursor: pointer;
 }
 
-
-.img-overlay-wrap {
-  position: relative;
-  display: inline-block;
-  transition: transform 150ms ease-in-out;
+.d-none {
+  display: none !important;
 }
 
-.img-overlay-wrap img {
-  display: block;
-  max-width: 100%;
-  height: auto;
+.invert-color {
+  filter: invert(83%);
 }
 
-.img-overlay-wrap svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.circle-group:hover {
-  cursor: pointer;
-}
-
-.circle-group circle {
-  stroke: white;
-}
-
-.circle-group:hover circle {
-  stroke: #AFEEEE;
-}
-
-.circle-group text {
-  filter: url(#bg-text);
-  font: 13px px Arial, sans-serif;
-  font-weight: bold;
-}
-
-.circle-group:hover text {
-  filter: url(#bg-text-hover);
-}
-
-.modal-dialog {
-  position: unset;
-}
-
-.modal-content {
-  position: unset;
-}
-
-.modal-body {
-  position: unset;
-}
-
-.alert {
-  position: unset;
-}
-
-#aladin-lite-div .aladin-popup-container {
-  width: 300px;
+.invert-color-dark {
+  filter: invert(95%);
 }
