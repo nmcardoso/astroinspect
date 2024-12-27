@@ -1,16 +1,15 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable @next/next/no-img-element */
-import { loadErrorState, loadingState, queuedState } from '@/lib/states'
-import { CustomCellRendererProps } from '@ag-grid-community/react'
 import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
-import { useMemo, useState } from 'react'
-import DownloadIcon from '@mui/icons-material/Download'
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline'
-import AccessTimeIcon from '@mui/icons-material/AccessTime'
+import { useState } from 'react'
+import { SxProps, useTheme } from '@mui/material'
+import { useXTableConfig } from '@/contexts/XTableConfigContext'
+import { CustomCellRendererProps } from 'ag-grid-react'
+import ImagePlaceholderSwitcher from './ImagePlaceholderSwitcher'
 
 
-const style = {
+const style: SxProps = {
   position: 'absolute',
   top: '50%',
   left: '50%',
@@ -19,40 +18,24 @@ const style = {
   bgcolor: 'background.paper',
   boxShadow: 24,
   p: 0,
+  borderRadius: '4px',
 }
 
 
-const ImageModal = ({ show, onHide, src, size, zoomWidth, zoomHeight }: any) => {
+const ImageModal = ({ show, onHide, src, size, zoomWidth, zoomHeight, invertColor = false }: any) => {
   return (
     <Modal open={show} onClose={onHide}>
       <Box sx={style}>
-        <img src={src} width={zoomWidth} height={zoomHeight} alt="" />
+        <img
+          src={src}
+          width={zoomWidth}
+          height={zoomHeight}
+          className={invertColor ? 'invert-color-dark' : ''}
+          alt="" />
       </Box>
     </Modal>
   )
 }
-
-
-const QueuedPlaceholder = () =>
-  <div
-    className="border d-flex align-items-center justify-content-center"
-    style={{ width: 120, height: 120, backgroundColor: '#f5f5f5' }}>
-    <span><AccessTimeIcon /> Queued</span>
-  </div>
-
-const LoadingPlaceholder = () =>
-  <div
-    className="border d-flex align-items-center justify-content-center"
-    style={{ width: 120, height: 120, backgroundColor: '#f5f5f5' }}>
-    <span><DownloadIcon /> Downloading</span>
-  </div>
-
-const ErrorPlaceholder = () =>
-  <div
-    className="border d-flex align-items-center justify-content-center"
-    style={{ width: 120, height: 120, backgroundColor: '#f5f5f5' }}>
-    <span><ErrorOutlineIcon /> Server Error</span>
-  </div>
 
 
 function ImageCell({
@@ -61,46 +44,40 @@ function ImageCell({
   zoomHeight,
   modalSize = "",
   lazy = false,
+  isPlotImage = false,
 }: {
   src: string | symbol,
   zoomWidth?: number | string,
   zoomHeight?: number | string,
   modalSize?: string,
   lazy?: boolean,
+  isPlotImage?: boolean,
 }) {
   const [showModal, setShowModal] = useState(false)
-
-  const ImgComp = useMemo(() => {
-    if (src === queuedState) {
-      return QueuedPlaceholder
-    } else if (src === loadingState) {
-      return LoadingPlaceholder
-    } else if (src === loadErrorState) {
-      return ErrorPlaceholder
-    } else {
-      const Figure = () => (
-        <img
-          src={src as string}
-          alt=""
-          loading={lazy ? 'lazy' : 'eager'}
-          height={120}
-          style={{ cursor: 'zoom-in' }}
-          onClick={() => setShowModal(true)} />
-      )
-      return Figure
-    }
-  }, [src, lazy])
+  const { tcState } = useXTableConfig()
+  const theme = useTheme()
+  const invert = Boolean(isPlotImage) && tcState.ui.invertColorDarkMode && theme.palette.mode == 'dark'
 
   return (
     <>
-      <ImgComp />
+      <ImagePlaceholderSwitcher src={src}>
+        <img
+          src={src as string}
+          alt=""
+          className={invert ? 'invert-color' : ''}
+          loading={lazy ? 'lazy' : 'eager'}
+          height={tcState.ui.figureSize}
+          style={{ cursor: 'zoom-in' }}
+          onClick={() => setShowModal(true)} />
+      </ImagePlaceholderSwitcher>
       <ImageModal
         show={showModal}
         onHide={() => setShowModal(false)}
         src={src}
         size={modalSize}
         zoomWidth={zoomWidth}
-        zoomHeight={zoomHeight} />
+        zoomHeight={zoomHeight}
+        invertColor={invert} />
     </>
   )
 }
@@ -111,11 +88,13 @@ export default function imageCellFactory({
   zoomHeight,
   modalSize = "",
   lazy = false,
+  isPlotImage = false,
 }: {
   zoomWidth?: number | string,
   zoomHeight?: number | string,
   modalSize?: string,
   lazy?: boolean,
+  isPlotImage?: boolean,
 }) {
   function ImageCellMemo(params: CustomCellRendererProps) {
     return (
@@ -124,7 +103,8 @@ export default function imageCellFactory({
         zoomWidth={zoomWidth}
         zoomHeight={zoomHeight}
         modalSize={modalSize}
-        lazy={lazy} />
+        lazy={lazy}
+        isPlotImage={isPlotImage} />
     )
   }
 
