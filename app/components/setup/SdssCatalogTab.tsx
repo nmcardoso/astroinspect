@@ -2,6 +2,9 @@ import SdssService from '@/services/sdss'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import { ContextActions } from '@/interfaces/contextActions'
 import CatalogDisplay from '../common/CatalogDisplay'
+import Box from '@mui/material/Box'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Checkbox from '@mui/material/Checkbox'
 
 const service = new SdssService()
 
@@ -38,13 +41,24 @@ export default function SdssCatalogTab() {
   }
 
   return (
-    <>
+    <Box>
+      <FormControlLabel
+        label="Show SDSS catalog columns"
+        control={
+          <Checkbox
+            checked={tcState.cols.sdssCatalog.enabled}
+            onChange={(e) => tcDispatch({
+              type: ContextActions.SDSS_CATALOG,
+              payload: { enabled: e.target.checked }
+            })} />
+        } />
+
       <CatalogDisplay
         onAddColumn={handleAddColumn}
         onRemoveColumn={handleRemoveColumn}
         selectedColumns={selectedColumns}
-        service={service}
-      />
-    </>
+        service={service} />
+    </Box>
+
   )
 }
