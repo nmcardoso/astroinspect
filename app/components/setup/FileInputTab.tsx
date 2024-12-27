@@ -124,7 +124,7 @@ function PositionColumns() {
           decIndex: selectedIndex,
           decCol: tcState.table.columns?.[selectedIndex],
           selectedColumnsId: selectedCols,
-          state: selectedIndex >= 0 && tcState.table.raIndex != undefined && tcState.table.raIndex >= 0 ? 'success' : tcState.table.state
+          // state: selectedIndex >= 0 && tcState.table.raIndex != undefined && tcState.table.raIndex >= 0 ? 'success' : tcState.table.state
         }
       })
     }

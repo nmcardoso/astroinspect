@@ -59,7 +59,7 @@ export default function RemoteFileInput() {
               raCol: summary.raCol,
               decCol: summary.decCol,
               dataTypes: summary.dataTypes,
-              state: summary.positionFound ? 'success' : 'positionNotFound',
+              // state: summary.positionFound ? 'success' : 'positionNotFound',
               url,
               isSameFile,
             }
