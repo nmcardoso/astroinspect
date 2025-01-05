@@ -111,7 +111,7 @@ export default function AIGrid() {
   const notification = useNotifications()
 
   const onGridReady = useCallback((event: GridReadyEvent) => {
-    if (!tcState.grid.api) {
+    if (!tcState.grid.api || tcState.grid?.api?.isDestroyed) {
       tcDispatch({
         type: ContextActions.GRID_UPDATE,
         payload: {
@@ -314,7 +314,7 @@ export default function AIGrid() {
     tcDispatch({
       type: ContextActions.GRID_UPDATE,
       payload: {
-        data: tcState.grid.data?.map((d: any) => ({ ...d, ...initVal })),
+        // data: tcState.grid.data?.map((d: any) => ({ ...d, ...initVal })),
         // currColConfigs: cloneDeep(tcState.cols),
         // currTable: { ...tcState.table },
         colDef: colDef,
