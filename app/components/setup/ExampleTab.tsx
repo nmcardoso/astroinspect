@@ -62,6 +62,15 @@ const LoadExemple = ({ name, url }: { name: string, url: string }) => {
       }
     })
 
+    tcDispatch({
+      type: ContextActions.PLOT_SETUP,
+      payload: {
+        inspectSelected: false,
+        filterIndex: [],
+        filterView: undefined,
+      }
+    })
+
     // tcDispatch({
     //   type: ContextActions.USER_FILE_INPUT,
     //   payload: {
