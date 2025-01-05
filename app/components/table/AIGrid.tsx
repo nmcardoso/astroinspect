@@ -12,6 +12,7 @@ import {
   AllCommunityModule, ModuleRegistry, CellKeyDownEvent, GetRowIdParams, 
   GridOptions, GridReadyEvent, IRowNode, themeQuartz, colorSchemeDark,
   colorSchemeLight,
+  GridPreDestroyedEvent,
 } from 'ag-grid-community'
 import { AgGridReact } from 'ag-grid-react'
 // import 'ag-grid-community/styles/ag-grid.css'
@@ -20,6 +21,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTheme } from '@mui/material'
 import copy from 'copy-to-clipboard'
 import { useNotifications } from '@/contexts/NotificationsContext'
+import { defaults } from 'lodash'
 
 ModuleRegistry.registerModules([AllCommunityModule])
 // provideGlobalGridOptions({ theme: "legacy" })
@@ -321,12 +323,33 @@ export default function AIGrid() {
       }
     })
   }, [
-    tcState.cols.classification.enabled, tcState.table.selectedColumnsId,
-    tcState.cols.customImaging.enabled, tcState.cols.legacyImaging.enabled,
-    tcState.cols.sdssCatalog.enabled, tcState.cols.sdssSpectra.enabled,
-    tcState.cols.splusImaging.enabled, tcState.cols.splusPhotoSpectra.enabled,
-    tcState.grid.editable, tcState.ui.figureSize
+    tcState.cols.classification.enabled, tcState.cols.splusPhotoSpectra.enabled,
+    tcState.cols.legacyImaging.enabled, tcState.cols.splusImaging.enabled, 
+    tcState.table.selectedColumnsId, tcState.grid.editable, tcState.ui.figureSize,
+    tcState.cols.sdssSpectra.enabled,
   ])
+
+  useEffect(() => {
+    const { colDef, initVal } = TableHelper.getColDefs(tcState)
+
+    if (tcState.grid?.data) {
+      tcState.grid.data = tcState.grid.data?.map((d: any) => defaults(d, initVal))
+    }
+
+    tcDispatch({
+      type: ContextActions.GRID_UPDATE,
+      payload: {
+        colDef: colDef,
+      }
+    })
+  }, [
+    tcState.cols.sdssCatalog.enabled, tcState.cols.sdssCatalog.selectedColumns,
+    tcState.cols.customImaging.enabled,
+  ])
+
+  const onGridPreDestroyed = useCallback((event: GridPreDestroyedEvent) => {
+    console.log(tcState.grid.data)
+  }, [tcState.grid.data])
 
   const gridTheme = useMemo(() => {
     if (theme.palette.mode == 'light') {
@@ -355,6 +378,7 @@ export default function AIGrid() {
         onSortChanged={onChange}
         onFilterChanged={onChange}
         onCellKeyDown={onCellKeyDown}
+        onGridPreDestroyed={onGridPreDestroyed}
         singleClickEdit={true}
         isExternalFilterPresent={() => tcState.plots.inspectSelected}
         doesExternalFilterPass={plotFilter}
