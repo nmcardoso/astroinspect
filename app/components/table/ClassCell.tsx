@@ -10,16 +10,13 @@ export default function ClassCell(params: GroupCellRendererParams) {
   const { tcState } = useXTableConfig()
 
   return (
-    <FormControl variant="standard" fullWidth>
-      <InputLabel id={`class-select-label-${params.data['ai:id']}`}>class</InputLabel>
+    <FormControl variant="outlined" size="small" fullWidth>
       <Select
-        labelId={`class-select-label-${params.data['ai:id']}`}
         id={`class-select-${params.data['ai:id']}`}
         value={params.value || ''}
-        label="class"
+        sx={{my: 1}}
         onChange={e => {
           params.api.getRowNode(params.data['ai:id'])?.setDataValue('ai:class', e.target.value)
-          // console.log(params.api.getRowNode(params.data._id).data)
         }}>
         <MenuItem value="">-</MenuItem>
         {tcState.cols.classification.classNames.map(cls => (
