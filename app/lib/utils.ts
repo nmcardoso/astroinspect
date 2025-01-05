@@ -52,7 +52,7 @@ export function getBaseURL() {
 
 
 export function findIndex(query: string, items: string[]) {
-  const pattern = `^${query}_?J?\d*?$`
+  const pattern = `^${query}_?J?\d*`
   const regex = RegExp(pattern, 'gi')
   return items.findIndex((item, i) => {
     return regex.exec(item) !== null
