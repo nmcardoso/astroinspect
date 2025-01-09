@@ -415,7 +415,7 @@ def plot():
     save_start_time = datetime.now()
 
   buff = BytesIO()
-  fig.savefig(buff, format='jpg', bbox_inches='tight', pad_inches=0.05)
+  fig.savefig(buff, format='jpg', bbox_inches='tight', pad_inches=0.1)
   buff.seek(0)
 
   if os.getenv('ENV') != 'PRODUCTION':
