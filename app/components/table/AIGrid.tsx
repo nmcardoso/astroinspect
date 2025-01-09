@@ -212,6 +212,7 @@ export default function AIGrid() {
               {
                 resourceFetch: new CustomImageFromFolder(
                   col.prepend, col.append, e[riCol],
+                  tcState.cols.customImaging.columns?.[idx]?.folderStructure,
                   tcState.cols.customImaging.columns?.[idx]?.folder
                 ),
                 colId: `img:custom_${idx}`,

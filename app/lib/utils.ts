@@ -106,15 +106,25 @@ export function isUrlValid(url: string) {
 }
 
 
-export function findFileList(query: string, filelist?: FileList) {
-  if (!!filelist) {
-    for (let i = 0; i < filelist.length; i++) {
-      const file = filelist[i]
-      if (file.name === query) {
-        return file
-      }
+export function findFileList(query: string, folderStructure?: string[], filelist?: FileList | null) {
+  if (!!filelist && !!folderStructure) {
+    const index = folderStructure.findIndex((path) => path === query)
+    if (index !== -1) {
+      return filelist[index]
     }
   }
   
   return undefined
+}
+
+
+
+export function getFileListStructure(filelist?: FileList | null) {
+  const files = []
+  if (!!filelist) {
+    for (let i = 0; i < filelist.length; i++) {
+      files.push(filelist[i].webkitRelativePath.split(/\/(.*)/)[1])
+    }
+  }
+  return files
 }

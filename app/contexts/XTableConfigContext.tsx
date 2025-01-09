@@ -3,7 +3,7 @@ import localforage from 'localforage'
 import { ContextActions } from '@/interfaces/contextActions'
 
 
-export const SCHEMA_VERSION: number = 24
+export const SCHEMA_VERSION: number = 25
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
@@ -83,6 +83,7 @@ const getInitialState = (): IState => ({
         {
           type: 'folder',
           folder: undefined,
+          folderStructure: undefined,
           prepend: '',
           append: '',
           columnIndex: -1,

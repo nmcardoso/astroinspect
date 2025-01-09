@@ -61,17 +61,19 @@ export class CustomImageFromFolder implements IResourceFetch {
   private append
   private ri
   private filelist
+  private folderStructure
 
-  constructor(preprend: string, append: string, ri: string, filelist: FileList) {
+  constructor(preprend: string, append: string, ri: string, folderStructure?: string[], filelist?: FileList | null) {
     this.prepend = preprend
     this.append = append
     this.ri = ri
     this.filelist = filelist
+    this.folderStructure = folderStructure
   }
 
   async fetch() {
     const filename = `${this.prepend || ''}${this.ri || ''}${this.append || ''}`
-    const file = findFileList(filename, this.filelist)
+    const file = findFileList(filename, this.folderStructure, this.filelist)
     // console.log(filename, file)
     if (!!file) {
       return { data: file }

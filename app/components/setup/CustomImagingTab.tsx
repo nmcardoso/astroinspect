@@ -27,6 +27,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import DriveFolderUploadIcon from '@mui/icons-material/DriveFolderUpload'
+import { getFileListStructure } from '@/lib/utils'
 
 
 const invalidateLoadedCells = (tcState: IState, index: number) => {
@@ -215,6 +216,7 @@ const CustomImagingFolderSetup = ({ index }: { index: number }) => {
               </Typography>
             )
           }
+
           <input
             hidden
             ref={inputRef}
@@ -226,14 +228,19 @@ const CustomImagingFolderSetup = ({ index }: { index: number }) => {
             onChange={(e) => {
               tcDispatch({
                 type: ContextActions.CUSTOM_IMAGE_UPDATE,
-                payload: { index, folder: e.target.files }
+                payload: { 
+                  index, 
+                  folder: e.target.files, 
+                  folderStructure: getFileListStructure(e.target.files) 
+                }
               })
               invalidateLoadedCells(tcState, index)
             }} />
-          <Help title="Images folder">
-            Select a folder from your computer that contains the images to be loaded by AstroInspect
-          </Help>
 
+          <Help title="Images folder">
+            Select a folder from your computer that contains the images to be 
+            loaded by AstroInspect
+          </Help>
 
 
           <TextField
@@ -249,10 +256,12 @@ const CustomImagingFolderSetup = ({ index }: { index: number }) => {
               })
               invalidateLoadedCells(tcState, index)
             }} />
+
           <Help title="Filename prefix">
             (Optional) Choose the filename prefix. The value typed here will be inserted at 
             the beggining of the expression that generates the filename for each row
           </Help>
+
 
           <Box sx={{ ml: 2 }}>
             {
@@ -275,7 +284,7 @@ const CustomImagingFolderSetup = ({ index }: { index: number }) => {
             getOptionKey={e => e}
             getOptionLabel={e => e}
             options={tcState.table.columns}
-            value={tcState.table.columns?.[custom?.columnIndex] || undefined}
+            value={tcState.table.columns?.[custom?.columnIndex] || ''}
             renderInput={(params) => <TextField {...params} label="Column" />}
             onChange={(e, newValue) => {
               tcDispatch({
@@ -286,6 +295,7 @@ const CustomImagingFolderSetup = ({ index }: { index: number }) => {
             }
             }
           />
+
           <Help title="Resource Identification Column">
             The <b>resource identification column</b> (RI column) is the {" "}
             only variable part of the filename. This field must specify the {" "}
@@ -309,8 +319,10 @@ const CustomImagingFolderSetup = ({ index }: { index: number }) => {
                 type: ContextActions.CUSTOM_IMAGE_UPDATE,
                 payload: { index, append: e.target.value }
               })
+              console.log(custom.folder)
               invalidateLoadedCells(tcState, index)
             }} />
+
           <Help title="Filename suffix">
             (Optional) Choose the filename suffix. The value typed here will be inserted at 
             the end of the expression that generates the filename for each row.

@@ -87,7 +87,8 @@ interface ISplusPhotoSpectra extends IterableInterface {
 
 interface ICustomImagingColumn extends IterableInterface {
   type: 'folder' | 'url',
-  folder: any,
+  folder?: FileList | null,
+  folderStructure?: string[],
   prepend: string,
   append: string,
   columnIndex: number,
