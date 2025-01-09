@@ -3,7 +3,7 @@
 import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
 import { useState } from 'react'
-import { SxProps, useTheme } from '@mui/material'
+import { Dialog, DialogContent, SxProps, useTheme } from '@mui/material'
 import { useXTableConfig } from '@/contexts/XTableConfigContext'
 import { CustomCellRendererProps } from 'ag-grid-react'
 import ImagePlaceholderSwitcher from './ImagePlaceholderSwitcher'
@@ -24,16 +24,13 @@ const style: SxProps = {
 
 const ImageModal = ({ show, onHide, src, size, zoomWidth, zoomHeight, invertColor = false }: any) => {
   return (
-    <Modal open={show} onClose={onHide}>
-      <Box sx={style}>
-        <img
-          src={src}
-          width={zoomWidth}
-          height={zoomHeight}
-          className={invertColor ? 'invert-color-dark' : ''}
-          alt="" />
-      </Box>
-    </Modal>
+    <Dialog open={show} onClose={onHide} maxWidth="xl" sx={{}}>
+      <img
+        style={{ width: zoomWidth, height: zoomHeight, maxWidth: '100%', objectFit: 'cover' }}
+        src={src}
+        className={invertColor ? 'invert-color-dark' : ''}
+        alt="" />
+    </Dialog>
   )
 }
 

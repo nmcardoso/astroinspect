@@ -15,10 +15,27 @@ import InputLabel from '@mui/material/InputLabel'
 import Grid from '@mui/material/Grid2'
 import Divider from '@mui/material/Divider'
 import Box from '@mui/material/Box'
+import Autocomplete from '@mui/material/Autocomplete'
+import { useCallback } from 'react'
+import { queuedState } from '@/lib/states'
+import { Typography } from '@mui/material'
 
 const CustomImagingColumnGroup = ({ index }: { index: number }) => {
   const { tcState, tcDispatch } = useXTableConfig()
   const custom = tcState.cols.customImaging.columns[index]
+  console.log(tcState.cols.customImaging.columns)
+
+  const invalidateCells = useCallback(() => {
+    if (tcState.grid.api && !tcState.grid.api.isDestroyed()) {
+      const itemsToUpdate: any[] = []
+      tcState.grid.api!.forEachNode((rowNode: any, i: any) => {
+        const data = rowNode.data
+        data[`img:custom_${index}`] = queuedState
+        itemsToUpdate.push(data);
+      })
+      tcState.grid.api!.applyTransaction({ update: itemsToUpdate })!
+    }
+  }, [index, tcState.grid.api])
 
   return (
     <Grid container spacing={2}>
@@ -29,10 +46,13 @@ const CustomImagingColumnGroup = ({ index }: { index: number }) => {
             label="Base URL"
             id={`custom-base-url-${index}`}
             value={custom.url}
-            onChange={e => tcDispatch({
-              type: ContextActions.CUSTOM_IMAGE_UPDATE,
-              payload: { index, url: e.target.value }
-            })} />
+            onChange={e => {
+              tcDispatch({
+                type: ContextActions.CUSTOM_IMAGE_UPDATE,
+                payload: { index, url: e.target.value }
+              })
+              invalidateCells()
+            }} />
           <Help title="Base Resource URL">
             The <b>base resource url</b> is the first (static) part of the URL.
             This value must starts with <code>http://</code>{" "}
@@ -50,10 +70,13 @@ const CustomImagingColumnGroup = ({ index }: { index: number }) => {
             id={`custom-suffix-${index}`}
             sx={{ width: '28ch' }}
             value={custom.fileExtension}
-            onChange={e => tcDispatch({
-              type: ContextActions.CUSTOM_IMAGE_UPDATE,
-              payload: { index, fileExtension: e.target.value }
-            })} />
+            onChange={e => {
+              tcDispatch({
+                type: ContextActions.CUSTOM_IMAGE_UPDATE,
+                payload: { index, fileExtension: e.target.value }
+              })
+              invalidateCells()
+            }} />
           <Help title="URL Suffix">
             The <b>url suffix</b> is the last (static) part of the URL and {" "}
             is used to specify the file extension, for example.<br />
@@ -65,25 +88,23 @@ const CustomImagingColumnGroup = ({ index }: { index: number }) => {
 
       <Grid size={8}>
         <Stack direction="row" sx={{ alignItems: 'center' }}>
-          <FormControl fullWidth>
-            <InputLabel id={`custom-RI-${index}-label`}>RI column</InputLabel>
-            <Select
-              labelId={`custom-RI-${index}-label`}
-              id={`custom-RI-${index}`}
-              value={tcState.cols.customImaging.columns?.[index]?.columnIndex || -1}
-              label="RI column"
-              onChange={e => tcDispatch({
-                type: ContextActions.SPLUS_LUPTON_CONFIG,
-                payload: { R: e.target.value }
-              })}>
-              <MenuItem value={-1}>Select a column</MenuItem>
-              {tcState.table.columns.map((colName, idx) => (
-                <MenuItem value={idx} key={`custom-RI-${idx}-${index}`}>
-                  {colName}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <Autocomplete
+            disablePortal={false}
+            sx={{ flexGrow: 1 }}
+            getOptionKey={e => e}
+            getOptionLabel={e => e}
+            options={tcState.table.columns}
+            value={tcState.table.columns?.[tcState.cols.customImaging.columns?.[index]?.columnIndex] || undefined}
+            renderInput={(params) => <TextField {...params} label="Column" />}
+            onChange={(e, newValue) => {
+              tcDispatch({
+                type: ContextActions.CUSTOM_IMAGE_UPDATE,
+                payload: { index, columnIndex: tcState.table.columns.findIndex(v => v == newValue) }
+              })
+              invalidateCells()
+            }
+            }
+          />
           <Help title="Resource Identification Column">
             The <b>resource identification column</b> (RI column) is the {" "}
             only variable part of the url. This field must specify the {" "}
@@ -98,10 +119,13 @@ const CustomImagingColumnGroup = ({ index }: { index: number }) => {
           color="error"
           variant="outlined"
           startIcon={<RemoveIcon />}
-          onClick={() => tcDispatch({
-            type: ContextActions.CUSTOM_IMAGE_REMOVE,
-            payload: { index, prevColumns: tcState.cols.customImaging.columns }
-          })}>
+          onClick={() => {
+            tcDispatch({
+              type: ContextActions.CUSTOM_IMAGE_REMOVE,
+              payload: { index, prevColumns: tcState.cols.customImaging.columns }
+            })
+            invalidateCells()
+          }}>
           Remove column
         </Button>
       </Grid>
@@ -114,7 +138,7 @@ export default function CustomImagingTab() {
   const custom = tcState.cols.customImaging
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={1}>
       <FormControlLabel
         label="Show custom images columns"
         control={
@@ -127,10 +151,13 @@ export default function CustomImagingTab() {
         } />
 
       {custom.columns.map((_, i) => (
-        <Stack spacing={3} key={i}>
-          <Box><CustomImagingColumnGroup index={i} /></Box>
-          <Divider variant="middle" flexItem sx={{ bgcolor: 'secondary' }} />
-        </Stack>
+        <Box key={i}>
+          <Box sx={{ pb: 2 }}>
+            <Typography variant="overline">Custom column {i + 1}</Typography>
+            <CustomImagingColumnGroup index={i} />
+          </Box>
+          <Divider flexItem sx={{ bgcolor: 'secondary' }} />
+        </Box>
       ))}
 
       <Box>

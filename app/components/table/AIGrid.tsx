@@ -344,7 +344,7 @@ export default function AIGrid() {
     })
   }, [
     tcState.cols.sdssCatalog.enabled, tcState.cols.sdssCatalog.selectedColumns,
-    tcState.cols.customImaging.enabled,
+    tcState.cols.customImaging.enabled, tcState.cols.customImaging.columns,
   ])
 
   const onGridPreDestroyed = useCallback((event: GridPreDestroyedEvent) => {
