@@ -66,7 +66,7 @@ const splusPhotoSpectraColDef = (state: IState): ColDef => ({
 const customImagingColDefFactory = (id: number): ColDef => {
   return {
     field: `img:custom_${id}`,
-    flex: 1,
+    // flex: 1,
     headerName: `custom ${id + 1}`,
     cellRenderer: imageCellFactory({ zoomHeight: 600, modalSize: 'lg', lazy: true }),
   }
