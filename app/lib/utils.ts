@@ -104,3 +104,17 @@ export function isUrlValid(url: string) {
   )
   return urlRE.test(url)
 }
+
+
+export function findFileList(query: string, filelist?: FileList) {
+  if (!!filelist) {
+    for (let i = 0; i < filelist.length; i++) {
+      const file = filelist[i]
+      if (file.name === query) {
+        return file
+      }
+    }
+  }
+  
+  return undefined
+}

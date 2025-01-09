@@ -159,8 +159,10 @@ class TableHelper {
     // Custom Imaging
     if (tcState.cols.customImaging.enabled) {
       tcState.cols.customImaging.columns.forEach((col, idx, _) => {
-        defs.push(customImagingColDefFactory(idx))
-        initVal[`img:custom_${idx}`] = queuedState
+        if (col.visible) {
+          defs.push(customImagingColDefFactory(idx))
+          initVal[`img:custom_${idx}`] = queuedState
+        }
       })
     }
 

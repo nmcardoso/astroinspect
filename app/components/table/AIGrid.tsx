@@ -4,12 +4,12 @@ import { ContextActions } from '@/interfaces/contextActions'
 import { semaphore } from '@/lib/Semaphore'
 import { loadErrorState, loadingState, queuedState } from '@/lib/states'
 import TableHelper from '@/lib/TableHelper'
-import { CustomImage } from '@/services/custom'
+import { CustomImageFromFolder, CustomImageFromUrl } from '@/services/custom'
 import { LegacyStamp } from '@/services/legacy'
 import { SdssCatalog, SdssSpectra } from '@/services/sdss'
 import { SplusPhotoSpectra, SplusStamp } from '@/services/splus'
 import {
-  AllCommunityModule, ModuleRegistry, CellKeyDownEvent, GetRowIdParams, 
+  AllCommunityModule, ModuleRegistry, CellKeyDownEvent, GetRowIdParams,
   GridOptions, GridReadyEvent, IRowNode, themeQuartz, colorSchemeDark,
   colorSchemeLight,
   GridPreDestroyedEvent,
@@ -30,6 +30,7 @@ semaphore.create('img:legacy', 6)
 semaphore.create('img:splus', 5)
 semaphore.create('img:splus_photospec', 5)
 semaphore.create('img:sdss_spec', 4)
+semaphore.create('img:custom', 15)
 semaphore.create('sdss_cat', 4)
 
 const FETCH_BUFFER = process.env.NODE_ENV === 'development' ? 0 : 400
@@ -62,33 +63,6 @@ const downloadResource = async ({
       } else {
         rowNode?.setDataValue(colId, resp.data)
       }
-    } catch {
-      rowNode?.setDataValue(colId, loadErrorState)
-    }
-  }
-}
-
-
-const customImageResource = ({
-  url,
-  colId,
-  rowId,
-  grid,
-}: {
-  url: string,
-  colId: string,
-  rowId: string,
-  grid: AgGridReact,
-}) => {
-  const rowNode = grid!.api.getRowNode(rowId)
-  if (
-    (rowNode?.data[colId] === queuedState || rowNode?.data[colId] === undefined)
-    && rowNode?.data.hasOwnProperty(colId)
-  ) {
-    try {
-      // const riCol = `tab:${tcState.table.columns[col.columnIndex]}`
-      // const url = `${col.url}${String(e[riCol])}${col.fileExtension}`
-      rowNode?.setDataValue(colId, url)
     } catch {
       rowNode?.setDataValue(colId, loadErrorState)
     }
@@ -219,9 +193,34 @@ export default function AIGrid() {
       if (tcState.cols.customImaging.enabled) {
         tcState.cols.customImaging.columns.forEach((col, idx, _) => {
           const riCol = `tab:${tcState.table.columns[col.columnIndex]}`
-          const url = `${col.url}${e[riCol] || ''}${col.fileExtension || ''}`
-          const colId = `img:custom_${idx}`
-          customImageResource({ url, colId, rowId, grid: gridRef.current })
+          if (col.type === 'url') {
+            semaphore.enqueue(
+              'img:custom',
+              downloadResource,
+              {
+                resourceFetch: new CustomImageFromUrl(col.prepend, col.append, e[riCol]),
+                colId: `img:custom_${idx}`,
+                rowId: rowId,
+                grid: gridRef.current,
+                isImage: false,
+              }
+            )
+          } else if (col.type === 'folder') {
+            semaphore.enqueue(
+              'img:custom',
+              downloadResource,
+              {
+                resourceFetch: new CustomImageFromFolder(
+                  col.prepend, col.append, e[riCol],
+                  tcState.cols.customImaging.columns?.[idx]?.folder
+                ),
+                colId: `img:custom_${idx}`,
+                rowId: rowId,
+                grid: gridRef.current,
+                isImage: true,
+              }
+            )
+          }
         })
       }
 
@@ -244,7 +243,7 @@ export default function AIGrid() {
   }, [tcState])
 
 
-  
+
   const onCellKeyDown = useCallback((event: CellKeyDownEvent) => {
     const keyEvent = event.event as KeyboardEvent
     if (!keyEvent) return
@@ -324,7 +323,7 @@ export default function AIGrid() {
     })
   }, [
     tcState.cols.classification.enabled, tcState.cols.splusPhotoSpectra.enabled,
-    tcState.cols.legacyImaging.enabled, tcState.cols.splusImaging.enabled, 
+    tcState.cols.legacyImaging.enabled, tcState.cols.splusImaging.enabled,
     tcState.table.selectedColumnsId, tcState.grid.editable, tcState.ui.figureSize,
     tcState.cols.sdssSpectra.enabled,
   ])

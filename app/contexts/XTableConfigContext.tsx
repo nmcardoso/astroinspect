@@ -3,7 +3,7 @@ import localforage from 'localforage'
 import { ContextActions } from '@/interfaces/contextActions'
 
 
-export const SCHEMA_VERSION: number = 23
+export const SCHEMA_VERSION: number = 24
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
@@ -75,15 +75,18 @@ const getInitialState = (): IState => ({
     },
     splusPhotoSpectra: {
       enabled: true,
-      selectedLines: ['iso', 'aper6']
+      selectedLines: ['auto', 'iso', 'petro', 'aper3', 'aper6', 'pstotal']
     },
     customImaging: {
       enabled: false,
       columns: [
         {
-          url: '',
-          fileExtension: '',
+          type: 'folder',
+          folder: undefined,
+          prepend: '',
+          append: '',
           columnIndex: -1,
+          visible: true,
         }
       ]
     },
@@ -190,14 +193,17 @@ const updateGridValues = (state: IState, action: IAction<IGrid>) => {
   return setAttributes(state, action, (s) => s.grid)
 }
 
-const addCustomImaging = (state: IState, action: IAction<{ prevColumns: ICustomImagingColumn[] }>) => {
+const addCustomImaging = (state: IState, action: IAction<{ type: 'folder' | 'url', prevColumns: ICustomImagingColumn[] }>) => {
   const s = { ...state }
   s.cols.customImaging.columns = [
     ...action.payload.prevColumns,
     {
-      url: '',
-      fileExtension: '',
-      columnIndex: -1
+      type: action.payload.type,
+      folder: undefined,
+      prepend: '',
+      append: '',
+      columnIndex: -1,
+      visible: true,
     }
   ]
   persistStateAsync(s)
@@ -205,7 +211,9 @@ const addCustomImaging = (state: IState, action: IAction<{ prevColumns: ICustomI
 }
 
 const updateCustomImaging = (state: IState, action: IAction<ICustomImagingColumn & { index: number }>) => {
-  return setAttributes(state, action, (s) => s.cols.customImaging.columns[action.payload.index])
+  const st = setAttributes(state, action, (s) => s.cols.customImaging.columns[action.payload.index])
+  st.cols.customImaging.columns = [...st.cols.customImaging.columns]
+  return st
 }
 
 const removeCustomImaging = (state: IState, action: IAction<{ index: number, prevColumns: ICustomImagingColumn[] }>) => {
