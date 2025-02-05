@@ -20,6 +20,7 @@ const splusBands = [
   'U', 'F378', 'F395', 'F410', 'F430', 'G',
   'F515', 'R', 'F660', 'I', 'F861', 'Z'
 ]
+const broadBands = ['U', 'G', 'R', 'I', 'Z']
 
 function toggleUnique(data: { [key: string]: string[] }, key: string, value: string) {
   const d = { ...data }
@@ -49,7 +50,7 @@ function SplusFilterChip({ band, channel, color }:
     <Chip
       color={color}
       variant={trilogyConfig[channel].includes(band) ? "filled" : "outlined"}
-      label={band}
+      label={broadBands.findIndex(v => v == band) !== -1 ? <i>{band.toLowerCase()}</i> : band}
       onClick={() => tcDispatch({
         type: ContextActions.SPLUS_TRILOGY_CONFIG,
         payload: toggleUnique({ R, G, B }, channel, band)
