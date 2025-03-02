@@ -18,6 +18,8 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: timeConvert(1, 'day', 'ms'),
+      retry: 3,
+      retryDelay: 2000,
     },
   },
 })
@@ -80,7 +82,7 @@ export class LegacyStamp implements IResourceFetch {
       queryFn: () => processResponse(
         async () => {
           let resp
-          try {
+          // try {
             resp = await axios.get(LEGACY_RGB, {
               responseType: 'blob',
               signal: semaphore.getSignal(),
@@ -92,21 +94,21 @@ export class LegacyStamp implements IResourceFetch {
                 layer: this.layer
               }
             })
-          } catch {
-            resp = await axios.get(LEGACY_RGB_2, {
-              responseType: 'blob',
-              signal: semaphore.getSignal(),
-              params: {
-                hips: 'CDS/P/DESI-Legacy-Surveys/DR10/color',
-                ra: this.ra,
-                dec: this.dec,
-                width: this.size,
-                height: this.size,
-                fov: (pixscale / 3600) * this.size,
-                format: 'png',
-              }
-            })
-          }
+          // } catch {
+          //   resp = await axios.get(LEGACY_RGB_2, {
+          //     responseType: 'blob',
+          //     signal: semaphore.getSignal(),
+          //     params: {
+          //       hips: 'CDS/P/DESI-Legacy-Surveys/DR10/color',
+          //       ra: this.ra,
+          //       dec: this.dec,
+          //       width: this.size,
+          //       height: this.size,
+          //       fov: (pixscale / 3600) * this.size,
+          //       format: 'png',
+          //     }
+          //   })
+          // }
           return resp
         }
       )
