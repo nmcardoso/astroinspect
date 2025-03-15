@@ -10,13 +10,14 @@ const APP_NAME = 'AstroInspect'
 const APP_META = {
   'samp.name': 'AstroInspect',
   'samp.description': 'Visual inspection tool',
-  // 'samp.icon.url': baseUrl + "clientIcon.gif",
+  'samp.icon.url': 'https://astroinspect.natanael.net/favicon_32.png',
 }
 
 
 export function SAMPProvider(props: React.PropsWithChildren) {
   const [isConnected, setConnected] = useState<boolean>(false)
   const [client, setClient] = useState<any>(undefined)
+  const [sampUrl, setSampUrl] = useState<string | undefined>(undefined)
 
   const state = useMemo(() => ({
     connect: () => {
@@ -30,42 +31,12 @@ export function SAMPProvider(props: React.PropsWithChildren) {
             return { text: "ping to you, " + client.tracker.getName(senderId) };
           }
         }
-  
+
         callHandler['table.load.votable'] = function (senderId, message, isCall) {
           const params = message['samp.params']
           const origUrl = params['url']
-          console.log(message)
-          console.log('params', params)
-          console.log('origUrl', origUrl)
-          console.log('senderId', senderId)
-          // const proxyUrl = origUrl
-          const proxyUrl = client.tracker.connection.translateUrl(origUrl)
-          console.log('proxyUrl', proxyUrl)
-          const xhr = samp.XmlRpcClient.createXHR()
-          var e
-          xhr.open('GET', proxyUrl)
-          xhr.onload = function () {
-            var xml = xhr.responseXML
-            if (xml) {
-              try {
-                // displayVotable(xml)
-                // tableId = params['table-id']
-                // tableUrl = origUrl
-                console.log('table-id', params['table-id'])
-                console.log('xml', xml)
-              }
-              catch (e) {
-                // showTableError("Error displaying table:\n" + e.toString())
-              }
-            }
-            else {
-              // showTableError("No XML response")
-            }
-          }
-          xhr.onerror = function (err) {
-            // showTableError("Error getting table " + origUrl + "\n" + "(" + err + ")")
-          }
-          xhr.send(null)
+          const proxyUrl = tracker.connection.translateUrl(origUrl)
+          setSampUrl(proxyUrl)
         }
 
         const subs = tracker.calculateSubscriptions()
@@ -82,7 +53,8 @@ export function SAMPProvider(props: React.PropsWithChildren) {
       setConnected(false)
     },
     isConnected: isConnected,
-  }), [isConnected, client])
+    sampUrl: sampUrl,
+  }), [isConnected, client, sampUrl])
 
 
   useEffect(() => {

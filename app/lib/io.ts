@@ -1,5 +1,6 @@
 import { CSVReader } from './csv'
 import { ParquetReader } from './parquet'
+import { VotableReader } from './votable'
 
 
 export function getFileExt(file: string | File) {
@@ -17,5 +18,7 @@ export function getTableReader(file: string | File) {
     return new CSVReader(file)
   } else if (['parquet', 'parq', 'par', 'pq'].includes(ext || '')) {
     return new ParquetReader(file)
+  } else if (['vo', 'vot', 'votable', 'xml'].includes(ext || '')) {
+    return new VotableReader(file)
   }
 }
