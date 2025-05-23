@@ -14,3 +14,11 @@ export async function processResponse(func: () => Promise<any>) {
     }
   }
 }
+
+export function getReplicaUrl(replicas: string[], id: number) {
+  const n = replicas.length
+  for (let i = n; i > 0; i--) {
+    if (id % i === 0) return replicas[i-1]
+  }
+  return replicas[0]
+}

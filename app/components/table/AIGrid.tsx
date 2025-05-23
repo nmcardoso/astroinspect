@@ -56,7 +56,7 @@ const downloadResource = async ({
   ) {
     try {
       rowNode?.setDataValue(colId, loadingState)
-      const resp = await resourceFetch.fetch()
+      const resp = await resourceFetch.fetch({id: parseInt(rowId)})
 
       if (isImage) {
         rowNode?.setDataValue(colId, URL.createObjectURL(resp.data))

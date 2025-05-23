@@ -4,7 +4,7 @@ import { obj2qs } from '../lib/utils'
 import { QueryClient } from '@tanstack/react-query'
 import { timeConvert } from '../lib/utils'
 import { semaphore } from '../lib/Semaphore'
-import { processResponse } from './utils'
+import { getReplicaUrl, processResponse } from './utils'
 
 
 type TableType = {
@@ -21,8 +21,24 @@ type SchemaType = {
 
 const PUBLIC_TAP_URL = 'https://bittersweet-large-ticket.glitch.me/https://splus.cloud/public-TAP/tap/'
 const PRIVATE_TAP_URL = 'https://bittersweet-large-ticket.glitch.me/https://splus.cloud/tap/tap/'
-const TRILOGY_URL = 'https://checker-melted-forsythia.glitch.me/trilogy.png'
-const LUPTON_URL = 'https://checker-melted-forsythia.glitch.me/lupton.png'
+const TRILOGY_URL = [
+  'https://checker-melted-forsythia.glitch.me/trilogy.png',
+  'https://dawn-titanium-servant.glitch.me/trilogy.png',
+  'https://blue-daisy-people.glitch.me/trilogy.png',
+  'https://powerful-abounding-gopher.glitch.me/trilogy.png',
+  'https://adjoining-cotton-concrete.glitch.me/trilogy.png',
+  'https://lush-glow-pipe.glitch.me/trilogy.png',
+  'https://broadleaf-pointy-fahrenheit.glitch.me/trilogy.png',
+]
+const LUPTON_URL = [
+  'https://checker-melted-forsythia.glitch.me/lupton.png',
+  'https://dawn-titanium-servant.glitch.me/lupton.png',
+  'https://blue-daisy-people.glitch.me/lupton.png',
+  'https://powerful-abounding-gopher.glitch.me/lupton.png',
+  'https://adjoining-cotton-concrete.glitch.me/lupton.png',
+  'https://lush-glow-pipe.glitch.me/lupton.png',
+  'https://broadleaf-pointy-fahrenheit.glitch.me/lupton.png',
+]
 // const PHOTOSPEC_URL = 'https://splus-spectra.herokuapp.com/plot'
 const PHOTOSPEC_URL = 'https://astrotools.vercel.app/plot'
 const FLUX_RADIUS_URL = 'https://checker-melted-forsythia.glitch.me/fluxRadius'
@@ -180,18 +196,18 @@ export class SplusStamp implements IResourceFetch {
     }
   }
 
-  getUrl() {
+  getUrl(replicaId: number = 0) {
     if (this.type === 'trilogy') {
-      return TRILOGY_URL
+      return getReplicaUrl(TRILOGY_URL, replicaId || 0)
     }
-    return LUPTON_URL
+    return getReplicaUrl(LUPTON_URL, replicaId || 0)
   }
 
-  async fetch() {
+  async fetch(config: IResourceFetchConfig) {
     return await queryClient.fetchQuery({
       queryKey: [this.ra, this.dec, this.stampSize, this.type, this.config],
       queryFn: () => processResponse(
-        () => axios.get(this.getUrl(), {
+        () => axios.get(this.getUrl(config.id), {
           responseType: 'blob',
           signal: semaphore.getSignal(),
           params: this.getParams()
@@ -214,7 +230,7 @@ export class SplusPhotoSpectra implements IResourceFetch {
     this.lines = lines
   }
 
-  async fetch() {
+  async fetch(config: IResourceFetchConfig) {
     return await queryClient.fetchQuery({
       queryKey: [this.ra, this.dec, this.lines],
       queryFn: () => processResponse(

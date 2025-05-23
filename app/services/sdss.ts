@@ -199,7 +199,7 @@ export class SdssSpectra extends SdssService implements IResourceFetch {
     this.dec = dec
   }
 
-  async fetch() {
+  async fetch(config: IResourceFetchConfig) {
     const specObjId = await this.getObjSpecId(this.ra, this.dec)
     if (!specObjId) return undefined
     return { data: `${SPEC_PLOT_URL}?id=${specObjId}` }
@@ -231,7 +231,7 @@ export class SdssCatalog extends SdssService implements IResourceFetch {
     this.column = column
   }
 
-  async fetch() {
+  async fetch(config: IResourceFetchConfig) {
     const strategy = SDSS_TABLES[this.table].searchStrategy
     const query = strategy.getCrossIdQuery(this.table, [this.column])
     const resp = await queryClient.fetchQuery({

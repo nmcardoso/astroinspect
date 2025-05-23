@@ -1,3 +1,7 @@
+interface IResourceFetchConfig {
+  id?: number
+}
+
 interface IResourceFetch {
-  fetch(): Promise<AxiosResponse<any, any>>
+  fetch(configs: IResourceFetchConfig): Promise<AxiosResponse<any, any>>
 }
