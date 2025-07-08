@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from io import BytesIO
 
 import requests
-from flask import Flask, request, send_file
+from flask import Flask, Response, request, send_file
 from flask_cors import CORS, cross_origin
 from matplotlib.figure import Figure
 from requests import Session
@@ -53,6 +53,67 @@ def get_token():
 @app.get('/')
 def hello():
   return 'AstroInspect API'
+
+
+
+@app.route('/proxy/<path:path>')
+@cross_origin()
+def proxy(path):
+  base_url = path
+  query = request.args
+
+  try:
+    # Forward the request to the target URL
+    resp = requests.request(
+      method=request.method,
+      url=base_url,
+      params=query,
+      headers={key: value for (key, value) in request.headers if key != 'Host'},
+      data=request.get_data(),
+      cookies=request.cookies,
+      allow_redirects=True
+    )
+
+    # Create a Flask Response object from the target server's response
+    excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
+    headers = [(name, value) for name, value in resp.raw.headers.items() if name.lower() not in excluded_headers]
+
+    return Response(resp.content, resp.status_code, headers)
+
+  except requests.exceptions.RequestException as e:
+    return f"Proxy error: {e}", 500
+
+
+
+@app.get('/legacy.jpg')
+@cross_origin()
+def legacy():
+  try:
+    res = requests.get(
+      'https://www.legacysurvey.org/viewer/cutout.jpg', 
+      params=request.args,
+      stream=True
+    )
+    return res.raw.read(), res.status_code, res.headers.items()
+
+  except requests.exceptions.RequestException as e:
+    return f"Proxy error: {e}", 500
+
+
+
+@app.get('/trilogy.png')
+@cross_origin()
+def trilogy():
+  pass
+
+
+
+
+@app.get('/lupton.png')
+@cross_origin()
+def lupton():
+  pass
+
 
 
 
@@ -443,5 +504,6 @@ def handle_exception(e):
 
 if __name__ == '__main__':
   # web.run_app(app)
+  app.run(debug=True, port=5005)
   pass
 

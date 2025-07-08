@@ -19,25 +19,13 @@ type SchemaType = {
 
 
 
-const PUBLIC_TAP_URL = 'https://bittersweet-large-ticket.glitch.me/https://splus.cloud/public-TAP/tap/'
-const PRIVATE_TAP_URL = 'https://bittersweet-large-ticket.glitch.me/https://splus.cloud/tap/tap/'
+const PUBLIC_TAP_URL = 'https://astrotools.vercel.app/proxy/https://splus.cloud/public-TAP/tap/'
+const PRIVATE_TAP_URL = 'https://astrotools.vercel.app/proxy/https://splus.cloud/tap/tap/'
 const TRILOGY_URL = [
   'https://checker-melted-forsythia.glitch.me/trilogy.png',
-  'https://dawn-titanium-servant.glitch.me/trilogy.png',
-  'https://blue-daisy-people.glitch.me/trilogy.png',
-  'https://powerful-abounding-gopher.glitch.me/trilogy.png',
-  'https://adjoining-cotton-concrete.glitch.me/trilogy.png',
-  'https://lush-glow-pipe.glitch.me/trilogy.png',
-  'https://broadleaf-pointy-fahrenheit.glitch.me/trilogy.png',
 ]
 const LUPTON_URL = [
   'https://checker-melted-forsythia.glitch.me/lupton.png',
-  'https://dawn-titanium-servant.glitch.me/lupton.png',
-  'https://blue-daisy-people.glitch.me/lupton.png',
-  'https://powerful-abounding-gopher.glitch.me/lupton.png',
-  'https://adjoining-cotton-concrete.glitch.me/lupton.png',
-  'https://lush-glow-pipe.glitch.me/lupton.png',
-  'https://broadleaf-pointy-fahrenheit.glitch.me/lupton.png',
 ]
 // const PHOTOSPEC_URL = 'https://splus-spectra.herokuapp.com/plot'
 const PHOTOSPEC_URL = 'https://astrotools.vercel.app/plot'
