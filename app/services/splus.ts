@@ -22,10 +22,10 @@ type SchemaType = {
 const PUBLIC_TAP_URL = 'https://astrotools.vercel.app/proxy/https://splus.cloud/public-TAP/tap/'
 const PRIVATE_TAP_URL = 'https://astrotools.vercel.app/proxy/https://splus.cloud/tap/tap/'
 const TRILOGY_URL = [
-  'https://checker-melted-forsythia.glitch.me/trilogy.png',
+  'https://astrotools.vercel.app/trilogy.png',
 ]
 const LUPTON_URL = [
-  'https://checker-melted-forsythia.glitch.me/lupton.png',
+  'https://astrotools.vercel.app/lupton.png',
 ]
 // const PHOTOSPEC_URL = 'https://splus-spectra.herokuapp.com/plot'
 const PHOTOSPEC_URL = 'https://astrotools.vercel.app/plot'

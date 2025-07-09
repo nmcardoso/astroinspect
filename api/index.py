@@ -4,12 +4,18 @@ import os
 import urllib.parse
 from datetime import datetime, timedelta
 from io import BytesIO
+from typing import Dict
+from urllib.parse import urljoin, urlparse
 
 import requests
 from flask import Flask, Response, request, send_file
 from flask_cors import CORS, cross_origin
 from matplotlib.figure import Figure
 from requests import Session
+
+BASE_URL = 'https://splus.cloud/api/'
+LUPTON_ROUTE = 'get_lupton_image/{ra}/{dec}/{size}/{r_band}/{g_band}/{b_band}/{stretch}/{Q}'
+TRILOGY_ROUTE = 'get_image/{ra}/{dec}/{size}/{r_band}-{g_band}-{b_band}/{noise}/{saturation}'
 
 if os.getenv('ENV') != 'PRODUCTION':
   from dotenv import load_dotenv
@@ -101,10 +107,47 @@ def legacy():
 
 
 
+
+def _get_url(route: str, params: Dict[str, str] = {}):
+  return urljoin(BASE_URL, route.format(**params))
+
+
+
+def _download_image(route: str, **kwargs):
+  # Stage 1 request
+  url = _get_url(route, kwargs)
+  resp = requests.get(url, headers={'Authorization': f'Token {get_token()}'})
+
+  if resp.status_code == 200:
+    if 'application/json' in resp.headers['Content-Type']:
+      resp_body = resp.json()
+      file_url = _get_url(resp_body['filename'])
+      
+      # Stage 2 request
+      res = requests.get(
+        file_url, 
+        params=request.args,
+        stream=True,
+        headers={'Authorization': f'Token {get_token()}'},
+      )
+      return res.raw.read(), res.status_code, res.headers.items()
+
+
+
 @app.get('/trilogy.png')
 @cross_origin()
 def trilogy():
-  pass
+  return _download_image(
+    TRILOGY_ROUTE,
+    ra=request.args.get('ra'),
+    dec=request.args.get('dec'),
+    size=request.args.get('size', '150'),
+    r_band=request.args.get('r', ','.join(['G', 'F515', 'R', 'I', 'F861', 'Z'])),
+    g_band=request.args.get('g', ','.join(['F660'])),
+    b_band=request.args.get('b', ','.join(['U', 'F378', 'F395', 'F410', 'F430'])),
+    noise=request.args.get('noise', '0.15'),
+    saturation=request.args.get('q', '0.2')
+  )
 
 
 
@@ -112,7 +155,17 @@ def trilogy():
 @app.get('/lupton.png')
 @cross_origin()
 def lupton():
-  pass
+  return _download_image(
+    LUPTON_ROUTE,
+    ra=request.args.get('ra'),
+    dec=request.args.get('dec'),
+    size=request.args.get('size', '150'),
+    r_band=request.args.get('r', ','.join(['I'])),
+    g_band=request.args.get('g', ','.join(['R'])),
+    b_band=request.args.get('b', ','.join(['G'])),
+    stretch=request.args.get('stretch', '1.4'),
+    Q=request.args.get('q', '6.2')
+  )
 
 
 
