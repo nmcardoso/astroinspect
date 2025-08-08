@@ -58,6 +58,14 @@ def get_token():
   return None
 
 
+def include_cache_control(headers):
+  excluded_headers = ['cache-control', 'age']
+  headers = [(name, value) for name, value in headers if name.lower() not in excluded_headers]
+  headers.append(('cache-control', 'public,max-age=604800,immutable'))
+  headers.append(('age', '0'))
+  return headers
+
+
 @app.get('/')
 def hello():
   return 'AstroInspect API'
@@ -85,12 +93,14 @@ def proxy(path):
     excluded_headers = [
       'content-encoding', 'content-length', 'transfer-encoding', 'connection',
       'access-control-allow-origin', 'access-control-allow-headers',
-      'access-control-allow-methods'
+      'access-control-allow-methods',
     ]
     headers = [(name, value) for name, value in resp.raw.headers.items() if name.lower() not in excluded_headers]
     headers.append(('access-control-allow-origin', request.environ.get('HTTP_ORIGIN', '*')))
     headers.append(('access-control-allow-headers', 'access-control-allow-origin,content-type'))
     headers.append(('access-control-allow-methods', 'GET,POST'))
+    headers = include_cache_control(headers)
+    
     return Response(resp.content, resp.status_code, headers)
 
   except requests.exceptions.RequestException as e:
@@ -107,7 +117,7 @@ def legacy():
       params=request.args,
       stream=True
     )
-    return res.raw.read(), res.status_code, res.headers.items()
+    return res.raw.read(), res.status_code, include_cache_control(res.headers.items())
 
   except requests.exceptions.RequestException as e:
     return f"Proxy error: {e}", 500
@@ -154,7 +164,7 @@ def _download_image(route: str, **kwargs):
   
   if resp.status_code == 200:
     return resp.raw.read(), resp.status_code, resp.headers.items()
-  return 'error', resp.status_code, resp.headers.items()
+  return 'error', resp.status_code, include_cache_control(resp.headers.items())
 
 
 
@@ -206,7 +216,7 @@ def lupton():
 def spec():
   specobjid = request.args.get('id')
   res = requests.get(f'https://skyserver.sdss.org/dr18/en/get/SpecById.ashx?id={specobjid}', stream=True)
-  return res.raw.read(), res.status_code, res.headers.items()
+  return res.raw.read(), res.status_code, include_cache_control(res.headers.items())
 
 
 
@@ -567,7 +577,7 @@ def plot():
     print('>>> Save duration:', str(datetime.now() - save_start_time))
   print('>>> Total plot duration:', str(datetime.now() - plot_start_time))
 
-  return send_file(buff, mimetype='image/jpeg', as_attachment=False, download_name='plot')
+  return send_file(buff, mimetype='image/jpeg', as_attachment=False, download_name='plot', max_age=3600)
   # return web.Response(body=buff.read(), headers={'Content-Type': 'image/jpg'})
   # response = web.StreamResponse(headers={'Content-Type': 'image/jpg'})
   # await response.prepare(request)
