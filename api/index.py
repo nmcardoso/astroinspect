@@ -83,10 +83,10 @@ def proxy(path):
     )
 
     # Create a Flask Response object from the target server's response
-    excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
-    headers = [(name, value) for name, value in resp.raw.headers.items() if name.lower() not in excluded_headers]
-
-    return Response(resp.content, resp.status_code, headers)
+    # excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
+    # headers = [(name, value) for name, value in resp.raw.headers.items() if name.lower() not in excluded_headers]
+    # return Response(resp.content, resp.status_code, headers)
+    return Response(resp.content, resp.status_code)
 
   except requests.exceptions.RequestException as e:
     return f"Proxy error: {e}", 500
