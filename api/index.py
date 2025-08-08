@@ -82,7 +82,11 @@ def proxy(path):
     )
 
     # Create a Flask Response object from the target server's response
-    excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
+    excluded_headers = [
+      'content-encoding', 'content-length', 'transfer-encoding', 'connection',
+      'access-control-allow-origin', 'access-control-allow-headers',
+      'access-control-allow-methods'
+    ]
     headers = [(name, value) for name, value in resp.raw.headers.items() if name.lower() not in excluded_headers]
     headers.append(('access-control-allow-origin', request.environ.get('HTTP_ORIGIN', '*')))
     headers.append(('access-control-allow-headers', 'access-control-allow-origin,content-type'))
