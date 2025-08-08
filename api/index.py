@@ -63,7 +63,7 @@ def include_cache_control(headers):
   headers = [(name, value) for name, value in headers if name.lower() not in excluded_headers]
   headers.append(('cache-control', 'public,max-age=3600'))
   headers.append(('Vercel-CDN-Cache-Control', 'max-age=3600'))
-  headers.append(('CDN-Cache-Control', 'max-age=60'))
+  headers.append(('CDN-Cache-Control', 'max-age=3600'))
   headers.append(('age', '0'))
   return headers
 
