@@ -65,7 +65,6 @@ def hello():
 
 
 @app.route('/proxy/<path:path>')
-@cross_origin()
 def proxy(path):
   base_url = path.replace('http:/', 'http://').replace('https:/', 'https://')
   query = request.args
@@ -83,10 +82,12 @@ def proxy(path):
     )
 
     # Create a Flask Response object from the target server's response
-    # excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
-    # headers = [(name, value) for name, value in resp.raw.headers.items() if name.lower() not in excluded_headers]
-    # return Response(resp.content, resp.status_code, headers)
-    return Response(resp.content, resp.status_code)
+    excluded_headers = ['content-encoding', 'content-length', 'transfer-encoding', 'connection']
+    headers = [(name, value) for name, value in resp.raw.headers.items() if name.lower() not in excluded_headers]
+    headers.append(('access-control-allow-origin', request.environ.get('HTTP_ORIGIN', '*')))
+    headers.append(('access-control-allow-headers', 'access-control-allow-origin,content-type'))
+    headers.append(('access-control-allow-methods', 'GET,POST'))
+    return Response(resp.content, resp.status_code, headers)
 
   except requests.exceptions.RequestException as e:
     return f"Proxy error: {e}", 500
