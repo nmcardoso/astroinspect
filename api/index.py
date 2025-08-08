@@ -67,7 +67,7 @@ def hello():
 @app.route('/proxy/<path:path>')
 @cross_origin()
 def proxy(path):
-  base_url = path
+  base_url = path.replace('http:/', 'http://').replace('https:/', 'https://')
   query = request.args
 
   try:
