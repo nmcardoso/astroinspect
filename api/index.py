@@ -101,7 +101,7 @@ def proxy(path):
     headers.append(('access-control-allow-origin', request.environ.get('HTTP_ORIGIN', '*')))
     headers.append(('access-control-allow-headers', 'access-control-allow-origin,content-type'))
     headers.append(('access-control-allow-methods', 'GET,POST'))
-    headers = include_cache_control(headers)
+    # headers = include_cache_control(headers)
     
     return Response(resp.content, resp.status_code, headers)
 
