@@ -12,10 +12,10 @@ semaphore.create('sdss_batch_query', 2)
 semaphore.create('sdss_query', 2)
 
 
-const CONE_SPEC_URL = 'https://skyserver.sdss.org/dr18/SkyServerWS/SpectroQuery/ConeSpectro'
-const SQL_URL = 'https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch'
-const CROSSID_SEARCH = 'https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/CrossIdSearch'
-const SPEC_PLOT_URL = 'https://skyserver.sdss.org/dr18/en/get/SpecById.ashx'
+const CONE_SPEC_URL = 'https://astrotools.vercel.app/proxy/https://skyserver.sdss.org/dr18/SkyServerWS/SpectroQuery/ConeSpectro'
+const SQL_URL = 'https://astrotools.vercel.app/proxy/https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/SqlSearch'
+const CROSSID_SEARCH = 'https://astrotools.vercel.app/proxy/https://skyserver.sdss.org/dr18/SkyServerWS/SearchTools/CrossIdSearch'
+const SPEC_PLOT_URL = 'https://astrotools.vercel.app/proxy/https://skyserver.sdss.org/dr18/en/get/SpecById.ashx'
 // const SPEC_PLOT_URL = 'https://astrotools.vercel.app/spec'
 
 
