@@ -18,6 +18,7 @@ BASE_URL = 'https://splus.cloud/api/'
 # TRILOGY_ROUTE = 'get_image/{ra}/{dec}/{size}/{r_band}-{g_band}-{b_band}/{noise}/{saturation}'
 TRILOGY_ROUTE = 'https://splus.cloud/api/trilogy_image'
 LUPTON_ROUTE = 'https://splus.cloud/api/lupton_image'
+TIMEOUT = 6
 
 if os.getenv('ENV') != 'PRODUCTION':
   from dotenv import load_dotenv
@@ -93,7 +94,8 @@ def proxy(path):
       headers={key: value for (key, value) in request.headers if key != 'Host'},
       data=request.get_data(),
       cookies=request.cookies,
-      allow_redirects=True
+      allow_redirects=True,
+      timeout=TIMEOUT,
     )
 
     # Create a Flask Response object from the target server's response
@@ -121,7 +123,8 @@ def legacy():
     res = requests.get(
       'https://www.legacysurvey.org/viewer/cutout.jpg', 
       params=request.args,
-      stream=True
+      stream=True,
+      timeout=TIMEOUT,
     )
     return res.raw.read(), res.status_code, include_cache_control(res.headers.items())
 
@@ -166,6 +169,7 @@ def _download_image(route: str, **kwargs):
     json=kwargs,
     headers={'Authorization': f'Token {get_token()}'},
     stream=True,
+    timeout=TIMEOUT,
   )
   
   if resp.status_code == 200:
@@ -221,7 +225,11 @@ def lupton():
 @cross_origin()
 def spec():
   specobjid = request.args.get('id')
-  res = requests.get(f'https://skyserver.sdss.org/dr18/en/get/SpecById.ashx?id={specobjid}', stream=True)
+  res = requests.get(
+    f'https://skyserver.sdss.org/dr18/en/get/SpecById.ashx?id={specobjid}', 
+    stream=True, 
+    timeout=TIMEOUT
+  )
   return res.raw.read(), res.status_code, include_cache_control(res.headers.items())
 
 
@@ -393,7 +401,7 @@ def plot():
   }
 
   query_start_time = datetime.now()
-  resp = session.post(query_url, headers=headers)
+  resp = session.post(query_url, headers=headers, timeout=TIMEOUT)
   print('>>> Query duration:', str(datetime.now() - query_start_time))
   if resp.status_code != 200 or 'application/json' not in resp.headers['Content-Type']:
     return 'Query Error', 500
@@ -583,7 +591,13 @@ def plot():
     print('>>> Save duration:', str(datetime.now() - save_start_time))
   print('>>> Total plot duration:', str(datetime.now() - plot_start_time))
 
-  return send_file(buff, mimetype='image/jpeg', as_attachment=False, download_name='plot', max_age=604800)
+  return send_file(
+    buff, 
+    mimetype='image/jpeg', 
+    as_attachment=False, 
+    download_name='plot', 
+    max_age=604800
+  )
   # return web.Response(body=buff.read(), headers={'Content-Type': 'image/jpg'})
   # response = web.StreamResponse(headers={'Content-Type': 'image/jpg'})
   # await response.prepare(request)
