@@ -111,7 +111,7 @@ def proxy(path):
     ]
     headers = include_cache_control(headers.items())
     
-    return resp.content, resp.status_code, headers.items()
+    return resp.content, resp.status_code, headers
   except requests.exceptions.RequestException as e:
     return f"Proxy error: {e}", 500
 
