@@ -109,7 +109,7 @@ def proxy(path):
       (name, value) for name, value in resp.headers.items()
       if name.lower() not in excluded_headers
     ]
-    headers = include_cache_control(headers)
+    # headers = include_cache_control(headers)
     
     return resp.content, resp.status_code, headers
   except requests.exceptions.RequestException as e:
