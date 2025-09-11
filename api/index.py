@@ -77,7 +77,10 @@ def hello():
 
 @app.route('/proxy/<path:path>')
 @cross_origin(
-  expose_headers=['access-control-allow-origin', 'access-control-allow-headers', 'access-control-allow-methods', 'content-type', 'content-length'],
+  expose_headers=[
+    'access-control-allow-origin', 'access-control-allow-headers', 
+    'access-control-allow-methods', 'content-type', 'content-length'
+  ],
   send_wildcard=False,
 )
 def proxy(path):
