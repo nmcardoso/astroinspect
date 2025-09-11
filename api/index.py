@@ -97,13 +97,12 @@ def proxy(path):
       cookies=request.cookies,
       allow_redirects=True,
       timeout=TIMEOUT,
-      stream=True,
     )
 
     excluded_headers = [
-      # 'content-encoding', 'content-length', 'transfer-encoding', 'connection',
-      'access-control-allow-origin', 'access-control-allow-headers',
-      'access-control-allow-methods',
+      'connection', 'transfer-encoding', 'content-encoding', 'content-length', 
+      # 'access-control-allow-origin', 'access-control-allow-headers',
+      # 'access-control-allow-methods',
     ]
     
     headers = [
@@ -113,9 +112,9 @@ def proxy(path):
     print(headers)
     # headers = include_cache_control(headers)
     
-    # status = 200 if resp.status_code < 400 else resp.status_code
+    status = 200 if resp.status_code < 400 else resp.status_code
     
-    return resp.raw.read(), resp.status_code, headers
+    return resp.content, status, headers
   except requests.exceptions.RequestException as e:
     return f"Proxy error: {e}", 500
 
