@@ -101,7 +101,7 @@ def proxy(path):
     )
 
     excluded_headers = [
-      'content-encoding', 'content-length', 'transfer-encoding', 'connection',
+      # 'content-encoding', 'content-length', 'transfer-encoding', 'connection',
       'access-control-allow-origin', 'access-control-allow-headers',
       'access-control-allow-methods',
     ]
