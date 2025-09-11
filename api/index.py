@@ -110,6 +110,7 @@ def proxy(path):
       (name, value) for name, value in resp.raw.headers.items()
       if name.lower() not in excluded_headers
     ]
+    print(headers)
     # headers = include_cache_control(headers)
     
     # status = 200 if resp.status_code < 400 else resp.status_code
