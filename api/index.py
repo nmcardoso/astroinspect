@@ -75,6 +75,11 @@ def hello():
 
 
 @app.route('/proxy/<path:path>')
+@cross_origin(
+  methods=['GET', 'POST', 'HEAD', 'OPTIONS'], 
+  expose_headers=['access-control-allow-origin', 'content-type'],
+  send_wildcard=False,
+)
 def proxy(path):
   base_url = path.replace('http:/', 'http://').replace('https:/', 'https://')
   query = request.args
@@ -97,14 +102,13 @@ def proxy(path):
       'access-control-allow-origin', 'access-control-allow-headers',
       'access-control-allow-methods',
     ]
-    headers = [(name, value) for name, value in resp.raw.headers.items() if name.lower() not in excluded_headers]
-    headers.append(('access-control-allow-origin', request.environ.get('HTTP_ORIGIN', '*')))
-    headers.append(('access-control-allow-headers', 'access-control-allow-origin,content-type'))
-    headers.append(('access-control-allow-methods', 'GET,POST'))
+    headers = [
+      (name, value) for name, value in resp.raw.headers.items() 
+      if name.lower() not in excluded_headers
+    ]
     # headers = include_cache_control(headers)
     
-    return Response(resp.content, resp.status_code, headers)
-
+    return resp.content, resp.status_code, include_cache_control(headers.items())
   except requests.exceptions.RequestException as e:
     return f"Proxy error: {e}", 500
 
