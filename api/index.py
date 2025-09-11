@@ -88,7 +88,6 @@ def proxy(path):
   query = request.args
 
   try:
-    # Forward the request to the target URL
     resp = requests.request(
       method=request.method,
       url=base_url,
@@ -100,7 +99,6 @@ def proxy(path):
       timeout=TIMEOUT,
     )
 
-    # Create a Flask Response object from the target server's response
     excluded_headers = [
       'content-encoding', 'content-length', 'transfer-encoding', 'connection',
       'access-control-allow-origin', 'access-control-allow-headers',
