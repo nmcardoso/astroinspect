@@ -104,11 +104,11 @@ def proxy(path):
       'access-control-allow-origin', 'access-control-allow-headers',
       'access-control-allow-methods',
     ]
-    print(resp.raw.headers.items())
-    headers = [
-      (name, value) for name, value in resp.raw.headers.items()
-      if name.lower() not in excluded_headers
-    ]
+    print(resp.headers)
+    # headers = [
+    #   (name, value) for name, value in resp.raw.headers.items()
+    #   if name.lower() not in excluded_headers
+    # ]
     # headers = include_cache_control(headers)
     
     return resp.content, resp.status_code, headers.items()
