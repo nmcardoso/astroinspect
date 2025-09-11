@@ -79,7 +79,7 @@ def hello():
 @cross_origin(
   expose_headers=[
     'access-control-allow-origin', 'access-control-allow-headers', 
-    'access-control-allow-methods', 'content-type', 'content-length'
+    'access-control-allow-methods', 'content-type', 'content-length', 'allow'
   ],
   send_wildcard=False,
 )
@@ -97,6 +97,7 @@ def proxy(path):
       cookies=request.cookies,
       allow_redirects=True,
       timeout=TIMEOUT,
+      stream=True,
     )
 
     excluded_headers = [
@@ -106,12 +107,12 @@ def proxy(path):
     ]
     
     headers = [
-      (name, value) for name, value in resp.headers.items()
+      (name, value) for name, value in resp.raw.headers.items()
       if name.lower() not in excluded_headers
     ]
     # headers = include_cache_control(headers)
     
-    return resp.content, resp.status_code, headers
+    return resp.raw.read(), resp.status_code, headers
   except requests.exceptions.RequestException as e:
     return f"Proxy error: {e}", 500
 
