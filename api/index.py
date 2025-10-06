@@ -28,7 +28,7 @@ if os.getenv('ENV') != 'PRODUCTION':
 # session = aiohttp.ClientSession()
 session = Session()
 app = Flask(__name__)
-cors = CORS(app, send_wildcard=False)
+cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 _TOKEN = {'value': None, 'date': None}
@@ -82,7 +82,13 @@ def hello():
 #   ],
 # )
 @app.route('/proxy/<path:path>')
-@cross_origin()
+@cross_origin(
+  vary_header=True, 
+  send_wildcard=False, 
+  expose_headers=['access-control-allow-origin', 'access-control-allow-headers', 
+                  'access-control-allow-methods', 'content-type', 'content-length', 'allow'],
+  allow_headers='',
+  )
 def proxy(path):
   base_url = path.replace('http:/', 'http://').replace('https:/', 'https://')
   query = request.args
