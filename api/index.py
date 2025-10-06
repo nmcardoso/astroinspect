@@ -91,6 +91,8 @@ def hello():
   )
 def proxy(path):
   base_url = path.replace('http:/', 'http://').replace('https:/', 'https://')
+  if not base_url.startswith('http'):
+    base_url = 'http://' + base_url
   query = request.args
 
   try:
