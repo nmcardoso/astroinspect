@@ -17,7 +17,7 @@ BASE_URL = 'https://splus.cloud/api/'
 # LUPTON_ROUTE = 'get_lupton_image/{ra}/{dec}/{size}/{r_band}/{g_band}/{b_band}/{stretch}/{q}'
 # TRILOGY_ROUTE = 'get_image/{ra}/{dec}/{size}/{r_band}-{g_band}-{b_band}/{noise}/{saturation}'
 TRILOGY_ROUTE = 'https://splus.cloud/adss/v1/images/collections/3/trilogy-rgb_by_coordinates'
-LUPTON_ROUTE = 'https://splus.cloud/api/lupton_image'
+LUPTON_ROUTE = 'https://splus.cloud/adss/v1/images/collections/3/rgb_by_coordinates'
 TIMEOUT = 6
 
 if os.getenv('ENV') != 'PRODUCTION':
@@ -48,7 +48,7 @@ def get_token():
     'password': os.getenv('SPLUS_PASSWORD')
   }
 
-  resp = session.post('https://splus.cloud/adss/v1/auth/login', json=credentials)
+  resp = session.post('https://splus.cloud/adss/v1/auth/login', data=credentials)
   if resp.status_code == 200:
     data = resp.json()
     if 'access_token' in data:
@@ -208,8 +208,6 @@ def trilogy():
   )
 
 
-
-
 @app.get('/lupton.png')
 @cross_origin()
 def lupton():
@@ -218,13 +216,15 @@ def lupton():
     ra=request.args.get('ra'),
     dec=request.args.get('dec'),
     size=request.args.get('size', '150'),
-    R=request.args.get('r', ','.join(['I'])),
-    G=request.args.get('g', ','.join(['R'])),
-    B=request.args.get('b', ','.join(['G'])),
+    size_unit='pixels',
+    r_filter=request.args.get('r', 'I'),
+    g_filter=request.args.get('g', 'R'),
+    b_filter=request.args.get('b', 'G'),
     stretch=request.args.get('stretch', '1.4'),
     Q=request.args.get('q', '6.2'),
-    option=1,
-    dr=None,
+    format='png',
+    # option=1,
+    # dr=None,
   )
 
 
