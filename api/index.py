@@ -16,7 +16,7 @@ from requests import Session
 BASE_URL = 'https://splus.cloud/api/'
 # LUPTON_ROUTE = 'get_lupton_image/{ra}/{dec}/{size}/{r_band}/{g_band}/{b_band}/{stretch}/{q}'
 # TRILOGY_ROUTE = 'get_image/{ra}/{dec}/{size}/{r_band}-{g_band}-{b_band}/{noise}/{saturation}'
-TRILOGY_ROUTE = 'https://splus.cloud/api/trilogy_image'
+TRILOGY_ROUTE = 'https://splus.cloud/adss/v1/images/collections/3/trilogy-rgb_by_coordinates'
 LUPTON_ROUTE = 'https://splus.cloud/api/lupton_image'
 TIMEOUT = 6
 
@@ -51,8 +51,8 @@ def get_token():
   resp = session.post('https://splus.cloud/api/auth/login', json=credentials)
   if resp.status_code == 200:
     data = resp.json()
-    if 'token' in data:
-      token = data['token']
+    if 'access_token' in data:
+      token = data['access_token']
       _TOKEN['value'] = token
       _TOKEN['date'] = datetime.now()
       return token
@@ -75,13 +75,14 @@ def hello():
 
 
 
-@app.route('/proxy/<path:path>')
 # @cross_origin(
 #   expose_headers=[
 #     'access-control-allow-origin', 'access-control-allow-headers', 
 #     'access-control-allow-methods', 'content-type', 'content-length', 'allow'
 #   ],
 # )
+@app.route('/proxy/<path:path>')
+@cross_origin()
 def proxy(path):
   base_url = path.replace('http:/', 'http://').replace('https:/', 'https://')
   query = request.args
@@ -170,7 +171,7 @@ def _download_image(route: str, **kwargs):
   resp = requests.post(
     route, 
     json=kwargs,
-    headers={'Authorization': f'Token {get_token()}'},
+    headers={'Authorization': f'Bearer {get_token()}'},
     stream=True,
     timeout=TIMEOUT,
   )
@@ -193,12 +194,17 @@ def trilogy():
     ra=request.args.get('ra'),
     dec=request.args.get('dec'),
     size=request.args.get('size', '150'),
+    size_unit='pixels',
+    r_filters=r_band.split(','),
+    g_filters=g_band.split(','),
+    b_filters=b_band.split(','),
     reqOrder=f'{r_band}-{g_band}-{b_band}',
-    noiselum=request.args.get('noise', '0.15'),
-    satpercent=request.args.get('q', '0.2'),
-    colorsatfac=request.args.get('colorsatfac', '1'),
-    option=1,
-    dr=None,
+    noiselum=float(request.args.get('noise', 0.15)),
+    satpercent=float(request.args.get('q', 0.2)),
+    colorsatfac=float(request.args.get('colorsatfac', 1)),
+    format='png',
+    # option=1,
+    # dr=None,
   )
 
 
