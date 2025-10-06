@@ -87,7 +87,6 @@ def hello():
   send_wildcard=False, 
   expose_headers=['access-control-allow-origin', 'access-control-allow-headers', 
                   'access-control-allow-methods', 'content-type', 'content-length', 'allow'],
-  allow_headers='',
   )
 def proxy(path):
   base_url = path.replace('http:/', 'http://').replace('https:/', 'https://')
