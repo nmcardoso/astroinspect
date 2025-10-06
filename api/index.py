@@ -87,7 +87,7 @@ def hello():
   send_wildcard=False, 
   expose_headers=['access-control-allow-origin', 'access-control-allow-headers', 
                   'access-control-allow-methods', 'content-type', 'content-length', 'allow'],
-  )
+)
 def proxy(path):
   base_url = path.replace('http:/', 'http://').replace('https:/', 'https://')
   if not base_url.startswith('http'):
@@ -117,7 +117,6 @@ def proxy(path):
       (name, value) for name, value in resp.raw.headers.items()
       if name.lower() not in excluded_headers
     ]
-    print(headers)
     # headers = include_cache_control(headers)
     
     status = 200 if resp.status_code < 400 else resp.status_code
