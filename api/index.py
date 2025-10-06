@@ -184,7 +184,7 @@ def _download_image(route: str, **kwargs):
   
   if resp.status_code == 200:
     return resp.raw.read(), resp.status_code, headers.items()
-  return 'error', resp.status_code, include_cache_control(resp.headers.items())
+  return 'error', resp.status_code, resp.headers.items()
 
 
 
