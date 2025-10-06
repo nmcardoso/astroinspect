@@ -176,8 +176,14 @@ def _download_image(route: str, **kwargs):
     timeout=TIMEOUT,
   )
   
+  headers: dict = resp.headers
+  try:
+    headers.pop('content-disposition')
+  except Exception:
+    pass
+  
   if resp.status_code == 200:
-    return resp.raw.read(), resp.status_code, resp.headers.items()
+    return resp.raw.read(), resp.status_code, headers.items()
   return 'error', resp.status_code, include_cache_control(resp.headers.items())
 
 
