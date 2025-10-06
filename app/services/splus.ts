@@ -19,8 +19,8 @@ type SchemaType = {
 
 
 
-const PUBLIC_TAP_URL = 'https://astrotools.vercel.app/proxy/https://splus.cloud/public-TAP/tap/'
-const PRIVATE_TAP_URL = 'https://astrotools.vercel.app/proxy/https://splus.cloud/tap/tap/'
+const PUBLIC_TAP_URL = 'https://astrotools.vercel.app/proxy/splus.cloud/public-TAP/tap/'
+const PRIVATE_TAP_URL = 'https://astrotools.vercel.app/proxy/splus.cloud/tap/tap/'
 const TRILOGY_URL = [
   'https://astrotools.vercel.app/trilogy.png',
 ]
