@@ -28,7 +28,7 @@ if os.getenv('ENV') != 'PRODUCTION':
 # session = aiohttp.ClientSession()
 session = Session()
 app = Flask(__name__)
-cors = CORS(app)
+cors = CORS(app, send_wildcard=False)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 _TOKEN = {'value': None, 'date': None}
