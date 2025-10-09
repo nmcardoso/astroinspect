@@ -202,7 +202,7 @@ export default function AIGrid() {
                 colId: `img:custom_${idx}`,
                 rowId: rowId,
                 grid: gridRef.current,
-                isImage: true,
+                isImage: false,
               }
             )
           } else if (col.type === 'folder') {

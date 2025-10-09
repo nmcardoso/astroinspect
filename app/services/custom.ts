@@ -48,8 +48,8 @@ export class CustomImageFromUrl implements IResourceFetch {
     this.ri = ri
   }
 
-  async fetch() {
-    return `${this.prepend || ''}${this.ri || ''}${this.append || ''}`
+  async fetch(config: IResourceFetchConfig) {
+    return { data: `${this.prepend || ''}${this.ri || ''}${this.append || ''}` }
   }
 }
 
