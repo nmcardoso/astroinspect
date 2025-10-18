@@ -4,6 +4,7 @@ import SplusImagingTab from '@/components/setup/SplusImagingTab'
 import LegacyImagingTab from '@/components/setup/LegacyImagingTab'
 import PhotoOutlinedIcon from '@mui/icons-material/PhotoOutlined'
 import CollectionsIcon from '@mui/icons-material/Collections'
+import HipsImagingTab from '../setup/HipsImagingTab'
 
 
 const menu: DropdownMenuItemProps[] = [
@@ -19,6 +20,13 @@ const menu: DropdownMenuItemProps[] = [
     modal: <SplusImagingTab />,
     left: <CollectionsIcon />,
     modalTitle: 'S-PLUS stamps',
+    modalIcon: <CollectionsIcon />,
+  },
+  {
+    title: 'HiPS stamps',
+    modal: <HipsImagingTab />,
+    left: <CollectionsIcon />,
+    modalTitle: 'HIPS stamps',
     modalIcon: <CollectionsIcon />,
   },
   {

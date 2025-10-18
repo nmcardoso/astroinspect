@@ -4,12 +4,14 @@ import imageCellFactory from '@/components/table/ImageCell'
 import { queuedState } from './states'
 import { ColDef } from 'ag-grid-community'
 import stampCellFactory from '@/components/table/StampCell'
+import { HIPS_REGISTRY } from '@/services/hips'
 
 
 const SDSS_SPEC_RATIO = 1134 / 810
 const SPLUS_PHOTOSPEC_RATIO = 840 / 659
 const LEGACY_STAMP_RATIO = 1
 const SPLUS_STAMP_RATIO = 1
+const HIPS_STAMP_RATIO = 1
 const IMAGE_PADDING = 14
 
 
@@ -44,6 +46,18 @@ const legacyImagingColDef = (state: IState): ColDef => ({
   cellRenderer: stampCellFactory({ zoomHeight: 650, modalSize: 'lg' }),
   autoHeight: false,
 })
+
+const hipsImagingColDefFactory = (state: IState, survey: string): ColDef => {
+  const name = HIPS_REGISTRY.filter(e => e.id == survey)?.[0].short || 'HIPS'
+  return {
+    field: `img:hips_${survey}`,
+    // flex: 1,
+    width: Math.ceil(state.ui.figureSize * HIPS_STAMP_RATIO) + IMAGE_PADDING,
+    headerName: name,
+    cellRenderer: stampCellFactory({ zoomHeight: 650, modalSize: 'lg'}),
+    autoHeight: false,
+  }
+}
 
 const sdssSpectraColDef = (state: IState): ColDef => ({
   field: 'img:sdss_spec',
@@ -163,6 +177,14 @@ class TableHelper {
           defs.push(customImagingColDefFactory(idx))
           initVal[`img:custom_${idx}`] = queuedState
         }
+      })
+    }
+
+    // HiPS Stamp
+    if (tcState.cols.hipsImaging.enabled) {
+      tcState.cols.hipsImaging.selectedSurveys.forEach((survey, i, _) => {
+        defs.push(hipsImagingColDefFactory(tcState, survey))
+        initVal[`img:hips_${survey}`] = queuedState
       })
     }
 

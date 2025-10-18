@@ -64,6 +64,11 @@ function AstroInspectColumns() {
         label="Legacy image"
         actionType={ContextActions.LEGACY_IMAGING}
         enabled={c.legacyImaging.enabled} />
+      
+      <ColumnCheckbox
+        label="HiPS image"
+        actionType={ContextActions.HIPS_IMAGING}
+        enabled={c.hipsImaging.enabled} />
 
       <ColumnCheckbox
         label="Custom image"

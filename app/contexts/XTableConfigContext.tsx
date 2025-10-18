@@ -3,7 +3,7 @@ import localforage from 'localforage'
 import { ContextActions } from '@/interfaces/contextActions'
 
 
-export const SCHEMA_VERSION: number = 25
+export const SCHEMA_VERSION: number = 27
 
 const getInitialState = (): IState => ({
   schemaVersion: SCHEMA_VERSION,
@@ -69,6 +69,20 @@ const getInitialState = (): IState => ({
       pixelScale: 0.4,
       autoPixelScale: true,
       dataRelease: '10'
+    },
+    hipsImaging: {
+      enabled: false,
+      defaultSettings: {
+        minPixelCut: '0.5%',
+        maxPixelCut: '99.5%',
+        colormap: 'Greys',
+        stretch: 'linear',
+        invert: true,
+        fov: 1,
+        autofov: false,
+      },
+      surveySettings: {},
+      selectedSurveys: [],
     },
     sdssSpectra: {
       enabled: true
@@ -228,6 +242,17 @@ const enableCustomImaging = (state: IState, action: IAction<{ enabled: boolean }
   return setAttributes(state, action, (s) => s.cols.customImaging)
 }
 
+const setHipsImagingSettings = (state: IState, action: IAction<{id: string, settings: IHipsSettings}>) => {
+  const s = {...state}
+  s.cols.hipsImaging.surveySettings[action.payload.id] = {...state.cols.hipsImaging.defaultSettings, ...action.payload.settings}
+  persistStateAsync(s)
+  return s
+}
+
+const setHipsImaging = (state: IState, action: IAction<IHipsImaging>) => {
+  return setAttributes(state, action, (s) => s.cols.hipsImaging)
+}
+
 const scatterPlotSetup = (state: IState, action: IAction<IScatterPlot>) => {
   return setAttributes(state, action, (s) => s.plots.scatter)
 }
@@ -276,6 +301,8 @@ const reducerMap = {
   [ContextActions.CUSTOM_IMAGE_UPDATE]: updateCustomImaging,
   [ContextActions.CUSTOM_IMAGE_REMOVE]: removeCustomImaging,
   [ContextActions.CUSTOM_IMAGE_ENABLE]: enableCustomImaging,
+  [ContextActions.HIPS_IMAGING_SETTINGS]: setHipsImagingSettings,
+  [ContextActions.HIPS_IMAGING]: setHipsImaging,
   [ContextActions.GRID_UPDATE]: updateGridValues,
   [ContextActions.CURRENT_VIEW_CHANGE]: changeCurrentView,
   [ContextActions.SCATTER_PLOT_SETUP]: scatterPlotSetup,

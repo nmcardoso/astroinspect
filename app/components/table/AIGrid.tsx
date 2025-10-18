@@ -22,6 +22,7 @@ import { useTheme } from '@mui/material'
 import copy from 'copy-to-clipboard'
 import { useNotifications } from '@/contexts/NotificationsContext'
 import { defaults } from 'lodash'
+import { HipsStamp } from '@/services/hips'
 
 ModuleRegistry.registerModules([AllCommunityModule])
 // provideGlobalGridOptions({ theme: "legacy" })
@@ -32,6 +33,7 @@ semaphore.create('img:splus_photospec', 5)
 semaphore.create('img:sdss_spec', 4)
 semaphore.create('img:custom', 15)
 semaphore.create('sdss_cat', 4)
+semaphore.create('img:hips', 5)
 
 const FETCH_BUFFER = process.env.NODE_ENV === 'development' ? 0 : 400
 
@@ -158,6 +160,27 @@ export default function AIGrid() {
             grid: gridRef.current,
           }
         )
+      }
+
+      // Hips2Fits stamps
+      if (tcState.cols.hipsImaging.enabled) {
+        for (const survey of tcState.cols.hipsImaging.selectedSurveys) {
+          const conf = tcState.cols.hipsImaging.surveySettings?.[survey] ?? tcState.cols.hipsImaging.defaultSettings
+          semaphore.enqueue(
+            'img:hips',
+            downloadResource,
+            {
+              resourceFetch: new HipsStamp(
+                survey, ra, dec, 300, conf.fov, conf.minPixelCut, 
+                conf.maxPixelCut, conf.stretch, conf.colormap, conf.invert
+              ),
+              colId: `img:hips_${survey}`,
+              rowId: rowId,
+              grid: gridRef.current,
+              isImage: false,
+            }
+          )
+        }
       }
 
       // S-PLUS photo spectra
@@ -297,6 +320,7 @@ export default function AIGrid() {
     tcState.cols.legacyImaging.enabled ||
     tcState.cols.sdssSpectra.enabled ||
     tcState.cols.splusPhotoSpectra.enabled ||
+    tcState.cols.hipsImaging.enabled || 
     (tcState.cols.customImaging.enabled && tcState.cols.customImaging.columns.length > 0)
   ) {
     gridOptions.rowHeight = parseInt(tcState.ui.figureSize as any as string)
@@ -326,7 +350,7 @@ export default function AIGrid() {
     tcState.cols.classification.enabled, tcState.cols.splusPhotoSpectra.enabled,
     tcState.cols.legacyImaging.enabled, tcState.cols.splusImaging.enabled,
     tcState.table.selectedColumnsId, tcState.grid.editable, tcState.ui.figureSize,
-    tcState.cols.sdssSpectra.enabled,
+    tcState.cols.sdssSpectra.enabled, tcState.cols.hipsImaging.enabled,
   ])
 
   useEffect(() => {
@@ -345,6 +369,7 @@ export default function AIGrid() {
   }, [
     tcState.cols.sdssCatalog.enabled, tcState.cols.sdssCatalog.selectedColumns,
     tcState.cols.customImaging.enabled, tcState.cols.customImaging.columns,
+    tcState.cols.hipsImaging.enabled, tcState.cols.hipsImaging.selectedSurveys,
   ])
 
   const onGridPreDestroyed = useCallback((event: GridPreDestroyedEvent) => {
