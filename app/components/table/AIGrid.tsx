@@ -13,16 +13,23 @@ import {
   GridOptions, GridReadyEvent, IRowNode, themeQuartz, colorSchemeDark,
   colorSchemeLight,
   GridPreDestroyedEvent,
+  CellContextMenuEvent,
 } from 'ag-grid-community'
 import { AgGridReact } from 'ag-grid-react'
 // import 'ag-grid-community/styles/ag-grid.css'
 // import 'ag-grid-community/styles/ag-theme-quartz.css'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useTheme } from '@mui/material'
+import { ListItemIcon, ListItemText, MenuList, Paper, Popover, Typography, useTheme } from '@mui/material'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import Divider from '@mui/material/Divider'
 import copy from 'copy-to-clipboard'
 import { useNotifications } from '@/contexts/NotificationsContext'
 import { defaults } from 'lodash'
 import { HipsStamp } from '@/services/hips'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
+import MyLocationIcon from '@mui/icons-material/MyLocation'
+import LaunchIcon from '@mui/icons-material/Launch'
 
 ModuleRegistry.registerModules([AllCommunityModule])
 // provideGlobalGridOptions({ theme: "legacy" })
@@ -36,6 +43,15 @@ semaphore.create('sdss_cat', 4)
 semaphore.create('img:hips', 5)
 
 const FETCH_BUFFER = process.env.NODE_ENV === 'development' ? 0 : 400
+
+const paginationPageSizeSelector = [50, 100, 200, 400, 600, 800, 1000]
+
+const tableWrapperStyle = {
+  '--ag-cell-horizontal-padding': '8px',
+  '--ag-borders': 'solid 1px',
+  '--ag-wrapper-border-radius': '0px',
+  '--ag-header-height': '38px',
+} as React.CSSProperties
 
 
 const downloadResource = async ({
@@ -72,14 +88,133 @@ const downloadResource = async ({
 }
 
 
-const paginationPageSizeSelector = [50, 100, 200, 400, 600, 800, 1000]
+const copyCellValue = (value: any, notification: UseNotifications | null) => {
+  copy(value, {
+    format: 'text/plain',
+    onCopy: () => {
+      notification?.show(`Copied: ${value}`, { autoHideDuration: 2000, severity: 'success' })
+    }
+  })
+}
 
-const tableWrapperStyle = {
-  '--ag-cell-horizontal-padding': '8px',
-  '--ag-borders': 'solid 1px',
-  '--ag-wrapper-border-radius': '0px',
-  '--ag-header-height': '38px',
-} as React.CSSProperties
+
+const copyCoordinates = (rowData: any, notification: UseNotifications | null, tcState: IState) => {
+  if (tcState.table.raCol && tcState.table.decCol) {
+    const ra = rowData[`tab:${tcState.table.raCol}`]
+    const dec = rowData[`tab:${tcState.table.decCol}`]
+    copy(`${ra} ${dec}`, {
+      format: 'text/plain',
+      onCopy: () => {
+        notification?.show(`Copied: ${ra} ${dec}`, { autoHideDuration: 2000, severity: 'success' })
+      }
+    })
+  } else {
+    notification?.show('Can not find RA and DEC columns', { autoHideDuration: 2000, severity: 'error' })
+  }
+}
+
+
+const goToSimbad = (rowData: any, tcState: IState) => {
+  const ra = String(rowData[`tab:${tcState.table.raCol}`])
+  let dec = String(rowData[`tab:${tcState.table.decCol}`])
+  if (!dec.startsWith('-')) {
+    dec = '+' + dec
+  }
+  const url = (
+    `https://simbad.u-strasbg.fr/simbad/sim-coo?Coord=${ra}${dec}` + 
+    '&CooFrame=FK5&CooEpoch=2000&CooEqui=2000&CooDefinedFrames=none' +
+    '&Radius=5&Radius.unit=arcsec&submit=submit+query&CoordList='
+  )
+  window.open(url, '_blank')?.focus()
+}
+
+
+
+const goToNED = (rowData: any, tcState: IState) => {
+  const ra = String(rowData[`tab:${tcState.table.raCol}`])
+  let dec = String(rowData[`tab:${tcState.table.decCol}`])
+  if (!dec.startsWith('-')) {
+    dec = '+' + dec
+  }
+  const url = (
+    'https://ned.ipac.caltech.edu/conesearch?search_type=Near%20Position%20Search' +
+    `&in_csys=Equatorial&in_equinox=J2000&ra=${ra}d&dec=${dec}d` +
+    '&radius=0.083&Z_CONSTRAINT=Unconstrained'
+  )
+  window.open(url, '_blank')?.focus()
+}
+
+
+
+function TableContextMenu({
+  context,
+  onClose = () => {}
+}: {context: CellContextMenuEvent | null, onClose: () => void}) {
+  const { tcState, tcDispatch } = useXTableConfig()
+  const notification = useNotifications()
+
+  const handleCopy = () => {
+    copyCellValue(context?.value, notification)
+    onClose()
+  }
+
+  const handleCopyCoordinates = () => {
+    copyCoordinates(context?.data, notification, tcState)
+    onClose()
+  }
+
+  const handleGoToSimbad = () => {
+    goToSimbad(context?.data, tcState)
+    onClose()
+  }
+
+  const handleGoToNED = () => {
+    goToNED(context?.data, tcState)
+    onClose()
+  }
+
+  return (
+    <Popover
+      open={context !== null}
+      onClose={onClose}
+      anchorReference="anchorPosition"
+      anchorPosition={
+        context !== null ? { 
+          top: (context?.event as MouseEvent).clientY - 6, 
+          left: (context?.event as MouseEvent).clientX + 2 
+        } : undefined
+      }
+    >
+      <Paper sx={{ width: 260, maxWidth: '100%' }}>
+        <MenuList>
+        <MenuItem onClick={handleCopy}>
+          <ListItemIcon><ContentCopyIcon fontSize="small" /></ListItemIcon>
+          <ListItemText>Copy</ListItemText>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            Ctrl + C
+          </Typography>
+        </MenuItem>
+        <MenuItem onClick={handleCopyCoordinates}>
+          <ListItemIcon><MyLocationIcon fontSize="small" /></ListItemIcon>
+          <ListItemText>Copy position</ListItemText>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            Ctrl + X
+          </Typography>
+        </MenuItem>
+        <Divider sx={{my: 0.5}} />
+        <MenuItem onClick={handleGoToSimbad}>
+          <ListItemIcon><LaunchIcon fontSize="small" /></ListItemIcon>
+          <ListItemText>Search Simbad</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={handleGoToNED}>
+          <ListItemIcon><LaunchIcon fontSize="small" /></ListItemIcon>
+          <ListItemText>Search NED</ListItemText>
+        </MenuItem>
+        </MenuList>
+      </Paper>
+    </Popover>
+  )
+}
 
 
 export default function AIGrid() {
@@ -87,6 +222,7 @@ export default function AIGrid() {
   const theme = useTheme()
   const gridRef = useRef<AgGridReact>(null)
   const notification = useNotifications()
+  const [contextMenu, setContextMenu] = useState<CellContextMenuEvent | null>(null)
 
   const onGridReady = useCallback((event: GridReadyEvent) => {
     if (!tcState.grid.api || tcState.grid?.api?.isDestroyed) {
@@ -273,25 +409,9 @@ export default function AIGrid() {
     if (!keyEvent) return
 
     if (keyEvent.key.toLowerCase() === 'c' && (keyEvent.ctrlKey || keyEvent.metaKey) && !tcState.grid.editable) {
-      copy(event.value, {
-        format: 'text/plain',
-        onCopy: () => {
-          notification?.show(`Copied: ${event.value}`, { autoHideDuration: 2000, severity: 'success' })
-        }
-      })
+      copyCellValue(event?.value, notification)
     } else if (keyEvent.key.toLowerCase() === 'x' && (keyEvent.ctrlKey || keyEvent.metaKey) && !tcState.grid.editable) {
-      if (tcState.table.raCol && tcState.table.decCol) {
-        const ra = event.data[`tab:${tcState.table.raCol}`]
-        const dec = event.data[`tab:${tcState.table.decCol}`]
-        copy(`${ra} ${dec}`, {
-          format: 'text/plain',
-          onCopy: () => {
-            notification?.show(`Copied: ${ra} ${dec}`, { autoHideDuration: 2000, severity: 'success' })
-          }
-        })
-      } else {
-        notification?.show('Can not find RA and DEC columns', { autoHideDuration: 2000, severity: 'error' })
-      }
+      copyCoordinates(event?.data, notification, tcState)
     } else if (tcState.cols.classification.enabled && !keyEvent.altKey && !keyEvent.ctrlKey && !keyEvent.shiftKey) {
       for (const [cls, hotkey] of Object.entries(tcState.cols.classification.keyMap)) {
         if (hotkey.toLowerCase() == keyEvent.key.toLowerCase()) {
@@ -304,6 +424,26 @@ export default function AIGrid() {
       }
     }
   }, [tcState.cols.classification.enabled, tcState.cols.classification.keyMap])
+
+
+  const handleContextMenu = (event: CellContextMenuEvent) => {
+    event.event?.preventDefault()
+
+    setContextMenu(contextMenu === null ? event : null)
+
+    const selection = document.getSelection()
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0)
+
+      setTimeout(() => {
+        selection.addRange(range)
+      })
+    }
+  }
+
+  const handleCloseContextMenu = () => {
+    setContextMenu(null)
+  }
 
 
   const getRowId = useCallback((params: GetRowIdParams): string => {
@@ -386,7 +526,8 @@ export default function AIGrid() {
   return (
     <div
       className="ag-theme-quartz"
-      style={{ width: '100%', height: '100%', ...tableWrapperStyle }}>
+      style={{ width: '100%', height: '100%', ...tableWrapperStyle }}
+      onContextMenu={e => e.preventDefault()}>
       <AgGridReact
         gridOptions={gridOptions}
         ref={gridRef}
@@ -407,8 +548,10 @@ export default function AIGrid() {
         singleClickEdit={true}
         isExternalFilterPresent={() => tcState.plots.inspectSelected}
         doesExternalFilterPass={plotFilter}
+        onCellContextMenu={handleContextMenu}
       // colorSchemeVariable="data-toolpad-color-scheme"
       />
+      <TableContextMenu context={contextMenu} onClose={handleCloseContextMenu} />
     </div>
   )
 }
