@@ -44,7 +44,7 @@ semaphore.create('img:hips', 5)
 
 const FETCH_BUFFER = process.env.NODE_ENV === 'development' ? 0 : 400
 
-const paginationPageSizeSelector = [50, 100, 200, 400, 600, 800, 1000]
+const PAGE_SIZES = [50, 100, 200, 400, 600, 800, 1000]
 
 const tableWrapperStyle = {
   '--ag-cell-horizontal-padding': '8px',
@@ -538,7 +538,7 @@ export default function AIGrid() {
         theme={gridTheme}
         pagination={true}
         paginationPageSize={100}
-        paginationPageSizeSelector={paginationPageSizeSelector}
+        paginationPageSizeSelector={PAGE_SIZES}
         onGridReady={onGridReady}
         onPaginationChanged={onChange}
         onSortChanged={onChange}
