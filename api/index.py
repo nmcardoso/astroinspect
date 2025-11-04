@@ -98,6 +98,8 @@ def proxy(path):
     data = dict(json=request.get_json())
   except Exception:
     data = dict(data=request.get_data())
+  
+  print(data)
 
   try:
     resp = requests.request(
