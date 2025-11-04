@@ -81,13 +81,7 @@ def hello():
 #     'access-control-allow-methods', 'content-type', 'content-length', 'allow'
 #   ],
 # )
-@app.route('/proxy/<path:path>')
-@cross_origin(
-  vary_header=True, 
-  send_wildcard=False, 
-  expose_headers=['access-control-allow-origin', 'access-control-allow-headers', 
-                  'access-control-allow-methods', 'content-type', 'content-length', 'allow'],
-)
+@app.route('/proxy/<path:path>', methods=['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'OPTIONS'])
 def proxy(path):
   base_url = path.replace('http:/', 'http://').replace('https:/', 'https://')
   if not base_url.startswith('http'):
@@ -98,8 +92,6 @@ def proxy(path):
     data = dict(json=request.get_json())
   except Exception:
     data = dict(data=request.get_data())
-  
-  print(data)
 
   try:
     resp = requests.request(
