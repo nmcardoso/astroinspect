@@ -101,6 +101,7 @@ def proxy(path):
       params=query,
       headers={key: value for (key, value) in request.headers if key != 'Host'},
       data=request.get_data(),
+      json=request.get_json(),
       cookies=request.cookies,
       allow_redirects=True,
       timeout=TIMEOUT,
